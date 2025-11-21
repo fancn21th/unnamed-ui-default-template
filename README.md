@@ -1,5 +1,11 @@
 This is the [assistant-ui](https://github.com/Yonom/assistant-ui) starter project.
 
+## How to debug
+
+This branch is for debug purposes. It contains additional config for debugging the app locally. Both next.config.js and tsconfig.json contain additional settings for debugging.
+
+Before debugging make sure to clone the asssistant-ui repo and install its dependencies and both this repo and the assistant-ui repo are placed in the same parent directory.
+
 ## Getting Started
 
 First, add your OpenAI API key to `.env.local` file:
