@@ -6,6 +6,10 @@ This branch is for debug purposes. It contains additional config for debugging t
 
 Before debugging make sure to clone the asssistant-ui repo and install its dependencies and both this repo and the assistant-ui repo are placed in the same parent directory.
 
+## Leveraging ExternalStoreRuntime to connect to SmartVision API
+
+https://www.assistant-ui.com/docs/runtimes/custom/external-store
+
 ## Getting Started
 
 First, add your OpenAI API key to `.env.local` file:
