@@ -1,5 +1,6 @@
 import type { SmartVisionChunk, SmartVisionMessage } from "./types";
 import { appid, token, slug, baseURL } from "./config";
+import { RemoteThreadListResponse } from "@assistant-ui/react/dist/legacy-runtime/runtime-cores/remote-thread-list/types";
 
 // SmartVision API 客户端
 export class SmartVisionClient {
@@ -118,6 +119,48 @@ export class SmartVisionClient {
       throw error;
     }
   }
+
+  async conversationsList(): Promise<RemoteThreadListResponse> {
+    const headers = this.getHeaders();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    try {
+      const params: Record<string, unknown> = {
+        limit: 20,
+      };
+
+      // 添加日期筛选参数
+      if (today) {
+        params.start_time = Math.floor(today.getTime() / 1000);
+        params.end_time = Math.floor(
+          (today.getTime() + 24 * 60 * 60 * 1000) / 1000,
+        );
+      }
+
+      const response = await fetch(
+        `${this.baseURL}${this.slug}1/api/apps/conversations?limit=${params.limit}&start_time=${params.start_time}&end_time=${params.end_time}`,
+        {
+          headers,
+        },
+      );
+      const result = await response.json();
+      if (result && result.data && Array.isArray(result.data)) {
+        return {
+          threads: result.data.map((d) => ({
+            status: "regular",
+            remoteId: d.id,
+            title: d.name,
+          })),
+        };
+      }
+      return {
+        threads: [],
+      };
+    } catch (e) {
+      console.error("Load more conversations error:", e);
+    } finally {
+    }
+  }
 }
 
 // 创建单例实例
@@ -130,4 +173,8 @@ export const sendSmartVisionMessage = (params: {
   taskId?: string;
 }) => {
   return smartvisionClient.sendMessage(params);
+};
+// 获取会话历史
+export const getConversationsList = () => {
+  return smartvisionClient.conversationsList();
 };
