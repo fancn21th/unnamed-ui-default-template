@@ -153,13 +153,12 @@ export class SmartVisionClient {
           })),
         };
       }
-      return {
-        threads: [],
-      };
     } catch (e) {
       console.error("Load more conversations error:", e);
-    } finally {
     }
+    return {
+      threads: [],
+    };
   }
 }
 
