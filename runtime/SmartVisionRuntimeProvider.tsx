@@ -13,7 +13,7 @@ export function SmartVisionRuntimeProvider({
 
   // 使用类型断言来解决 React 19 兼容性问题
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const Provider = AssistantRuntimeProvider as any;
+  const Provider = AssistantRuntimeProvider;
 
   return <Provider runtime={runtime}>{children}</Provider>;
 }

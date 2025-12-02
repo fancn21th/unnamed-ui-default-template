@@ -1,11 +1,14 @@
 import { useState } from "react";
 import {
-  useExternalStoreRuntime,
   useExternalMessageConverter,
+  useExternalStoreRuntime,
+  useLocalThreadRuntime,
+  unstable_useRemoteThreadListRuntime as useRemoteThreadListRuntime,
 } from "@assistant-ui/react";
 import type { SmartVisionMessage } from "./types";
 import { useSmartVisionMessages } from "./useSmartVisionMessages";
 import { convertSmartVisionMessages } from "./convertSmartVisionMessages";
+import { threadListAdapter } from "@/runtime/threadListAdapter";
 
 // 创建符合 assistant-ui 标准的运行时
 export const useSmartVisionRuntime = () => {
@@ -30,7 +33,7 @@ export const useSmartVisionRuntime = () => {
     isRunning,
   });
 
-  const runtime = useExternalStoreRuntime({
+  const StoreRuntime = useExternalStoreRuntime({
     isRunning,
     messages: threadMessages,
     onNew: async (message) => {
@@ -52,6 +55,8 @@ export const useSmartVisionRuntime = () => {
       await handleSendMessage([userMessage]);
     },
   });
-
-  return runtime;
+  return useRemoteThreadListRuntime({
+    runtimeHook: () => StoreRuntime,
+    adapter: threadListAdapter,
+  });
 };
