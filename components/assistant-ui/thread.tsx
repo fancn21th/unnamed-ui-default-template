@@ -183,6 +183,7 @@ const Composer: FC = () => {
           rows={1}
           autoFocus
           aria-label="Message input"
+          asChild
         >
           <PromptInput />
         </ComposerPrimitive.Input>
