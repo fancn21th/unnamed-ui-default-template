@@ -23,7 +23,7 @@ export const useSmartVisionMessages = () => {
 
       // 处理流式响应
       for await (const chunk of generator) {
-        console.log("📥 Processing chunk:", chunk);
+        // console.log("📥 Processing chunk:", chunk);
 
         if (chunk.event === "agent_thought") {
           console.log("🧠 检测到 agent_thought 事件:", chunk);
