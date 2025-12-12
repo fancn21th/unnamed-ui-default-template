@@ -69,6 +69,15 @@ export interface SmartVisionToolCall {
 // 工具执行状态
 export type SmartVisionToolStatus = "running" | "finished" | "error";
 
+export interface ConversationItem {
+  id: string;
+  name: string;
+  inputs: Record<string, unknown>;
+  status: string;
+  introduction: string;
+  created_at: number;
+  updated_at: number;
+}
 // SmartVision 消息类型（类似 LangChain 的消息结构）
 export type SmartVisionMessage =
   | {
@@ -99,3 +108,123 @@ export type SmartVisionMessage =
       toolLabels?: Record<string, Record<string, unknown>>;
       observation?: string;
     };
+
+/** 审查匹配项 */
+export interface ReviewStepContent {
+  /** 审核步骤名称 */
+  step: string;
+  /** 审核步骤状态 */
+  status: string;
+  /** 当前审核进度 */
+  current?: number;
+  /** 总审核进度 */
+  total?: number;
+}
+export interface MultimodalContent {
+  type?:
+    | "text"
+    | "image_url"
+    | "tool"
+    | "video_url"
+    | "canvas"
+    | "reviewStep"
+    | "edit_answer";
+  text?: string;
+  id?: string;
+  image_url?: {
+    url: string;
+  };
+  video_url?: {
+    url: string;
+  };
+  tool?: {
+    tool_labels?: Record<string, any>;
+    tool?: string;
+    tool_input?: string;
+    tool_execute_time?: number;
+    observation?: string;
+    data?: any;
+    status?: "finished" | "using";
+    // 审核步骤数据，在tool中进行展示
+    reviewStep?: ReviewStepContent[];
+  };
+  canvas?: {
+    title?: string;
+    artifact_id?: string;
+    content?: string;
+    version_number?: number;
+  };
+  /** 审核步骤数据 */
+  reviewStep?: ReviewStepContent;
+  /** 编辑回答数据 */
+  editResult?: {
+    title?: string;
+    artifactId?: string;
+    versionNumber?: number;
+  };
+  /** 时间戳 */
+  timestamp?: string;
+}
+export interface ExecSteps {
+  index: string;
+  step_item_title: string;
+  step_item_type: string;
+  step_item_content: string;
+  step_item_metadata: string | null;
+}
+type baseAgentProps = {
+  avatar: string;
+  id: number;
+  name: string;
+};
+export enum UpvoteStatus {
+  None = "0",
+  Like = "1",
+  Unlike = "2",
+}
+export interface MessageProps {
+  id: string;
+  conversation_id: string;
+  inputs: { test1: string; sex: string };
+  query: string;
+  answer: string;
+  feedback: null;
+  created_at: number;
+  regenerate_list: {
+    id: string;
+    answer: string;
+    toolsets_reference?: string;
+  }[];
+  agent_thoughts: (MultimodalContent["tool"] & {
+    files?: string[];
+    thought?: string;
+    bi_steps?: any;
+    canvas_meta?: {
+      title: string;
+      artifact_id: string;
+      version_number: number;
+    };
+    exec_steps: ExecSteps[];
+    observation?: string;
+    created_at: number;
+  })[];
+  message_files: {
+    id: string;
+    belongs_to: "user" | "assistant";
+    url: string;
+    type: "image" | "doc" | "video";
+    name: string;
+  }[];
+  referenced_inputs: {
+    referenced_query: string;
+    referenced_tools: baseAgentProps[];
+    referenced_workflows: baseAgentProps[];
+    referenced_mcps: baseAgentProps[];
+  };
+  first_chunk_time: number;
+  is_upvote: UpvoteStatus;
+  variable?: Record<string, string>;
+  is_audio?: boolean;
+  canvas_meta?: any;
+  cotent?: string;
+}

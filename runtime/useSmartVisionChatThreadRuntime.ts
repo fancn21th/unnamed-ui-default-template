@@ -1,18 +1,21 @@
-import { useState } from "react";
 import {
-  useExternalStoreRuntime,
+  AssistantRuntime,
   useExternalMessageConverter,
+  useExternalStoreRuntime,
+  useRuntimeAdapters,
 } from "@assistant-ui/react";
-import type { SmartVisionMessage } from "./types";
+import { useMemo, useState } from "react";
 import { useSmartVisionMessages } from "./useSmartVisionMessages";
-import { convertSmartVisionMessages } from "./convertSmartVisionMessages";
-import { unstable_useRemoteThreadListRuntime as useRemoteThreadListRuntime } from "@assistant-ui/react";
-import { threadListAdapter } from "./threadListAdapter";
+import {
+  convertSmartVisionMessages,
+  getSmartVisionMessage,
+} from "@/runtime/convertSmartVisionMessages";
+import { SmartVisionMessage } from "@/runtime/types";
+import { useSmartVisionExternalHistory } from "./useSmartVisionExternalHistory";
 
-// 创建符合 assistant-ui 标准的运行时
-export const useSmartVisionRuntime = () => {
+export const useSmartVisionChatThreadRuntime = () => {
   const [isRunning, setIsRunning] = useState(false);
-  const { messages, sendMessage } = useSmartVisionMessages();
+  const { messages, sendMessage, setMessages } = useSmartVisionMessages();
 
   const handleSendMessage = async (newMessages: SmartVisionMessage[]) => {
     try {
@@ -32,9 +35,27 @@ export const useSmartVisionRuntime = () => {
     isRunning,
   });
 
-  const smartvisionAssistantRuntime = useExternalStoreRuntime({
+  const runtimeRef = useMemo(
+    () => ({
+      get current(): AssistantRuntime {
+        return runtime;
+      },
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+  const contextAdapters = useRuntimeAdapters();
+  const isLoading = useSmartVisionExternalHistory(
+    runtimeRef,
+    contextAdapters?.history,
+    getSmartVisionMessage,
+    setMessages,
+  );
+  const runtime = useExternalStoreRuntime({
     isRunning,
     messages: threadMessages,
+    setMessages: (messages) =>
+      setMessages(messages.map(getSmartVisionMessage).filter(Boolean).flat()),
     onNew: async (message) => {
       console.log("🚀 SmartVision onNew:", message);
 
@@ -53,12 +74,9 @@ export const useSmartVisionRuntime = () => {
 
       await handleSendMessage([userMessage]);
     },
+    onImport: (messages) =>
+      setMessages(messages.map(getSmartVisionMessage).filter(Boolean).flat()),
+    isLoading,
   });
-
-  const runtime = useRemoteThreadListRuntime({
-    runtimeHook: () => smartvisionAssistantRuntime,
-    adapter: threadListAdapter,
-  });
-
   return runtime;
 };

@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -19,9 +23,15 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"],
-      "@assistant-ui/react": ["../assistant-ui/packages/react/src/index.ts"],
-      "@assistant-ui/react/*": ["../assistant-ui/packages/react/src/*"],
+      "@/*": [
+        "./*"
+      ],
+      "@assistant-ui/react": [
+        "../assistant-ui/packages/react/src/index.ts"
+      ],
+      "@assistant-ui/react/*": [
+        "../assistant-ui/packages/react/src/*"
+      ],
       "@assistant-ui/react-ai-sdk": [
         "../assistant-ui/packages/react-ai-sdk/src/index.ts"
       ],
@@ -40,12 +50,18 @@
       "@assistant-ui/react-devtools/*": [
         "../assistant-ui/packages/react-devtools/src/*"
       ],
-      "@assistant-ui/tap": ["../assistant-ui/packages/tap/src/index.ts"],
-      "@assistant-ui/tap/*": ["../assistant-ui/packages/tap/src/*"],
+      "@assistant-ui/tap": [
+        "../assistant-ui/packages/tap/src/index.ts"
+      ],
+      "@assistant-ui/tap/*": [
+        "../assistant-ui/packages/tap/src/*"
+      ],
       "assistant-stream": [
         "../assistant-ui/packages/assistant-stream/src/index.ts"
       ],
-      "assistant-stream/*": ["../assistant-ui/packages/assistant-stream/src/*"]
+      "assistant-stream/*": [
+        "../assistant-ui/packages/assistant-stream/src/*"
+      ]
     }
   },
   "include": [
@@ -54,7 +70,10 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "../assistant-ui/packages/*/src/**/*.ts",
-    "../assistant-ui/packages/*/src/**/*.tsx"
+    "../assistant-ui/packages/*/src/**/*.tsx",
+    ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

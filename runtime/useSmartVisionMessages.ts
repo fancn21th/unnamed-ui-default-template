@@ -118,5 +118,6 @@ export const useSmartVisionMessages = () => {
   return {
     messages,
     sendMessage,
+    setMessages,
   };
 };

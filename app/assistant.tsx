@@ -1,12 +1,7 @@
 "use client";
 
-// import { AssistantRuntimeProvider } from "@assistant-ui/react";
 import { SmartVisionRuntimeProvider } from "../runtime/SmartVisionRuntimeProvider";
 import { DevToolsModal } from "@assistant-ui/react-devtools";
-// import {
-//   useChatRuntime,
-//   AssistantChatTransport,
-// } from "@assistant-ui/react-ai-sdk";
 import { Thread } from "@/components/assistant-ui/thread";
 import {
   SidebarInset,

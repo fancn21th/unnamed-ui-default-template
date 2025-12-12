@@ -1,4 +1,7 @@
-import { useExternalMessageConverter } from "@assistant-ui/react";
+import {
+  ThreadMessage,
+  useExternalMessageConverter,
+} from "@assistant-ui/react";
 import type { SmartVisionMessage } from "./types";
 
 export const convertSmartVisionMessages: useExternalMessageConverter.Callback<
@@ -61,4 +64,54 @@ export const convertSmartVisionMessages: useExternalMessageConverter.Callback<
     role: "system" as const,
     content: [{ type: "text" as const, text: String(messages.content) }],
   };
+};
+
+export const getSmartVisionMessage = (
+  message: ThreadMessage,
+): SmartVisionMessage => {
+  if (message.role === "user") {
+    return {
+      type: "human",
+      id: message.id,
+      content: message.content
+        .map((part) =>
+          part.type === "text" ? part.text : JSON.stringify(part),
+        )
+        .join(""),
+    } as SmartVisionMessage;
+  }
+  if (message.role === "assistant") {
+    return {
+      type: "ai",
+      id: message.id,
+      content: message.content.map((part) => {
+        if (part.type === "tool-call") {
+          return {
+            type: "tool-call",
+            toolCallId: (part as any).toolCallId,
+            toolName: (part as any).toolName,
+            args: (part as any).args,
+            argsText: (part as any).argsText,
+          };
+        } else if (part.type === "text") {
+          return {
+            type: "text",
+            text: part.text,
+          };
+        } else {
+          return {
+            type: "text",
+            text: JSON.stringify(part),
+          };
+        }
+      }),
+    } as SmartVisionMessage;
+  }
+  return {
+    type: "system",
+    id: message.id,
+    content: message.content
+      .map((part) => (part.type === "text" ? part.text : JSON.stringify(part)))
+      .join(""),
+  } as SmartVisionMessage;
 };

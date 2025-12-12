@@ -1,4 +1,9 @@
-import type { SmartVisionChunk, SmartVisionMessage } from "./types";
+import {
+  ConversationItem,
+  MessageProps,
+  SmartVisionChunk,
+  SmartVisionMessage,
+} from "./types";
 import { appid, token, slug, baseURL } from "./config";
 
 // SmartVision API 客户端
@@ -17,7 +22,7 @@ export class SmartVisionClient {
 
   // 构造完整的 API URL
   private getApiUrl(): string {
-    return `${this.baseURL}${this.slug}1/api/apps/chat`;
+    return `${this.baseURL}/api/apps/chat`;
   }
 
   // 构造请求头
@@ -118,10 +123,68 @@ export class SmartVisionClient {
       throw error;
     }
   }
+
+  /**
+   * 获取会话列表
+   * */
+  async conversationsList(): Promise<ConversationItem[]> {
+    const headers = this.getHeaders();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const params: Record<string, unknown> = {
+      limit: 20,
+    };
+
+    // 添加日期筛选参数
+    if (today) {
+      params.start_time = Math.floor(today.getTime() / 1000);
+      params.end_time = Math.floor(
+        (today.getTime() + 24 * 60 * 60 * 1000) / 1000,
+      );
+    }
+
+    const response = await fetch(
+      `${this.baseURL}/api/apps/conversations?limit=${params.limit}&start_time=${params.start_time}&end_time=${params.end_time}`,
+      {
+        headers,
+      },
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    if (!response.body) {
+      throw new Error("No response body");
+    }
+    const result = await response.json();
+    return result?.data || [];
+  }
+
+  /**
+   * 获取会话消息
+   * */
+  async conversationsMessages(conversationId: string): Promise<MessageProps[]> {
+    const headers = this.getHeaders();
+    const response = await fetch(
+      `${this.baseURL}/api/apps/messages?conversation_id=${conversationId}`,
+      {
+        headers,
+      },
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    if (!response.body) {
+      throw new Error("No response body");
+    }
+    const result = await response.json();
+    return result?.data || [];
+  }
 }
 
 // 创建单例实例
-export const smartvisionClient = new SmartVisionClient();
+export const smartVisionClient = new SmartVisionClient();
 
 // 便捷的发送消息函数
 export const sendSmartVisionMessage = (params: {
@@ -129,5 +192,15 @@ export const sendSmartVisionMessage = (params: {
   conversationId?: string;
   taskId?: string;
 }) => {
-  return smartvisionClient.sendMessage(params);
+  return smartVisionClient.sendMessage(params);
+};
+
+// 获取会话历史
+export const getConversationsList = () => {
+  return smartVisionClient.conversationsList();
+};
+
+// 获取会话消息
+export const getConversationsMessages = (conversationId: string) => {
+  return smartVisionClient.conversationsMessages(conversationId);
 };
