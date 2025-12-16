@@ -1,6 +1,5 @@
 import {
   ArrowDownIcon,
-  ArrowUpIcon,
   CheckIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -8,6 +7,8 @@ import {
   PencilIcon,
   RefreshCwIcon,
   Square,
+  Send,
+  PlusIcon,
 } from "lucide-react";
 
 import {
@@ -17,9 +18,9 @@ import {
   ErrorPrimitive,
   MessagePrimitive,
   ThreadPrimitive,
+  useAssistantState,
 } from "@assistant-ui/react";
-
-import { PromptSendButton, PromptInput } from "@/components/prompt-01";
+import { useShallow } from "zustand/shallow";
 
 import type { FC } from "react";
 import { LazyMotion, MotionConfig, domAnimation } from "motion/react";
@@ -30,10 +31,17 @@ import { MarkdownText } from "@/components/assistant-ui/markdown-text";
 import { ToolFallback } from "@/components/assistant-ui/tool-fallback";
 import { TooltipIconButton } from "@/components/assistant-ui/tooltip-icon-button";
 import {
-  ComposerAddAttachment,
   ComposerAttachments,
   UserMessageAttachments,
 } from "@/components/assistant-ui/attachment";
+import {
+  SenderContainer,
+  SenderTextarea,
+  SenderAttachmentButton,
+  SenderSendButton,
+  SenderRegion,
+  SenderActionBar,
+} from "@/components/wuhan/blocks/sender-01";
 
 import { cn } from "@/lib/utils";
 
@@ -172,22 +180,46 @@ const ThreadSuggestions: FC = () => {
   );
 };
 
+const ComposerAttachmentsRegion: FC = () => {
+  const hasAttachments = useAssistantState(
+    useShallow(({ composer }) => {
+      const attachments = composer.attachments;
+      return attachments && attachments.length > 0;
+    }),
+  );
+
+  if (!hasAttachments) return null;
+
+  return (
+    <SenderRegion className="py-0">
+      <ComposerAttachments />
+    </SenderRegion>
+  );
+};
+
 const Composer: FC = () => {
   return (
     <div className="aui-composer-wrapper sticky bottom-0 mx-auto flex w-full max-w-[var(--thread-max-width)] flex-col gap-4 overflow-visible rounded-t-3xl bg-background pb-4 md:pb-6">
       <ThreadScrollToBottom />
-      <ComposerPrimitive.Root className="aui-composer-root relative flex w-full flex-col rounded-3xl border border-border bg-muted px-1 pt-2 shadow-[0_9px_9px_0px_rgba(0,0,0,0.01),0_2px_5px_0px_rgba(0,0,0,0.06)] dark:border-muted-foreground/15">
-        <ComposerAttachments />
-        <ComposerPrimitive.Input
-          placeholder="Send a message..."
-          rows={1}
-          autoFocus
-          aria-label="Message input"
-          asChild
-        >
-          <PromptInput />
-        </ComposerPrimitive.Input>
-        <ComposerAction />
+      <ComposerPrimitive.Root asChild>
+        <SenderContainer className="aui-composer-root shadow-[0_9px_9px_0px_rgba(0,0,0,0.01),0_2px_5px_0px_rgba(0,0,0,0.06)] dark:border-muted-foreground/15">
+          <ComposerAttachmentsRegion />
+          <ComposerPrimitive.Input
+            placeholder="Send a message..."
+            rows={1}
+            autoFocus
+            aria-label="Message input"
+            asChild
+          >
+            <SenderTextarea />
+          </ComposerPrimitive.Input>
+          <SenderActionBar className="flex items-center justify-between">
+            <ComposerPrimitive.AddAttachment asChild>
+              <SenderAttachmentButton className="cursor-pointer" aria-label="Add Attachment"/>
+            </ComposerPrimitive.AddAttachment>
+            <ComposerAction />
+          </SenderActionBar>
+        </SenderContainer>
       </ComposerPrimitive.Root>
     </div>
   );
@@ -195,41 +227,23 @@ const Composer: FC = () => {
 
 const ComposerAction: FC = () => {
   return (
-    <div className="aui-composer-action-wrapper relative mx-1 mt-2 mb-2 flex items-center justify-between">
-      <ComposerAddAttachment />
-
+    <>
       <ThreadPrimitive.If running={false}>
         <ComposerPrimitive.Send asChild>
-          {/* <TooltipIconButton
-            tooltip="Send message"
-            side="bottom"
-            type="submit"
-            variant="default"
-            size="icon"
-            className="aui-composer-send size-[34px] rounded-full p-1"
-            aria-label="Send message"
-          >
-            <ArrowUpIcon className="aui-composer-send-icon size-5" />
-          </TooltipIconButton> */}
-          <PromptSendButton />
+          <SenderSendButton aria-label="Send message">
+            <Send className="size-4" />
+          </SenderSendButton>
         </ComposerPrimitive.Send>
       </ThreadPrimitive.If>
 
       <ThreadPrimitive.If running>
         <ComposerPrimitive.Cancel asChild>
-          {/* <Button
-            type="button"
-            variant="default"
-            size="icon"
-            className="aui-composer-cancel size-[34px] rounded-full border border-muted-foreground/60 hover:bg-primary/75 dark:border-muted-foreground/90"
-            aria-label="Stop generating"
-          >
-            <Square className="aui-composer-cancel-icon size-3.5 fill-white dark:fill-black" />
-          </Button> */}
-          <PromptSendButton disabled={false} />
+          <SenderSendButton generating aria-label="Stop generating">
+            <Square className="size-3.5 fill-white dark:fill-black" />
+          </SenderSendButton>
         </ComposerPrimitive.Cancel>
       </ThreadPrimitive.If>
-    </div>
+    </>
   );
 };
 

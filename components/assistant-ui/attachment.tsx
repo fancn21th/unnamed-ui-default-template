@@ -1,6 +1,6 @@
 "use client";
 
-import { PropsWithChildren, useEffect, useState, type FC } from "react";
+import { PropsWithChildren, useEffect, useMemo, useState, type FC } from "react";
 import Image from "next/image";
 import { XIcon, PlusIcon, FileText } from "lucide-react";
 import {
@@ -12,19 +12,49 @@ import {
 } from "@assistant-ui/react";
 import { useShallow } from "zustand/shallow";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
   Dialog,
   DialogTitle,
   DialogContent,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { TooltipIconButton } from "@/components/assistant-ui/tooltip-icon-button";
+import {
+  AttachmentCard,
+  AttachmentCardContent,
+  AttachmentCardDeleteButton,
+  AttachmentCardLeading,
+  AttachmentCardMeta,
+  AttachmentCardTitle,
+  AttachmentList,
+} from "@/components/wuhan/blocks/attachment-list-01";
 import { cn } from "@/lib/utils";
+
+const formatBytes = (bytes: number) => {
+  if (!Number.isFinite(bytes) || bytes < 0) return undefined;
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+};
+
+const getFileTypeLabel = (
+  name: string | undefined,
+  type: "image" | "document" | "file",
+) => {
+  if (name) {
+    const ext = name.split(".").pop()?.toUpperCase();
+    if (ext) return ext;
+  }
+  switch (type) {
+    case "image":
+      return "IMG";
+    case "document":
+      return "DOC";
+    case "file":
+      return "FILE";
+    default:
+      return "FILE";
+  }
+};
 
 const useFileSrc = (file: File | undefined) => {
   const [src, setSrc] = useState<string | undefined>(undefined);
@@ -109,111 +139,114 @@ const AttachmentPreviewDialog: FC<PropsWithChildren> = ({ children }) => {
   );
 };
 
-const AttachmentThumb: FC = () => {
-  const isImage = useAssistantState(
-    ({ attachment }) => attachment.type === "image",
-  );
-  const src = useAttachmentSrc();
-
-  return (
-    <Avatar className="aui-attachment-tile-avatar h-full w-full rounded-none">
-      <AvatarImage
-        src={src}
-        alt="Attachment preview"
-        className="aui-attachment-tile-image object-cover"
-      />
-      <AvatarFallback delayMs={isImage ? 200 : 0}>
-        <FileText className="aui-attachment-tile-fallback-icon size-8 text-muted-foreground" />
-      </AvatarFallback>
-    </Avatar>
-  );
-};
-
-const AttachmentUI: FC = () => {
+const AttachmentCardItem: FC = () => {
   const api = useAssistantApi();
   const isComposer = api.attachment.source === "composer";
 
-  const isImage = useAssistantState(
-    ({ attachment }) => attachment.type === "image",
-  );
-  const typeLabel = useAssistantState(({ attachment }) => {
-    const type = attachment.type;
-    switch (type) {
-      case "image":
-        return "Image";
-      case "document":
-        return "Document";
-      case "file":
-        return "File";
-      default:
-        const _exhaustiveCheck: never = type;
-        throw new Error(`Unknown attachment type: ${_exhaustiveCheck}`);
-    }
-  });
+  const { isImage, name, fileType, fileSize } = useAssistantState(
+    useShallow(({ attachment }) => {
+      const isImage = attachment.type === "image";
+      const name = attachment.file?.name ?? attachment.name ?? "Attachment";
+      const fileType = getFileTypeLabel(attachment.file?.name, attachment.type);
+      const fileSize = attachment.file?.size
+        ? formatBytes(attachment.file.size)
+        : undefined;
 
-  return (
-    <Tooltip>
-      <AttachmentPrimitive.Root
+      return { isImage, name, fileType, fileSize };
+    }),
+  );
+
+  const metaText = useMemo(() => {
+    if (fileType && fileSize) return `${fileType}·${fileSize}`;
+    return fileSize || fileType;
+  }, [fileType, fileSize]);
+
+  const src = useAttachmentSrc();
+
+  const icon = isImage ? (
+    src ? (
+      <Image
+        src={src}
+        alt={name}
+        width={56}
+        height={56}
+        className="w-full h-full object-cover"
+      />
+    ) : (
+      <div className="w-5 h-5 rounded-full border-2 border-[var(--border-brand)] border-t-[var(--divider-neutral-basic)] animate-spin" />
+    )
+  ) : (
+    <FileText className="size-5 text-muted-foreground" />
+  );
+
+  const card = (
+    <AttachmentCard
+      variant="ghost"
+      className={cn(
+        isImage ? "w-14 h-14 p-0" : "max-w-[200px] h-14",
+        !isImage && "gap-[var(--gap-sm)] px-[var(--padding-com-md)]",
+      )}
+      aria-label={`${fileType} attachment`}
+      title={name}
+    >
+      <AttachmentCardLeading
         className={cn(
-          "aui-attachment-root relative",
-          isImage &&
-            "aui-attachment-root-composer only:[&>#attachment-tile]:size-24",
+          isImage
+            ? "w-full h-full rounded-xl"
+            : "rounded-lg bg-[var(--bg-container)] w-10 h-10",
+          "flex items-center justify-center overflow-hidden",
         )}
       >
-        <AttachmentPreviewDialog>
-          <TooltipTrigger asChild>
-            <div
-              className={cn(
-                "aui-attachment-tile size-14 cursor-pointer overflow-hidden rounded-[14px] border bg-muted transition-opacity hover:opacity-75",
-                isComposer &&
-                  "aui-attachment-tile-composer border-foreground/20",
-              )}
-              role="button"
-              id="attachment-tile"
-              aria-label={`${typeLabel} attachment`}
-            >
-              <AttachmentThumb />
-            </div>
-          </TooltipTrigger>
-        </AttachmentPreviewDialog>
-        {isComposer && <AttachmentRemove />}
-      </AttachmentPrimitive.Root>
-      <TooltipContent side="top">
-        <AttachmentPrimitive.Name />
-      </TooltipContent>
-    </Tooltip>
-  );
-};
+        {icon}
+      </AttachmentCardLeading>
 
-const AttachmentRemove: FC = () => {
+      {!isImage && (
+        <AttachmentCardContent>
+          <AttachmentCardTitle>{name}</AttachmentCardTitle>
+          {metaText && <AttachmentCardMeta>{metaText}</AttachmentCardMeta>}
+        </AttachmentCardContent>
+      )}
+
+      {isComposer && (
+        <AttachmentPrimitive.Remove asChild>
+          <AttachmentCardDeleteButton
+            aria-label="Delete attachment"
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <XIcon className="size-3" />
+          </AttachmentCardDeleteButton>
+        </AttachmentPrimitive.Remove>
+      )}
+    </AttachmentCard>
+  );
+
   return (
-    <AttachmentPrimitive.Remove asChild>
-      <TooltipIconButton
-        tooltip="Remove file"
-        className="aui-attachment-tile-remove absolute top-1.5 right-1.5 size-3.5 rounded-full bg-white text-muted-foreground opacity-100 shadow-sm hover:!bg-white [&_svg]:text-black hover:[&_svg]:text-destructive"
-        side="top"
-      >
-        <XIcon className="aui-attachment-remove-icon size-3 dark:stroke-[2.5px]" />
-      </TooltipIconButton>
-    </AttachmentPrimitive.Remove>
+    <AttachmentPrimitive.Root>
+      {isImage ? <AttachmentPreviewDialog>{card}</AttachmentPreviewDialog> : card}
+    </AttachmentPrimitive.Root>
   );
 };
 
 export const UserMessageAttachments: FC = () => {
   return (
-    <div className="aui-user-message-attachments-end col-span-full col-start-1 row-start-1 flex w-full flex-row justify-end gap-2">
-      <MessagePrimitive.Attachments components={{ Attachment: AttachmentUI }} />
+    <div className="aui-user-message-attachments-end col-span-full col-start-1 row-start-1 flex w-full flex-row justify-end gap-2 overflow-x-auto empty:hidden">
+      <MessagePrimitive.Attachments
+        components={{ Attachment: AttachmentCardItem }}
+      />
     </div>
   );
 };
 
 export const ComposerAttachments: FC = () => {
   return (
-    <div className="aui-composer-attachments mb-2 flex w-full flex-row items-center gap-2 overflow-x-auto px-1.5 pt-0.5 pb-1 empty:hidden">
+    <AttachmentList className="w-full">
       <ComposerPrimitive.Attachments
-        components={{ Attachment: AttachmentUI }}
+        components={{ Attachment: AttachmentCardItem }}
       />
-    </div>
+    </AttachmentList>
   );
 };
 
