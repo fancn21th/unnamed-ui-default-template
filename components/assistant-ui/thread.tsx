@@ -42,6 +42,10 @@ import {
   SenderRegion,
   SenderActionBar,
 } from "@/components/wuhan/blocks/sender-01";
+import {
+  AIMessage as WuhanAIMessage,
+  UserMessage as WuhanUserMessage,
+} from "@/components/wuhan/blocks/message-01";
 
 import { cn } from "@/lib/utils";
 
@@ -264,19 +268,26 @@ const AssistantMessage: FC = () => {
         className="aui-assistant-message-root relative mx-auto w-full max-w-[var(--thread-max-width)] animate-in py-4 duration-150 ease-out fade-in slide-in-from-bottom-1 last:mb-24"
         data-role="assistant"
       >
-        <div className="aui-assistant-message-content mx-2 leading-7 break-words text-foreground">
-          <MessagePrimitive.Parts
-            components={{
-              Text: MarkdownText,
-              tools: { Fallback: ToolFallback },
-            }}
-          />
-          <MessageError />
-        </div>
-
-        <div className="aui-assistant-message-footer mt-2 ml-2 flex">
-          <BranchPicker />
-          <AssistantActionBar />
+        <div className="mx-2">
+          <WuhanAIMessage
+            className="break-words"
+            feedback={
+              <div className="aui-assistant-message-footer mt-2 flex">
+                <BranchPicker />
+                <AssistantActionBar />
+              </div>
+            }
+          >
+            <div className="aui-assistant-message-content leading-7 break-words">
+              <MessagePrimitive.Parts
+                components={{
+                  Text: MarkdownText,
+                  tools: { Fallback: ToolFallback },
+                }}
+              />
+              <MessageError />
+            </div>
+          </WuhanAIMessage>
         </div>
       </div>
     </MessagePrimitive.Root>
@@ -320,10 +331,12 @@ const UserMessage: FC = () => {
         <UserMessageAttachments />
 
         <div className="aui-user-message-content-wrapper relative col-start-2 min-w-0">
-          <div className="aui-user-message-content rounded-3xl bg-muted px-5 py-2.5 break-words text-foreground">
+          <WuhanUserMessage
+            className="aui-user-message-content break-words"
+          >
             <MessagePrimitive.Parts />
-          </div>
-          <div className="aui-user-action-bar-wrapper absolute top-1/2 left-0 -translate-x-full -translate-y-1/2 pr-2">
+          </WuhanUserMessage>
+          <div className="absolute top-full right-0 z-10 mt-2">
             <UserActionBar />
           </div>
         </div>
@@ -339,7 +352,7 @@ const UserActionBar: FC = () => {
     <ActionBarPrimitive.Root
       hideWhenRunning
       autohide="not-last"
-      className="aui-user-action-bar-root flex flex-col items-end"
+      className="aui-user-action-bar-root flex flex-col items-end text-muted-foreground"
     >
       <ActionBarPrimitive.Edit asChild>
         <TooltipIconButton tooltip="Edit" className="aui-user-action-edit p-4">

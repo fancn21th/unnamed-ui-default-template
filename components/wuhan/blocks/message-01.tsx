@@ -9,13 +9,13 @@ import { cn } from "@/lib/utils";
  * AI 消息状态类型
  * @public
  */
-export type AIMessageStatus = "idle" | "generating" | "failed";
+type AIMessageStatus = "idle" | "generating" | "failed";
 
 /**
  * 消息原语基础属性
  * @public
  */
-export interface MessagePrimitiveProps extends React.HTMLAttributes<HTMLDivElement> {
+interface MessagePrimitiveProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
    * 消息内容
    */
@@ -30,19 +30,19 @@ export interface MessagePrimitiveProps extends React.HTMLAttributes<HTMLDivEleme
  * AI 消息原语属性
  * @public
  */
-export type AIMessagePrimitiveProps = MessagePrimitiveProps;
+type AIMessagePrimitiveProps = MessagePrimitiveProps;
 
 /**
  * 用户消息原语属性
  * @public
  */
-export type UserMessagePrimitiveProps = MessagePrimitiveProps;
+type UserMessagePrimitiveProps = MessagePrimitiveProps;
 
 /**
  * AI 消息组件属性
  * @public
  */
-export interface AIMessageProps extends AIMessagePrimitiveProps {
+interface AIMessageProps extends AIMessagePrimitiveProps {
   /**
    * 消息状态
    * - idle: 正常状态（默认）
@@ -70,103 +70,133 @@ export interface AIMessageProps extends AIMessagePrimitiveProps {
  * AI 消息样式原语
  * @public
  */
-export const MessageAIPrimitive = React.forwardRef<
+const MessageAIPrimitive = React.forwardRef<
   HTMLDivElement,
   AIMessagePrimitiveProps
->(({ children, feedback, className, ...props }, ref) => {
-  return (
-    <div
-      className="[&_*]:!box-border w-fit max-w-full"
-      ref={ref}
-      role="article"
-      aria-label="AI message"
-    >
+>(
+  (
+    {
+      children,
+      feedback,
+      className,
+      style,
+      role = "article",
+      "aria-label": ariaLabel = "AI message",
+      "aria-live": ariaLive,
+      ...props
+    },
+    ref,
+  ) => {
+    return (
       <div
-        className={cn(
-          "pt-[var(--gap-md)]",
-          "pr-[var(--gap-lg)]",
-          "pb-[var(--gap-md)]",
-          "pl-[var(--gap-lg)]",
-          "rounded-[var(--radius-xl)]",
-          "font-[var(--font-family-cn)]",
-          "font-normal",
-          "leading-[var(--line-height-2)]",
-          "tracking-[0px]",
-          "text-[var(--text-icon-text-primary,#403F4D)]",
-          className,
-        )}
-        style={{
-          fontSize: "var(--font-size-2)",
-          ...props.style,
-        }}
-        {...props}
+        className="[&_*]:!box-border w-fit max-w-full"
+        ref={ref}
+        role={role}
+        aria-label={ariaLabel}
+        aria-live={ariaLive}
       >
-        {children}
-      </div>
-      {feedback && (
         <div
-          className="[&_*]:!box-border"
-          role="group"
-          aria-label="Message feedback"
+          className={cn(
+            "pt-[var(--gap-md)]",
+            "pr-[var(--gap-lg)]",
+            "pb-[var(--gap-md)]",
+            "pl-[var(--gap-lg)]",
+            "rounded-[var(--radius-xl)]",
+            "font-[var(--font-family-cn)]",
+            "font-normal",
+            "leading-[var(--line-height-2)]",
+            "tracking-[0px]",
+            "text-[var(--text-icon-text-primary,#403F4D)]",
+            className,
+          )}
+          style={{
+            fontSize: "var(--font-size-2)",
+            ...style,
+          }}
+          {...props}
         >
-          {feedback}
+          {children}
         </div>
-      )}
-    </div>
-  );
-});
+        {feedback && (
+          <div
+            className={cn("[&_*]:!box-border", "pl-[var(--gap-lg)]", "pr-[var(--gap-lg)]")}
+            role="group"
+            aria-label="Message feedback"
+          >
+            {feedback}
+          </div>
+        )}
+      </div>
+    );
+  },
+);
 MessageAIPrimitive.displayName = "MessageAIPrimitive";
 
 /**
  * 用户消息样式原语
  * @public
  */
-export const MessageUserPrimitive = React.forwardRef<
+const MessageUserPrimitive = React.forwardRef<
   HTMLDivElement,
   UserMessagePrimitiveProps
->(({ children, feedback, className, ...props }, ref) => {
-  return (
-    <div
-      className="[&_*]:!box-border w-fit max-w-full"
-      ref={ref}
-      role="article"
-      aria-label="User message"
-    >
+>(
+  (
+    {
+      children,
+      feedback,
+      className,
+      style,
+      role = "article",
+      "aria-label": ariaLabel = "User message",
+      "aria-live": ariaLive,
+      ...props
+    },
+    ref,
+  ) => {
+    return (
       <div
-        className={cn(
-          "pt-[var(--gap-md)]",
-          "pr-[var(--gap-lg)]",
-          "pb-[var(--gap-md)]",
-          "pl-[var(--gap-lg)]",
-          "rounded-[var(--radius-xl)]",
-          "bg-[var(--bg-neutral-light)]",
-          "font-[var(--font-family-cn)]",
-          "font-normal",
-          "leading-[var(--line-height-2)]",
-          "tracking-[0px]",
-          "text-[var(--text-icon-text-primary,#403F4D)]",
-          className,
-        )}
-        style={{
-          fontSize: "var(--font-size-2)",
-          ...props.style,
-        }}
-        {...props}
+        className="[&_*]:!box-border w-fit max-w-full"
+        ref={ref}
+        role={role}
+        aria-label={ariaLabel}
+        aria-live={ariaLive}
       >
-        {children}
-      </div>
-      {feedback && (
         <div
-          className="mt-[var(--gap-md)] [&_*]:!box-border"
-          role="group"
-          aria-label="Message feedback"
+          className={cn(
+            "pt-[var(--gap-md)]",
+            "pr-[var(--gap-lg)]",
+            "pb-[var(--gap-md)]",
+            "pl-[var(--gap-lg)]",
+            "rounded-[var(--radius-xl)]",
+            "bg-[var(--bg-neutral-light)]",
+            "font-[var(--font-family-cn)]",
+            "font-normal",
+            "leading-[var(--line-height-2)]",
+            "tracking-[0px]",
+            "text-[var(--text-icon-text-primary,#403F4D)]",
+            className,
+          )}
+          style={{
+            fontSize: "var(--font-size-2)",
+            ...style,
+          }}
+          {...props}
         >
-          {feedback}
+          {children}
         </div>
-      )}
-    </div>
-  );
-});
+        {feedback && (
+          <div
+            className={cn("mt-[var(--gap-md)]", "[&_*]:!box-border", "pl-[var(--gap-lg)]", "pr-[var(--gap-lg)]")}
+            role="group"
+            aria-label="Message feedback"
+          >
+            {feedback}
+          </div>
+        )}
+      </div>
+    );
+  },
+);
 MessageUserPrimitive.displayName = "MessageUserPrimitive";
 
 // ==================== 业务组件层 ====================
@@ -175,7 +205,7 @@ MessageUserPrimitive.displayName = "MessageUserPrimitive";
  * AI 消息组件
  * @public
  */
-export const AIMessage = React.forwardRef<HTMLDivElement, AIMessageProps>(
+const AIMessage = React.forwardRef<HTMLDivElement, AIMessageProps>(
   (
     {
       children,
@@ -225,10 +255,21 @@ AIMessage.displayName = "AIMessage";
  * 用户消息组件
  * @public
  */
-export const UserMessage = React.forwardRef<
-  HTMLDivElement,
-  UserMessagePrimitiveProps
->((props, ref) => {
-  return <MessageUserPrimitive ref={ref} {...props} />;
-});
+const UserMessage = React.forwardRef<HTMLDivElement, UserMessagePrimitiveProps>(
+  (props, ref) => {
+    return <MessageUserPrimitive ref={ref} {...props} />;
+  },
+);
 UserMessage.displayName = "UserMessage";
+
+// ==================== 统一导出 ====================
+
+export type {
+  AIMessageStatus,
+  MessagePrimitiveProps,
+  AIMessagePrimitiveProps,
+  UserMessagePrimitiveProps,
+  AIMessageProps,
+};
+
+export { MessageAIPrimitive, MessageUserPrimitive, AIMessage, UserMessage };
