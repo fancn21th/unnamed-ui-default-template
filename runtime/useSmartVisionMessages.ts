@@ -2,18 +2,21 @@ import type { SmartVisionMessage } from "./types";
 import { useCallback, useState } from "react";
 import { sendSmartVisionMessage } from "./smartvisionApi";
 import { findMessageById, generateUniqueId } from "./helpers";
+import { useAssistantApi } from "@assistant-ui/react";
 
 export const useSmartVisionMessages = () => {
+  const api = useAssistantApi();
   const [messages, setMessages] = useState<SmartVisionMessage[]>([]);
 
   const sendMessage = useCallback(async (newMessages: SmartVisionMessage[]) => {
     // 🆕 为 AI 回复创建专门的消息ID
     let aiResponseId: string | null = null; // 🆕 延迟初始化
-
+    const remoteId = api.threadListItem().getState().remoteId;
     try {
       // 调用 SmartVision API
       const generator = sendSmartVisionMessage({
         messages: newMessages,
+        conversationId: remoteId,
       });
 
       // 🆕 只添加用户消息，不提前创建 AI 占位符
