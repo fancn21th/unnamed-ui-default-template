@@ -57,16 +57,15 @@ ButtonPrimitive.displayName = "ButtonPrimitive";
  * 容器样式原语
  * 提供基础的容器样式，用户完全控制内容
  */
-export interface ContainerPrimitiveProps extends React.HTMLAttributes<HTMLDivElement> {
-  children?: React.ReactNode;
-}
+export interface ContainerPrimitiveProps
+  extends React.ComponentPropsWithoutRef<"form"> {}
 
 export const ContainerPrimitive = React.forwardRef<
-  HTMLDivElement,
+  HTMLFormElement,
   ContainerPrimitiveProps
 >(({ children, className, ...props }, ref) => {
   return (
-    <div
+    <form
       ref={ref}
       className={cn(
         "relative flex w-full flex-col border transition-colors has-[:focus-visible]:border-primary",
@@ -78,7 +77,7 @@ export const ContainerPrimitive = React.forwardRef<
       {...props}
     >
       {children}
-    </div>
+    </form>
   );
 });
 ContainerPrimitive.displayName = "ContainerPrimitive";
@@ -250,7 +249,7 @@ export const SendButtonPrimitive = React.forwardRef<
         disabled={isDisabled}
         className={cn(
           "w-8 h-8 rounded-full p-2 gap-2",
-          "bg-[var(--bg-brand)]",
+          "bg-[var(--primary)]",
           "text-[var(--text-inverse)]",
           "transition-opacity",
           // 禁用状态：添加透明度（使用 bg-mask 的 alpha 值 0.8）

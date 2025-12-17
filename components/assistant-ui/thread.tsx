@@ -8,7 +8,6 @@ import {
   RefreshCwIcon,
   Square,
   Send,
-  PlusIcon,
 } from "lucide-react";
 
 import {
@@ -219,7 +218,10 @@ const Composer: FC = () => {
           </ComposerPrimitive.Input>
           <SenderActionBar className="flex items-center justify-between">
             <ComposerPrimitive.AddAttachment asChild>
-              <SenderAttachmentButton className="cursor-pointer" aria-label="Add Attachment"/>
+              <SenderAttachmentButton
+                className="cursor-pointer"
+                aria-label="Add Attachment"
+              />
             </ComposerPrimitive.AddAttachment>
             <ComposerAction />
           </SenderActionBar>
@@ -331,9 +333,7 @@ const UserMessage: FC = () => {
         <UserMessageAttachments />
 
         <div className="aui-user-message-content-wrapper relative col-start-2 min-w-0">
-          <WuhanUserMessage
-            className="aui-user-message-content break-words"
-          >
+          <WuhanUserMessage className="aui-user-message-content break-words">
             <MessagePrimitive.Parts />
           </WuhanUserMessage>
           <div className="absolute top-full right-0 z-10 mt-2">

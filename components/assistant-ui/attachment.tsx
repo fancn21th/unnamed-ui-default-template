@@ -1,6 +1,12 @@
 "use client";
 
-import { PropsWithChildren, useEffect, useMemo, useState, type FC } from "react";
+import {
+  PropsWithChildren,
+  useEffect,
+  useMemo,
+  useState,
+  type FC,
+} from "react";
 import Image from "next/image";
 import { XIcon, PlusIcon, FileText } from "lucide-react";
 import {
@@ -26,6 +32,7 @@ import {
   AttachmentCardMeta,
   AttachmentCardTitle,
   AttachmentList,
+  AttachmentLoadingIndicator,
 } from "@/components/wuhan/blocks/attachment-list-01";
 import { cn } from "@/lib/utils";
 
@@ -139,6 +146,38 @@ const AttachmentPreviewDialog: FC<PropsWithChildren> = ({ children }) => {
   );
 };
 
+const AttachmentCardItemIcon = () => {
+  const { isImage, name, status } = useAssistantState(
+    useShallow(({ attachment }) => {
+      const isImage = attachment.type === "image";
+      const name = attachment.file?.name ?? attachment.name ?? "Attachment";
+      const status = attachment.status;
+      return { isImage, name, status };
+    }),
+  );
+  const src = useAttachmentSrc();
+  if (status.type === "running") {
+    return <AttachmentLoadingIndicator />;
+  }
+  if (isImage) {
+    if (src) {
+      return (
+        <Image
+          src={src}
+          alt={name}
+          width={56}
+          height={56}
+          className="h-full w-full object-cover"
+        />
+      );
+    }
+    return (
+      <div className="h-5 w-5 animate-spin rounded-full border-2 border-[var(--border-brand)] border-t-[var(--divider-neutral-basic)]" />
+    );
+  }
+  return <FileText className="size-5 text-muted-foreground" />;
+};
+
 const AttachmentCardItem: FC = () => {
   const api = useAssistantApi();
   const isComposer = api.attachment.source === "composer";
@@ -151,7 +190,6 @@ const AttachmentCardItem: FC = () => {
       const fileSize = attachment.file?.size
         ? formatBytes(attachment.file.size)
         : undefined;
-
       return { isImage, name, fileType, fileSize };
     }),
   );
@@ -161,29 +199,11 @@ const AttachmentCardItem: FC = () => {
     return fileSize || fileType;
   }, [fileType, fileSize]);
 
-  const src = useAttachmentSrc();
-
-  const icon = isImage ? (
-    src ? (
-      <Image
-        src={src}
-        alt={name}
-        width={56}
-        height={56}
-        className="w-full h-full object-cover"
-      />
-    ) : (
-      <div className="w-5 h-5 rounded-full border-2 border-[var(--border-brand)] border-t-[var(--divider-neutral-basic)] animate-spin" />
-    )
-  ) : (
-    <FileText className="size-5 text-muted-foreground" />
-  );
-
   const card = (
     <AttachmentCard
       variant="ghost"
       className={cn(
-        isImage ? "w-14 h-14 p-0" : "max-w-[200px] h-14",
+        isImage ? "h-14 w-14 p-0" : "h-14 max-w-[200px]",
         !isImage && "gap-[var(--gap-sm)] px-[var(--padding-com-md)]",
       )}
       aria-label={`${fileType} attachment`}
@@ -192,12 +212,12 @@ const AttachmentCardItem: FC = () => {
       <AttachmentCardLeading
         className={cn(
           isImage
-            ? "w-full h-full rounded-xl"
-            : "rounded-lg bg-[var(--bg-container)] w-10 h-10",
+            ? "h-full w-full rounded-xl"
+            : "h-10 w-10 rounded-lg bg-[var(--bg-container)]",
           "flex items-center justify-center overflow-hidden",
         )}
       >
-        {icon}
+        <AttachmentCardItemIcon />
       </AttachmentCardLeading>
 
       {!isImage && (
@@ -225,7 +245,11 @@ const AttachmentCardItem: FC = () => {
 
   return (
     <AttachmentPrimitive.Root>
-      {isImage ? <AttachmentPreviewDialog>{card}</AttachmentPreviewDialog> : card}
+      {isImage ? (
+        <AttachmentPreviewDialog>{card}</AttachmentPreviewDialog>
+      ) : (
+        card
+      )}
     </AttachmentPrimitive.Root>
   );
 };

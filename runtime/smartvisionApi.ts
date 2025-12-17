@@ -6,6 +6,7 @@ import {
   SmartVisionMessage,
 } from "./types";
 import { appid, token, slug, baseURL } from "./config";
+import axios from "axios";
 
 // SmartVision API 客户端
 export class SmartVisionClient {
@@ -205,23 +206,28 @@ export class SmartVisionClient {
     return result?.data || [];
   }
 
-  async fileUpload(file: File): Promise<FileUploadResponse> {
+  async fileUpload(
+    file: File,
+    /**
+     * 上传进度，百分比
+     * */
+    onProgress?: (progress: number) => void,
+  ): Promise<FileUploadResponse> {
     const formData = new FormData();
     formData.append("file", file);
     const headers = this.getHeaders(true);
-    const response = await fetch(`${this.baseURL}/api/apps/file/upload`, {
-      method: "POST",
-      headers,
-      body: formData,
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    if (!response.body) {
-      throw new Error("No response body");
-    }
-    const result = await response.json();
+    const response = await axios.post(
+      `${this.baseURL}/api/apps/file/upload`,
+      formData,
+      {
+        headers,
+        onUploadProgress: (event) => {
+          const percentCompleted = Math.round((event.progress || 0) * 100);
+          onProgress?.(percentCompleted);
+        },
+      },
+    );
+    const result = response.data;
     return result?.data;
   }
 }
@@ -249,6 +255,11 @@ export const getConversationsMessages = (conversationId: string) => {
 };
 
 // 上传会话文件
-export const uploadChatFile = (file: File) => {
-  return smartVisionClient.fileUpload(file);
+export const uploadChatFile = (
+  file: File /**
+   * 上传进度，百分比
+   * */,
+  onProgress?: (progress: number) => void,
+) => {
+  return smartVisionClient.fileUpload(file, onProgress);
 };
