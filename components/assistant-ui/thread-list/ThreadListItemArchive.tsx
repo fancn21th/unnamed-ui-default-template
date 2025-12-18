@@ -1,3 +1,8 @@
+import { TooltipIconButton } from "@/components/assistant-ui/tooltip-icon-button";
+import { FC } from "react";
+import { ArchiveIcon } from "lucide-react";
+import { ThreadListItemPrimitive } from "@assistant-ui/react";
+
 export const ThreadListItemArchive: FC = () => {
   return (
     <ThreadListItemPrimitive.Archive asChild>
