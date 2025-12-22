@@ -8,8 +8,11 @@ import { createAssistantStream } from "assistant-stream";
 import { useSmartVisionThreadHistoryAdapter } from "./useSmartVisionThreadHistoryAdapter";
 import { smartVisionFileAttachmentAdapter } from "@/runtime/SmartVisionFileAttachmentAdapter";
 import { getConversationsList } from "@/runtime/smartvisionApi";
+import { useSmartVisionThreadListAdapterLink } from "@/runtime/smartVisionThreadListAdapterLink";
 
 export const useSmartVisionThreadListAdapter = (): RemoteThreadListAdapter => {
+  const { initializeLink, generateTitleLink } =
+    useSmartVisionThreadListAdapterLink();
   /**
    * ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️ 注意
    * 一定要实现这个Provider组件
@@ -59,13 +62,8 @@ export const useSmartVisionThreadListAdapter = (): RemoteThreadListAdapter => {
       };
     },
     async initialize(localId) {
-      const response = await fetch("/api/threads", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ localId }),
-      });
-      const result = await response.json();
-      return { remoteId: result.id, externalId: result.external_id };
+      const remoteId = await initializeLink(localId);
+      return { remoteId, externalId: localId };
     },
     async rename(remoteId, title) {
       await fetch(`/api/threads/${remoteId}`, {
@@ -94,12 +92,7 @@ export const useSmartVisionThreadListAdapter = (): RemoteThreadListAdapter => {
     },
     async generateTitle(remoteId, messages) {
       return createAssistantStream(async (controller) => {
-        const response = await fetch(`/api/threads/${remoteId}/title`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages }),
-        });
-        const { title } = await response.json();
+        const title = await generateTitleLink(remoteId);
         controller.appendText(title);
       });
     },

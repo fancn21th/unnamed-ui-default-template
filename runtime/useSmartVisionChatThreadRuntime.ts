@@ -10,7 +10,7 @@ import {
   convertSmartVisionMessages,
   getSmartVisionMessage,
 } from "./convertSmartVisionMessages";
-import { SmartVisionMessage } from "@/runtime/types";
+import { SmartVisionContentPart, SmartVisionMessage } from "@/runtime/types";
 import { useSmartVisionExternalHistory } from "./useSmartVisionExternalHistory";
 import { smartVisionFileAttachmentAdapter } from "./SmartVisionFileAttachmentAdapter";
 
@@ -65,15 +65,17 @@ export const useSmartVisionChatThreadRuntime = () => {
         id: `user_${Date.now()}`,
         type: "human",
         content: message.content.map((c) => {
-          if (c.type === "text") return { type: "text", text: c.text };
-          return { type: "text", text: "" };
+          if (c.type === "text")
+            return { type: "text", text: c.text } as SmartVisionContentPart;
+          return { type: "text", text: "" } as SmartVisionContentPart;
         }),
-        files: message.attachments?.map((d) => d.id),
+        attachments: message.attachments,
       };
       await handleSendMessage([userMessage]);
     },
     onImport: (messages) =>
       setMessages(messages.map(getSmartVisionMessage).filter(Boolean).flat()),
+    onEdit: async () => {},
     isLoading,
     adapters: {
       /**

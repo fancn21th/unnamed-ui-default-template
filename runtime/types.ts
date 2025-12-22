@@ -2,6 +2,8 @@
 
 // SmartVision API 消息类型定义
 
+import { CompleteAttachment } from "@assistant-ui/react";
+
 export type SmartVisionEventType =
   | "agent_message" // 智能体消息
   | "agent_thought" // 智能体消息类型工具消息
@@ -89,7 +91,7 @@ export type SmartVisionMessage =
       type: "human";
       id: string;
       content: string | SmartVisionContentPart[];
-      files?: string[];
+      readonly attachments?: readonly CompleteAttachment[] | undefined;
     }
   | {
       type: "ai";

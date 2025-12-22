@@ -32,6 +32,7 @@ export const convertSmartVisionMessages: useExternalMessageConverter.Callback<
                 text: "",
               };
             }),
+      attachments: messages.attachments,
     };
   } else if (messages.type === "ai") {
     // 🎯 关键修复：正确处理包含 tool-call 的消息
