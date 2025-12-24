@@ -1,5 +1,12 @@
-import type { SmartVisionChunk, SmartVisionMessage } from "./types";
+import {
+  ConversationItem,
+  FileUploadResponse,
+  MessageProps,
+  SmartVisionChunk,
+  SmartVisionMessage,
+} from "./types";
 import { appid, token, slug, baseURL } from "./config";
+import axios from "axios";
 
 // SmartVision API 客户端
 export class SmartVisionClient {
@@ -17,14 +24,14 @@ export class SmartVisionClient {
 
   // 构造完整的 API URL
   private getApiUrl(): string {
-    return `${this.baseURL}${this.slug}1/api/apps/chat`;
+    return `${this.baseURL}/api/apps/super-entry`;
   }
 
   // 构造请求头
-  private getHeaders(): Record<string, string> {
+  private getHeaders(isFile = false): Record<string, string> {
     return {
       Authorization: `Bearer ${this.token}`,
-      "Content-Type": "application/json",
+      ...(isFile ? {} : { "Content-Type": "application/json" }),
     };
   }
 
@@ -38,36 +45,58 @@ export class SmartVisionClient {
     const headers = this.getHeaders();
 
     // 将 SmartVisionMessage 转换为 API 所需的格式
-    const apiMessages = params.messages.map((msg) => ({
-      role:
-        msg.type === "human"
-          ? "user"
-          : msg.type === "ai"
-            ? "assistant"
-            : "system",
-      content:
-        typeof msg.content === "string"
-          ? msg.content
-          : String(msg.content || ""),
-    }));
-
+    const allMessageContents = params.messages
+      .filter((d) => d.type === "human")
+      .map((d) => d.content);
+    const query =
+      allMessageContents
+        .map((d) => {
+          if (typeof d === "string") {
+            return [d];
+          }
+          return d.filter((d) => d.type === "text").map((d) => d.text);
+        })
+        .flat()
+        .filter(Boolean)
+        .at(-1) || "";
+    const files = params.messages
+      .filter((d) => d.type === "human")
+      .map((d) => {
+        return d.attachments?.map((d) => d.id) || [];
+      })
+      .flat()
+      .filter(Boolean);
     // 构造请求体（参考 smartversion 的格式）
     const body = {
-      app_id: this.appid,
-      files: undefined,
-      inputs: {},
-      query: apiMessages[apiMessages.length - 1]?.content || "",
+      app_id: "-2",
+      files: files,
+      query: query,
       referenced_query: "",
       response_mode: "streaming",
       stream: true,
       task_id: params.taskId,
       conversation_id: params.conversationId,
-      agent_mode: {
-        enabled: true,
-        toolsets: undefined,
-        workFlows: undefined,
+      chat_sys_variable: {},
+      chat_template_kwargs: {
+        crawler_search: false,
+        enable_thinking: false,
       },
-      messages: apiMessages,
+      model: {
+        model_id: 3081,
+        provider: "dcmodel",
+        name: "GPT-OSS",
+        model_key: "/data/models/gpt-oss",
+        api_base: null,
+        completion_params: {
+          presence_penalty: 0.1,
+          max_tokens: 4096,
+          top_p: 0.9,
+          frequency_penalty: 0.1,
+          temperature: 0.5,
+        },
+        tenant_id: 1,
+      },
+      // messages: apiMessages,
     };
 
     try {
@@ -118,10 +147,93 @@ export class SmartVisionClient {
       throw error;
     }
   }
+
+  /**
+   * 获取会话列表
+   * */
+  async conversationsList(): Promise<ConversationItem[]> {
+    const headers = this.getHeaders();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const params: Record<string, unknown> = {
+      limit: 20,
+    };
+
+    // 添加日期筛选参数
+    if (today) {
+      params.start_time = Math.floor(today.getTime() / 1000);
+      params.end_time = Math.floor(
+        (today.getTime() + 24 * 60 * 60 * 1000) / 1000,
+      );
+    }
+
+    const response = await fetch(
+      `${this.baseURL}/api/apps/conversations?limit=${params.limit}&start_time=${params.start_time}&end_time=${params.end_time}`,
+      {
+        headers,
+      },
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    if (!response.body) {
+      throw new Error("No response body");
+    }
+    const result = await response.json();
+    return result?.data || [];
+  }
+
+  /**
+   * 获取会话消息
+   * */
+  async conversationsMessages(conversationId: string): Promise<MessageProps[]> {
+    const headers = this.getHeaders();
+    const response = await fetch(
+      `${this.baseURL}/api/apps/messages?conversation_id=${conversationId}`,
+      {
+        headers,
+      },
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    if (!response.body) {
+      throw new Error("No response body");
+    }
+    const result = await response.json();
+    return result?.data || [];
+  }
+
+  async fileUpload(
+    file: File,
+    /**
+     * 上传进度，百分比
+     * */
+    onProgress?: (progress: number) => void,
+  ): Promise<FileUploadResponse> {
+    const formData = new FormData();
+    formData.append("file", file);
+    const headers = this.getHeaders(true);
+    const response = await axios.post(
+      `${this.baseURL}/api/apps/file/upload`,
+      formData,
+      {
+        headers,
+        onUploadProgress: (event) => {
+          const percentCompleted = Math.round((event.progress || 0) * 100);
+          onProgress?.(percentCompleted);
+        },
+      },
+    );
+    const result = response.data;
+    return result?.data;
+  }
 }
 
 // 创建单例实例
-export const smartvisionClient = new SmartVisionClient();
+export const smartVisionClient = new SmartVisionClient();
 
 // 便捷的发送消息函数
 export const sendSmartVisionMessage = (params: {
@@ -129,5 +241,25 @@ export const sendSmartVisionMessage = (params: {
   conversationId?: string;
   taskId?: string;
 }) => {
-  return smartvisionClient.sendMessage(params);
+  return smartVisionClient.sendMessage(params);
+};
+
+// 获取会话历史
+export const getConversationsList = () => {
+  return smartVisionClient.conversationsList();
+};
+
+// 获取会话消息
+export const getConversationsMessages = (conversationId: string) => {
+  return smartVisionClient.conversationsMessages(conversationId);
+};
+
+// 上传会话文件
+export const uploadChatFile = (
+  file: File /**
+   * 上传进度，百分比
+   * */,
+  onProgress?: (progress: number) => void,
+) => {
+  return smartVisionClient.fileUpload(file, onProgress);
 };
