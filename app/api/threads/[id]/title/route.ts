@@ -13,7 +13,7 @@ export async function POST(
   }
 
   // Generate a mock title based on the first message
-  let title = "New Thread";
+  const title = "New Thread";
   if (messages && messages.length > 0) {
     const firstMessage = messages[0];
     if (firstMessage.content) {

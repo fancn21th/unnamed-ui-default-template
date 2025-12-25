@@ -57,12 +57,10 @@ ButtonPrimitive.displayName = "ButtonPrimitive";
  * 容器样式原语
  * 提供基础的容器样式，用户完全控制内容
  */
-export interface ContainerPrimitiveProps
-  extends React.ComponentPropsWithoutRef<"form"> {}
 
 export const ContainerPrimitive = React.forwardRef<
   HTMLFormElement,
-  ContainerPrimitiveProps
+  React.ComponentPropsWithoutRef<"form">
 >(({ children, className, ...props }, ref) => {
   return (
     <form
@@ -86,7 +84,8 @@ ContainerPrimitive.displayName = "ContainerPrimitive";
  * 区域容器样式原语
  * 提供基础的区域布局样式，用户完全控制内容
  */
-export interface RegionPrimitiveProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface RegionPrimitiveProps
+  extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
   /**
    * 是否显示底部边框
@@ -135,27 +134,23 @@ export function RegionPrimitive({
  * 上传附件按钮样式原语
  * 提供上传附件按钮的基础样式
  */
-export interface AttachmentButtonPrimitiveProps extends React.ComponentProps<
-  typeof Button
-> {}
-
 export const AttachmentButtonPrimitive = React.forwardRef<
   HTMLButtonElement,
-  AttachmentButtonPrimitiveProps
+  React.ComponentProps<typeof Button>
 >(({ className, children, ...props }, ref) => {
   return (
     <Button
       ref={ref}
       {...props}
       className={cn(
-        "p-2 gap-2 border",
+        "gap-2 border p-2",
         "h-[var(--size-com-md)]",
         "w-[var(--size-com-md)]",
         "text-[var(--text-primary)]",
         "rounded-lg",
         "bg-[var(--bg-container)]",
         "border-[var(--border-neutral)]",
-        "hover:bg-[var(--bg-neutral-light-hover)] transition-colors",
+        "transition-colors hover:bg-[var(--bg-neutral-light-hover)]",
         className,
       )}
     >
@@ -169,9 +164,8 @@ AttachmentButtonPrimitive.displayName = "AttachmentButtonPrimitive";
  * 模式按钮样式原语（如深度思考、联网搜索等）
  * 提供模式选择按钮的基础样式和状态
  */
-export interface ModeButtonPrimitiveProps extends React.ComponentProps<
-  typeof Button
-> {
+export interface ModeButtonPrimitiveProps
+  extends React.ComponentProps<typeof Button> {
   /**
    * 是否选中状态
    */
@@ -187,7 +181,7 @@ export const ModeButtonPrimitive = React.forwardRef<
       ref={ref}
       {...props}
       className={cn(
-        "rounded-lg gap-1 px-3 border border-[var(--border-neutral)]",
+        "gap-1 rounded-lg border border-[var(--border-neutral)] px-3",
         "transition-colors",
         "h-[var(--size-com-md)]",
         "text-sm",
@@ -195,7 +189,7 @@ export const ModeButtonPrimitive = React.forwardRef<
         !selected && "bg-transparent hover:bg-[var(--bg-neutral-light-hover)]",
         // selected 状态
         selected &&
-          "bg-[var(--bg-brand-light)] border-[var(--border-brand-light-hover)] hover:bg-[var(--bg-brand-light)]",
+          "border-[var(--border-brand-light-hover)] bg-[var(--bg-brand-light)] hover:bg-[var(--bg-brand-light)]",
         selected ? "text-[var(--text-brand)]" : "text-[var(--text-primary)]",
         className,
       )}
@@ -211,9 +205,8 @@ ModeButtonPrimitive.displayName = "ModeButtonPrimitive";
  * 发送按钮样式原语
  * 提供圆形发送按钮的基础样式和状态
  */
-export interface SendButtonPrimitiveProps extends React.ComponentProps<
-  typeof Button
-> {
+export interface SendButtonPrimitiveProps
+  extends React.ComponentProps<typeof Button> {
   /**
    * 是否正在生成中
    */
@@ -248,7 +241,7 @@ export const SendButtonPrimitive = React.forwardRef<
         {...props}
         disabled={isDisabled}
         className={cn(
-          "w-8 h-8 rounded-full p-2 gap-2",
+          "h-8 w-8 gap-2 rounded-full p-2",
           "bg-[var(--primary)]",
           "text-[var(--text-inverse)]",
           "transition-opacity",
@@ -274,7 +267,8 @@ SendButtonPrimitive.displayName = "SendButtonPrimitive";
  * 输入区域样式原语
  * 提供文本域区域的布局样式
  */
-export interface InputRegionPrimitiveProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface InputRegionPrimitiveProps
+  extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
   /**
    * 文本域前的上传附件按钮
@@ -298,7 +292,7 @@ export function InputRegionPrimitive({
       {attachmentButton && (
         <div className="flex items-center">{attachmentButton}</div>
       )}
-      <div className="flex-1 relative">{children}</div>
+      <div className="relative flex-1">{children}</div>
       {actions && <div className="flex items-center gap-2">{actions}</div>}
     </div>
   );
@@ -309,7 +303,8 @@ export function InputRegionPrimitive({
  * 提供底部操作栏的基础样式，用户完全控制内容结构
  * 注意：这是一个简单的容器组件，仅提供基础的顶部内边距
  */
-export interface ActionBarPrimitiveProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface ActionBarPrimitiveProps
+  extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
 }
 
