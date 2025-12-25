@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import { getConversationsList } from "@/runtime/smartvisionApi";
+
 interface SmartVisionChatReferenceLinkState {
+  use?: boolean;
   reference?: {
     text: string;
     position: {
@@ -27,10 +28,17 @@ export const useSmartVisionChatReferenceLink = () => {
   const clearReference = () => {
     store.setState((draft) => {
       draft.reference = undefined;
+      draft.use = undefined;
+    });
+  };
+  const useReference = () => {
+    store.setState((draft) => {
+      draft.use = true;
     });
   };
   return {
     chooseReference,
     clearReference,
+    useReference,
   };
 };

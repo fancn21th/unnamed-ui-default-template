@@ -1,18 +1,33 @@
-import { ComponentPropsWithoutRef, type ComponentRef, forwardRef } from "react";
+import {
+  ComponentPropsWithoutRef,
+  type ComponentRef,
+  forwardRef,
+  useEffect,
+  useRef,
+} from "react";
 import { Primitive } from "@radix-ui/react-primitive";
-import { MarkdownTextPrimitive } from "@assistant-ui/react-markdown";
-import remarkGfm from "remark-gfm";
+import { useSmartVisionChatReferenceLink } from "@/runtime/smartVisionChatReferenceLink";
+
 
 type PrimitiveDivProps = ComponentPropsWithoutRef<typeof Primitive.div>;
 export type Element = ComponentRef<typeof Primitive.div>;
 export type Props = PrimitiveDivProps & {};
 export const ReferencePrimitiveRoot = forwardRef<Element, Props>(
-  (props, ref) => {
+  (props, forwardedRef) => {
+    const localRef = useRef<HTMLDivElement>(null);
     const { chooseReference, clearReference } =
       useSmartVisionChatReferenceLink();
-    const contentRef = useRef<HTMLDivElement>(null);
+
+    // 合并 forwardedRef 和 internalRef
     useEffect(() => {
-      const contentNode = contentRef.current;
+      if (typeof forwardedRef === "function") {
+        forwardedRef(localRef.current);
+      } else if (forwardedRef) {
+        forwardedRef.current = localRef.current;
+      }
+    }, [localRef.current]);
+    useEffect(() => {
+      const contentNode = localRef.current;
       const handleMouseUp = () => {
         const selection = window.getSelection();
         const selectText = selection && selection?.toString(); // 获取当前选中的文本
@@ -24,7 +39,7 @@ export const ReferencePrimitiveRoot = forwardRef<Element, Props>(
         ) {
           // 定位
           const range = selection.getRangeAt(0).getBoundingClientRect();
-          const componentRect = contentRef.current?.getBoundingClientRect() ?? {
+          const componentRect = localRef.current?.getBoundingClientRect() ?? {
             top: 0,
             left: 0,
           };
@@ -48,6 +63,6 @@ export const ReferencePrimitiveRoot = forwardRef<Element, Props>(
         clearReference();
       };
     }, []);
-    return <Primitive.div {...props} ref={ref} />;
+    return <Primitive.div {...props} ref={localRef} />;
   },
 );

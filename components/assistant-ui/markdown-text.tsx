@@ -9,20 +9,15 @@ import {
   useIsMarkdownCodeBlock,
 } from "@assistant-ui/react-markdown";
 import remarkGfm from "remark-gfm";
-import { type FC, memo, useEffect, useRef, useState } from "react";
+import { type FC, memo, useState } from "react";
 import { CheckIcon, CopyIcon } from "lucide-react";
 
 import { TooltipIconButton } from "@/components/assistant-ui/tooltip-icon-button";
 import { cn } from "@/lib/utils";
-import { useSmartVisionChatReferenceLink } from "@/runtime/smartVisionChatReferenceLink";
 
 const MarkdownTextImpl = () => {
-
-
   return (
     <MarkdownTextPrimitive
-      // @ts-ignore
-      ref={contentRef}
       remarkPlugins={[remarkGfm]}
       className="aui-md"
       components={defaultComponents}
