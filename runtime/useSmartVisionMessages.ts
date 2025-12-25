@@ -61,7 +61,7 @@ export const useSmartVisionMessages = () => {
           setMessages((prev) => [...prev, agentThoughtMessage]);
         }
 
-        if (chunk.event === "message" && chunk.answer) {
+        if (chunk.event === "agent_message" && chunk.answer) {
           // 🆕 第一次收到 agent_message 时创建 AI 回复
           if (!aiResponseId) {
             aiResponseId = generateUniqueId("ai_response");

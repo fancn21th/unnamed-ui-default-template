@@ -1,6 +1,6 @@
-import type { FC } from "react";
-import * as m from "motion/react-m";
+import { FC } from "react";
 import { ThreadSuggestions } from "./ThreadSuggestions";
+import { m } from "motion/react";
 
 export const ThreadWelcome: FC = () => {
   return (

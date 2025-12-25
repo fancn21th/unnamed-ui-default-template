@@ -1,6 +1,6 @@
+import type { FC } from "react";
 import { ActionBarPrimitive, MessagePrimitive } from "@assistant-ui/react";
-import { FC } from "react";
-import { TooltipIconButton } from "../tooltip-icon-button";
+import { TooltipIconButton } from "@/components/assistant-ui/tooltip-icon-button";
 import { CheckIcon, CopyIcon, RefreshCwIcon } from "lucide-react";
 
 export const AssistantActionBar: FC = () => {

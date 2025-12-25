@@ -1,13 +1,11 @@
-import { RefObject, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  AssistantRuntime,
   ThreadHistoryAdapter,
   ThreadMessage,
   useAssistantApi,
 } from "@assistant-ui/react";
 
 export const useSmartVisionExternalHistory = <TMessage>(
-  runtimeRef: RefObject<AssistantRuntime>,
   historyAdapter: ThreadHistoryAdapter | undefined,
   toStoreMessage: (messages: ThreadMessage) => TMessage,
   onSetMessages: (messages: TMessage[]) => void,
@@ -66,7 +64,7 @@ export const useSmartVisionExternalHistory = <TMessage>(
 
       loadHistory();
     }
-  }, [api, historyAdapter, runtimeRef, optionalThreadListItem]);
+  }, [api, historyAdapter, optionalThreadListItem]);
 
   return isLoading;
 };

@@ -1,13 +1,13 @@
+import { FC, PropsWithChildren } from "react";
+import { useAttachmentSrc } from "./hooks";
 import {
   Dialog,
   DialogTitle,
   DialogContent,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { FC, PropsWithChildren } from "react";
 
 import { AttachmentPreview } from "./AttachmentPreview";
-import { useAttachmentSrc } from "./utils";
 
 export const AttachmentPreviewDialog: FC<PropsWithChildren> = ({
   children,

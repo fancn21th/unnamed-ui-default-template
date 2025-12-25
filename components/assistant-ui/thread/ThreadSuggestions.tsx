@@ -1,10 +1,7 @@
 import type { FC } from "react";
-import {
-  ThreadPrimitive,
-} from "@assistant-ui/react";
+import { ThreadPrimitive } from "@assistant-ui/react";
 import { Button } from "@/components/ui/button";
 import { m } from "motion/react";
-
 
 export const ThreadSuggestions: FC = () => {
   return (

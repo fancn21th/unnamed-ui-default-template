@@ -22,9 +22,9 @@ export class SmartVisionClient {
     this.slug = slug;
   }
 
-  // 构造完整的 API URL
-  private getApiUrl(): string {
-    return `${this.baseURL}/api/apps/super-entry`;
+  // 构造 API URL
+  private get apiUrl(): string {
+    return `${this.baseURL}/${this.slug}1/api/apps`;
   }
 
   // 构造请求头
@@ -41,7 +41,7 @@ export class SmartVisionClient {
     conversationId?: string;
     taskId?: string;
   }): AsyncGenerator<SmartVisionChunk> {
-    const url = this.getApiUrl();
+    const url = `${this.apiUrl}/chat`;
     const headers = this.getHeaders();
 
     // 将 SmartVisionMessage 转换为 API 所需的格式
@@ -68,7 +68,7 @@ export class SmartVisionClient {
       .filter(Boolean);
     // 构造请求体（参考 smartversion 的格式）
     const body = {
-      app_id: "-2",
+      // app_id: "-2",
       files: files,
       query: query,
       referenced_query: "",
@@ -81,21 +81,21 @@ export class SmartVisionClient {
         crawler_search: false,
         enable_thinking: false,
       },
-      model: {
-        model_id: 3081,
-        provider: "dcmodel",
-        name: "GPT-OSS",
-        model_key: "/data/models/gpt-oss",
-        api_base: null,
-        completion_params: {
-          presence_penalty: 0.1,
-          max_tokens: 4096,
-          top_p: 0.9,
-          frequency_penalty: 0.1,
-          temperature: 0.5,
-        },
-        tenant_id: 1,
-      },
+      // model: {
+      //   model_id: 3081,
+      //   provider: "dcmodel",
+      //   name: "GPT-OSS",
+      //   model_key: "/data/models/gpt-oss",
+      //   api_base: null,
+      //   completion_params: {
+      //     presence_penalty: 0.1,
+      //     max_tokens: 4096,
+      //     top_p: 0.9,
+      //     frequency_penalty: 0.1,
+      //     temperature: 0.5,
+      //   },
+      //   tenant_id: 1,
+      // },
       // messages: apiMessages,
     };
 
@@ -168,7 +168,7 @@ export class SmartVisionClient {
     }
 
     const response = await fetch(
-      `${this.baseURL}/api/apps/conversations?limit=${params.limit}&start_time=${params.start_time}&end_time=${params.end_time}`,
+      `${this.apiUrl}/conversations?limit=${params.limit}&start_time=${params.start_time}&end_time=${params.end_time}`,
       {
         headers,
       },
@@ -190,7 +190,7 @@ export class SmartVisionClient {
   async conversationsMessages(conversationId: string): Promise<MessageProps[]> {
     const headers = this.getHeaders();
     const response = await fetch(
-      `${this.baseURL}/api/apps/messages?conversation_id=${conversationId}`,
+      `${this.apiUrl}/messages?conversation_id=${conversationId}`,
       {
         headers,
       },
@@ -216,17 +216,13 @@ export class SmartVisionClient {
     const formData = new FormData();
     formData.append("file", file);
     const headers = this.getHeaders(true);
-    const response = await axios.post(
-      `${this.baseURL}/api/apps/file/upload`,
-      formData,
-      {
-        headers,
-        onUploadProgress: (event) => {
-          const percentCompleted = Math.round((event.progress || 0) * 100);
-          onProgress?.(percentCompleted);
-        },
+    const response = await axios.post(`${this.apiUrl}/file/upload`, formData, {
+      headers,
+      onUploadProgress: (event) => {
+        const percentCompleted = Math.round((event.progress || 0) * 100);
+        onProgress?.(percentCompleted);
       },
-    );
+    });
     const result = response.data;
     return result?.data;
   }

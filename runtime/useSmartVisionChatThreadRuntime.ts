@@ -1,10 +1,9 @@
 import {
-  AssistantRuntime,
   useExternalMessageConverter,
   useExternalStoreRuntime,
   useRuntimeAdapters,
 } from "@assistant-ui/react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useSmartVisionMessages } from "./useSmartVisionMessages";
 import {
   convertSmartVisionMessages,
@@ -36,18 +35,8 @@ export const useSmartVisionChatThreadRuntime = () => {
     isRunning,
   });
 
-  const runtimeRef = useMemo(
-    () => ({
-      get current(): AssistantRuntime {
-        return runtime;
-      },
-    }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  );
   const contextAdapters = useRuntimeAdapters();
   const isLoading = useSmartVisionExternalHistory(
-    runtimeRef,
     contextAdapters?.history,
     getSmartVisionMessage,
     setMessages,
