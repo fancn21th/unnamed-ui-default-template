@@ -19,7 +19,12 @@ export const Thread: FC = () => {
         >
           <ThreadPrimitive.Viewport className="aui-thread-viewport relative flex flex-1 flex-col overflow-x-auto overflow-y-scroll px-4">
             <ThreadPrimitive.If empty>
-              <ThreadWelcome />
+              <div className="flex h-full flex-col items-center justify-center">
+                <div className="mx-auto flex w-full max-w-[var(--thread-max-width)] flex-col items-center gap-6">
+                  <ThreadWelcome />
+                  <Composer sticky={false} />
+                </div>
+              </div>
             </ThreadPrimitive.If>
 
             <ThreadPrimitive.Messages
@@ -34,7 +39,9 @@ export const Thread: FC = () => {
               <div className="aui-thread-viewport-spacer min-h-8 grow" />
             </ThreadPrimitive.If>
 
-            <Composer />
+            <ThreadPrimitive.If empty={false}>
+              <Composer sticky={true} />
+            </ThreadPrimitive.If>
           </ThreadPrimitive.Viewport>
         </ThreadPrimitive.Root>
       </MotionConfig>

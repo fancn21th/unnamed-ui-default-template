@@ -9,10 +9,18 @@ import {
 import { ThreadScrollToBottom } from "./ThreadScrollToBottom";
 import { ComposerAttachmentsRegion } from "./ComposerAttachmentsRegion";
 import { ComposerAction } from "./ComposerAction";
+import { cn } from "@/lib/utils";
 
-export const Composer: FC = () => {
+interface ComposerProps {
+  sticky?: boolean;
+}
+
+export const Composer: FC<ComposerProps> = ({ sticky = true }) => {
   return (
-    <div className="aui-composer-wrapper sticky bottom-0 mx-auto flex w-full max-w-[var(--thread-max-width)] flex-col gap-4 overflow-visible rounded-t-3xl bg-background pb-4 md:pb-6">
+    <div className={cn(
+      "aui-composer-wrapper mx-auto flex w-full max-w-[var(--thread-max-width)] flex-col gap-4 overflow-visible rounded-t-3xl bg-background pb-4 md:pb-6",
+      sticky && "sticky bottom-0"
+    )}>
       <ThreadScrollToBottom />
       <ComposerPrimitive.Root asChild>
         <SenderContainer className="aui-composer-root shadow-[0_9px_9px_0px_rgba(0,0,0,0.01),0_2px_5px_0px_rgba(0,0,0,0.06)] dark:border-muted-foreground/15">

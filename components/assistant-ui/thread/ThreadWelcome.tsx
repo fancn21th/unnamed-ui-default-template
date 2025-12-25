@@ -1,29 +1,23 @@
 import { FC } from "react";
 import { ThreadSuggestions } from "./ThreadSuggestions";
-import { m } from "motion/react";
+import {
+  WelcomeContainer,
+  WelcomeIcon,
+  WelcomeText,
+} from "@/components/wuhan/blocks/welcome-01";
+import { Sparkles } from "lucide-react";
 
 export const ThreadWelcome: FC = () => {
   return (
-    <div className="aui-thread-welcome-root mx-auto my-auto flex w-full max-w-[var(--thread-max-width)] flex-grow flex-col">
-      <div className="aui-thread-welcome-center flex w-full flex-grow flex-col items-center justify-center">
-        <div className="aui-thread-welcome-message flex size-full flex-col justify-center px-8">
-          <m.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            className="aui-thread-welcome-message-motion-1 text-2xl font-semibold"
-          >
-            Hello there!
-          </m.div>
-          <m.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            transition={{ delay: 0.1 }}
-            className="aui-thread-welcome-message-motion-2 text-2xl text-muted-foreground/65"
-          >
-            How can I help you today?
-          </m.div>
+    <div className="aui-thread-welcome-root flex w-full flex-col gap-4 items-center">
+      <div className="aui-thread-welcome-center flex w-full flex-col items-center justify-center">
+        <div className="aui-thread-welcome-message flex flex-col items-center justify-center px-8">
+          <WelcomeContainer>
+            <WelcomeIcon>
+              <Sparkles />
+            </WelcomeIcon>
+            <WelcomeText>Hello there! How can I help you today?</WelcomeText>
+          </WelcomeContainer>
         </div>
       </div>
       <ThreadSuggestions />
