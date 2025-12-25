@@ -1,5 +1,4 @@
 import type { FC } from "react";
-import { ComposerAddAttachment } from "../attachment";
 import { ComposerPrimitive, ThreadPrimitive } from "@assistant-ui/react";
 import { SenderSendButton } from "@/components/wuhan/blocks/sender-01";
 import { Send, Square } from "lucide-react";

@@ -4,15 +4,14 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { FC, PropsWithChildren } from "react";
 
 import { AttachmentPreview } from "./AttachmentPreview";
-import { useAttachmentSrc } from "./utils";
 
-export const AttachmentPreviewDialog: FC<PropsWithChildren> = ({ children }) => {
+export const AttachmentPreviewDialog: FC<PropsWithChildren> = ({
+  children,
+}) => {
   const src = useAttachmentSrc();
 
   if (!src) return children;

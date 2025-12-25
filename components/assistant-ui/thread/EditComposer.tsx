@@ -1,6 +1,5 @@
 import type { FC } from "react";
 import { ComposerPrimitive } from "@assistant-ui/react";
-import { FC } from "react";
 import { Button } from "@/components/ui/button";
 
 export const EditComposer: FC = () => {

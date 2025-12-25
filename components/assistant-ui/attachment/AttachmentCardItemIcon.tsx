@@ -1,9 +1,9 @@
 import { useAssistantState } from "@assistant-ui/react";
 import { useShallow } from "zustand/shallow";
-import { useAttachmentSrc } from "./utils";
 import { AttachmentLoadingIndicator } from "@/components/wuhan/blocks/attachment-list-01";
 import { FileText } from "lucide-react";
 import Image from "next/image";
+import { useAttachmentSrc } from "./hooks";
 
 export const AttachmentCardItemIcon = () => {
   const { isImage, name, status } = useAssistantState(

@@ -3,7 +3,6 @@ import { domAnimation, LazyMotion, MotionConfig } from "motion/react";
 import { ThreadPrimitive } from "@assistant-ui/react";
 import { Composer } from "./Composer";
 import { ThreadWelcome } from "./ThreadWelcome";
-import { Composer } from "./Composer";
 import { UserMessage } from "./UserMessage";
 import { EditComposer } from "./EditComposer";
 import { AssistantMessage } from "./AssistantMessage";

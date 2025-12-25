@@ -1,6 +1,5 @@
 import { MessagePrimitive } from "@assistant-ui/react";
 import type { FC } from "react";
-import { FC } from "react";
 import { UserMessage as WuhanUserMessage } from "@/components/wuhan/blocks/message-01";
 import { UserMessageAttachments } from "../attachment";
 import { BranchPicker } from "./BranchPicker";
