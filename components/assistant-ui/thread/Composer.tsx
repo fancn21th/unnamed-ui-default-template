@@ -9,6 +9,7 @@ import {
 import { ThreadScrollToBottom } from "./ThreadScrollToBottom";
 import { ComposerAttachmentsRegion } from "./ComposerAttachmentsRegion";
 import { ComposerAction } from "./ComposerAction";
+import { ThreadReference } from "./ThreadReference";
 import { cn } from "@/lib/utils";
 
 interface ComposerProps {
@@ -22,6 +23,7 @@ export const Composer: FC<ComposerProps> = ({ sticky = true }) => {
       sticky && "sticky bottom-0"
     )}>
       <ThreadScrollToBottom />
+      <ThreadReference />
       <ComposerPrimitive.Root asChild>
         <SenderContainer className="aui-composer-root shadow-[0_9px_9px_0px_rgba(0,0,0,0.01),0_2px_5px_0px_rgba(0,0,0,0.06)] dark:border-muted-foreground/15">
           <ComposerAttachmentsRegion />
