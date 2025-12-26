@@ -2,7 +2,6 @@ import * as React from "react";
 import { Sparkles, User, Plus } from "lucide-react";
 import {
   Sidebar,
-  SidebarRail,
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
