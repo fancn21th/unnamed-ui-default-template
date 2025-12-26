@@ -21,4 +21,7 @@ NEXT_PUBLIC_BASE_URL=https://smartvision-dev.digitalchina.com/
 
 ## 哲学 / Philosophy
 
-do less and focus on more important things
+- do less and focus on more important things
+- agile extreme programming practices
+
+
