@@ -1,16 +1,30 @@
 import type { FC } from "react";
 import { ThreadListItemPrimitive } from "@assistant-ui/react";
-
+import {
+  HistoryItemPrimitive,
+  HistoryItemTitlePrimitive,
+  HistoryItemHoverTrailingPrimitive,
+} from "@/components/wuhan/blocks/history-item-01";
 import { ThreadListItemArchive } from "./ThreadListItemArchive";
-import { ThreadListItemTitle } from "./ThreadListItemTitle";
 
 export const ThreadListItem: FC = () => {
   return (
-    <ThreadListItemPrimitive.Root className="aui-thread-list-item flex items-center gap-2 rounded-lg transition-all hover:bg-muted focus-visible:bg-muted focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none data-active:bg-muted">
-      <ThreadListItemPrimitive.Trigger className="aui-thread-list-item-trigger flex-grow px-3 py-2 text-start">
-        <ThreadListItemTitle />
+    <ThreadListItemPrimitive.Root asChild className="aui-thread-list-item cursor-pointer">
+      <ThreadListItemPrimitive.Trigger asChild>
+        <HistoryItemPrimitive asChild>
+          <div>
+            <HistoryItemTitlePrimitive>
+              <ThreadListItemPrimitive.Title fallback="新建对话" />
+            </HistoryItemTitlePrimitive>
+            <HistoryItemHoverTrailingPrimitive
+              onClick={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
+            >
+              <ThreadListItemArchive />
+            </HistoryItemHoverTrailingPrimitive>
+          </div>
+        </HistoryItemPrimitive>
       </ThreadListItemPrimitive.Trigger>
-      <ThreadListItemArchive />
     </ThreadListItemPrimitive.Root>
   );
 };

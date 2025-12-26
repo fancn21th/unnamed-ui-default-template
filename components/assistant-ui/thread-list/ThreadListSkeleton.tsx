@@ -1,5 +1,6 @@
 import type { FC } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
 export const ThreadListSkeleton: FC = () => {
   return (
@@ -10,9 +11,17 @@ export const ThreadListSkeleton: FC = () => {
           role="status"
           aria-label="Loading threads"
           aria-live="polite"
-          className="aui-thread-list-skeleton-wrapper flex items-center gap-2 rounded-md px-3 py-2"
+          className={cn(
+            "flex items-center",
+            "gap-[var(--gap-md)]",
+            "pt-[var(--padding-com-sm)]",
+            "pr-[var(--padding-com-lg)]",
+            "pb-[var(--padding-com-sm)]",
+            "pl-[var(--padding-com-lg)]",
+            "h-[34px]",
+          )}
         >
-          <Skeleton className="aui-thread-list-skeleton h-[22px] flex-grow" />
+          <Skeleton className="h-[22px] flex-grow rounded-[var(--radius-circle)]" />
         </div>
       ))}
     </>

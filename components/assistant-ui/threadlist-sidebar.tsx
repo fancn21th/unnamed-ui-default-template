@@ -1,73 +1,102 @@
 import * as React from "react";
-import { Github, MessagesSquare } from "lucide-react";
-import Link from "next/link";
+import { Sparkles, User, Plus } from "lucide-react";
 import {
   Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   SidebarRail,
+  SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
+import {
+  SidebarPrimitive,
+  SidebarContentPrimitive,
+  SidebarHeaderPrimitive,
+  SidebarHeaderLeading,
+  SidebarHeaderIcon,
+  SidebarHeaderTitle,
+  SidebarHeaderAction,
+  SidebarFooterPrimitive,
+} from "@/components/wuhan/blocks/sidebar-01";
 import { ThreadList } from "@/components/assistant-ui/thread-list";
+import { Button } from "@/components/ui/button";
+import { ThreadListPrimitive } from "@assistant-ui/react";
+import { cn } from "@/lib/utils";
 
 export function ThreadListSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
+
   return (
-    <Sidebar {...props}>
-      <SidebarHeader className="aui-sidebar-header mb-2 border-b">
-        <div className="aui-sidebar-header-content flex items-center justify-between">
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton size="lg" asChild>
-                <Link
-                  href="https://assistant-ui.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <div className="aui-sidebar-header-icon-wrapper flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                    <MessagesSquare className="aui-sidebar-header-icon size-4" />
-                  </div>
-                  <div className="aui-sidebar-header-heading mr-6 flex flex-col gap-0.5 leading-none">
-                    <span className="aui-sidebar-header-title font-semibold">
-                      assistant-ui
-                    </span>
-                  </div>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </div>
-      </SidebarHeader>
-      <SidebarContent className="aui-sidebar-content px-2">
-        <ThreadList />
-      </SidebarContent>
-      <SidebarRail />
-      <SidebarFooter className="aui-sidebar-footer border-t">
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <Link
-                href="https://github.com/assistant-ui/assistant-ui"
-                target="_blank"
-              >
-                <div className="aui-sidebar-footer-icon-wrapper flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <Github className="aui-sidebar-footer-icon size-4" />
-                </div>
-                <div className="aui-sidebar-footer-heading flex flex-col gap-0.5 leading-none">
-                  <span className="aui-sidebar-footer-title font-semibold">
-                    GitHub
-                  </span>
-                  <span>View Source</span>
-                </div>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
+    <Sidebar 
+      {...props} 
+      collapsible="icon" 
+      className="border-none"
+      style={{
+        "--sidebar-width-icon": "56px",
+        ...props.style,
+      } as React.CSSProperties}
+    >
+      <SidebarPrimitive className={cn(
+        "shrink-0 w-full opacity-100 bg-[var(--bg-page-neutral)] overflow-hidden transition-all duration-200",
+        isCollapsed ? "p-2 bg-[var(--background)]" : "p-[var(--padding-com-lg)]"
+      )}>
+        <SidebarContentPrimitive>
+          {/* Header */}
+          <SidebarHeaderPrimitive className={cn(
+            isCollapsed && "flex-col gap-2 items-center justify-start"
+          )}>
+            {isCollapsed ? (
+              <>
+                {/* Collapsed: Only show two icons */}
+                <SidebarHeaderAction className="w-full flex justify-center">
+                  <SidebarTrigger />
+                </SidebarHeaderAction>
+                <ThreadListPrimitive.New asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="size-8"
+                  >
+                    <Plus className="size-4" />
+                  </Button>
+                </ThreadListPrimitive.New>
+              </>
+            ) : (
+              <>
+                <SidebarHeaderLeading>
+                  <SidebarHeaderIcon aria-hidden="true">
+                    <Sparkles className="size-4" />
+                  </SidebarHeaderIcon>
+                  <SidebarHeaderTitle>问学</SidebarHeaderTitle>
+                </SidebarHeaderLeading>
+                <SidebarHeaderAction>
+                  <SidebarTrigger />
+                </SidebarHeaderAction>
+              </>
+            )}
+          </SidebarHeaderPrimitive>
+
+          {/* Thread List - Hidden when collapsed */}
+          {!isCollapsed && <ThreadList />}
+        </SidebarContentPrimitive>
+
+        {/* Footer */}
+        <SidebarFooterPrimitive>
+          <SidebarHeaderLeading className={cn(
+            isCollapsed && "justify-center w-full"
+          )}>
+            <SidebarHeaderIcon className="rounded-full">
+              <User className="size-4" />
+            </SidebarHeaderIcon>
+            {!isCollapsed && (
+              <SidebarHeaderTitle>
+                User
+              </SidebarHeaderTitle>
+            )}
+          </SidebarHeaderLeading>
+        </SidebarFooterPrimitive>
+      </SidebarPrimitive>
     </Sidebar>
   );
 }

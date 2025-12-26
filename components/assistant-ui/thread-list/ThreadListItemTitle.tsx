@@ -3,8 +3,6 @@ import type { FC } from "react";
 
 export const ThreadListItemTitle: FC = () => {
   return (
-    <span className="aui-thread-list-item-title text-sm">
-      <ThreadListItemPrimitive.Title fallback="New Chat" />
-    </span>
+    <ThreadListItemPrimitive.Title fallback="新建对话" />
   );
 };
