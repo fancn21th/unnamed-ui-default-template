@@ -23,9 +23,9 @@ export const Composer: FC<ComposerProps> = ({ sticky = true }) => {
       sticky && "sticky bottom-0"
     )}>
       <ThreadScrollToBottom />
-      <ThreadReference />
       <ComposerPrimitive.Root asChild>
         <SenderContainer className="aui-composer-root shadow-[0_9px_9px_0px_rgba(0,0,0,0.01),0_2px_5px_0px_rgba(0,0,0,0.06)] dark:border-muted-foreground/15">
+          <ThreadReference />
           <ComposerAttachmentsRegion />
           <ComposerPrimitive.Input
             placeholder="Send a message..."

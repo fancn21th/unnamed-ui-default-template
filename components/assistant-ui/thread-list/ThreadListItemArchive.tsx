@@ -15,6 +15,9 @@ export const ThreadListItemArchive: FC = () => {
         )}
         variant="ghost"
         tooltip="归档对话"
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
       >
         <ArchiveIcon className="size-3" />
       </TooltipIconButton>

@@ -11,13 +11,18 @@ export const ThreadListItem: FC = () => {
   return (
     <ThreadListItemPrimitive.Root asChild className="aui-thread-list-item">
       <ThreadListItemPrimitive.Trigger asChild>
-        <HistoryItemPrimitive>
-          <HistoryItemTitlePrimitive>
-            <ThreadListItemPrimitive.Title fallback="新建对话" />
-          </HistoryItemTitlePrimitive>
-          <HistoryItemHoverTrailingPrimitive>
-            <ThreadListItemArchive />
-          </HistoryItemHoverTrailingPrimitive>
+        <HistoryItemPrimitive asChild>
+          <div>
+            <HistoryItemTitlePrimitive>
+              <ThreadListItemPrimitive.Title fallback="新建对话" />
+            </HistoryItemTitlePrimitive>
+            <HistoryItemHoverTrailingPrimitive
+              onClick={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
+            >
+              <ThreadListItemArchive />
+            </HistoryItemHoverTrailingPrimitive>
+          </div>
         </HistoryItemPrimitive>
       </ThreadListItemPrimitive.Trigger>
     </ThreadListItemPrimitive.Root>
