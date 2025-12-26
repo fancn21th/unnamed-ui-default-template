@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Sparkles, User, Plus } from "lucide-react";
+import { Sparkles, User, SquarePlus } from "lucide-react";
 import {
   Sidebar,
   SidebarTrigger,
@@ -57,7 +57,7 @@ export function ThreadListSidebar({
                     size="icon"
                     className="size-8"
                   >
-                    <Plus className="size-4" />
+                    <SquarePlus className="size-4" />
                   </Button>
                 </ThreadListPrimitive.New>
               </>

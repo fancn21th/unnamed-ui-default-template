@@ -26,6 +26,8 @@ export const ThreadList: FC = () => {
       {/* Divider */}
       <SidebarDividerPrimitive />
 
+      <SidebarHistoryTitle>历史对话</SidebarHistoryTitle>
+
       {/* Search */}
       <SidebarHistorySearchPrimitive>
         <SidebarHistorySearchContainer>
@@ -38,7 +40,6 @@ export const ThreadList: FC = () => {
 
       {/* History */}
       <SidebarHistoryPrimitive>
-        <SidebarHistoryTitle>历史对话</SidebarHistoryTitle>
 
         {/* List */}
         <SidebarHistoryListPrimitive>
