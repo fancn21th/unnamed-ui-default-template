@@ -42,12 +42,12 @@ export const useSmartVisionChatReferenceLink = () => {
       if (withUse) draft.use = undefined;
     });
   };
-  const useReference = () => {
+  const useReference = useCallback(() => {
     store.setState((draft) => {
       draft.use = draft.reference?.text;
       draft.reference = undefined;
     });
-  };
+  }, []);
   const setActionBarRef = useCallback((ref: HTMLDivElement | null) => {
     actionBarRef.current = ref;
   }, []);

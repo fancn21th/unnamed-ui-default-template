@@ -33,3 +33,5 @@ export const ReferencePrimitiveActionBar = forwardRef<Element, Props>(
     return null;
   },
 );
+
+ReferencePrimitiveActionBar.displayName = "ReferencePrimitiveActionBar";

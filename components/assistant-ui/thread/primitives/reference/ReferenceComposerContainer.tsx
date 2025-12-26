@@ -12,3 +12,5 @@ export const ReferencePrimitiveComposerContainer = forwardRef<Element, Props>(
     return null;
   },
 );
+ReferencePrimitiveComposerContainer.displayName =
+  "ReferencePrimitiveComposerContainer";
