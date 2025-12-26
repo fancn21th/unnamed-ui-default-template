@@ -9,7 +9,7 @@ import { ThreadListItemArchive } from "./ThreadListItemArchive";
 
 export const ThreadListItem: FC = () => {
   return (
-    <ThreadListItemPrimitive.Root asChild className="aui-thread-list-item">
+    <ThreadListItemPrimitive.Root asChild className="aui-thread-list-item cursor-pointer">
       <ThreadListItemPrimitive.Trigger asChild>
         <HistoryItemPrimitive asChild>
           <div>
