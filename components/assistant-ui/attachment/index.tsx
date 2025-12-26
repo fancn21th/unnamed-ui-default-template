@@ -1,24 +1,30 @@
+import * as React from "react";
+import type { FC } from "react";
 import { ComposerPrimitive, MessagePrimitive } from "@assistant-ui/react";
-import { FC } from "react";
 import { TooltipIconButton } from "../tooltip-icon-button";
 import { PlusIcon } from "lucide-react";
-import { AttachmentUI } from "./AttachmentUI";
+import { AttachmentList } from "@/components/wuhan/blocks/attachment-list-01";
+import { AttachmentCardItem } from "./AttachmentCardItem";
 
 export const UserMessageAttachments: FC = () => {
   return (
-    <div className="aui-user-message-attachments-end col-span-full col-start-1 row-start-1 flex w-full flex-row justify-end gap-2">
-      <MessagePrimitive.Attachments components={{ Attachment: AttachmentUI }} />
+    <div className="aui-user-message-attachments-end col-span-full col-start-1 row-start-1 flex w-full flex-row justify-end empty:hidden">
+      <AttachmentList className="w-full">
+        <MessagePrimitive.Attachments
+          components={{ Attachment: AttachmentCardItem }}
+        />
+      </AttachmentList>
     </div>
   );
 };
 
 export const ComposerAttachments: FC = () => {
   return (
-    <div className="aui-composer-attachments mb-2 flex w-full flex-row items-center gap-2 overflow-x-auto px-1.5 pt-0.5 pb-1 empty:hidden">
+    <AttachmentList className="w-full">
       <ComposerPrimitive.Attachments
-        components={{ Attachment: AttachmentUI }}
+        components={{ Attachment: AttachmentCardItem }}
       />
-    </div>
+    </AttachmentList>
   );
 };
 
