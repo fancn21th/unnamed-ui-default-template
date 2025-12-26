@@ -21,3 +21,4 @@ export const ReferencePrimitiveCancel = forwardRef<Element, Props>(
     );
   },
 );
+ReferencePrimitiveCancel.displayName = "ReferencePrimitiveCancel";

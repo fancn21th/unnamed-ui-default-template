@@ -3,9 +3,9 @@ import { mockThreadsDb } from "../mockDb";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  const { id } = params;
+  const { id } = await params;
 
   if (!mockThreadsDb[id]) {
     return NextResponse.json({ error: "Thread not found" }, { status: 404 });
@@ -16,9 +16,9 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  const { id } = params;
+  const { id } = await params;
   const { title } = await req.json();
 
   if (!mockThreadsDb[id]) {
@@ -32,9 +32,9 @@ export async function PATCH(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  const { id } = params;
+  const { id } = await params;
 
   if (!mockThreadsDb[id]) {
     return NextResponse.json({ error: "Thread not found" }, { status: 404 });

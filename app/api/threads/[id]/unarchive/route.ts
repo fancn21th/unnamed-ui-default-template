@@ -3,9 +3,9 @@ import { mockThreadsDb } from "../../mockDb";
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  const { id } = params;
+  const { id } = await params;
 
   if (!mockThreadsDb[id]) {
     return NextResponse.json({ error: "Thread not found" }, { status: 404 });

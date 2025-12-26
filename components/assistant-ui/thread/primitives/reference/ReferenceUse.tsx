@@ -1,11 +1,12 @@
 import { ComponentPropsWithoutRef, type ComponentRef, forwardRef } from "react";
 import { Primitive } from "@radix-ui/react-primitive";
 import { useSmartVisionChatReferenceLink } from "@/runtime/smartVisionChatReferenceLink";
+import { composeEventHandlers } from "@radix-ui/primitive";
 
 type PrimitiveDivProps = ComponentPropsWithoutRef<typeof Primitive.button>;
 export type Element = ComponentRef<typeof Primitive.button>;
 export type Props = PrimitiveDivProps & {};
-export const ReferenceUse = forwardRef<Element, Props>(
+export const ReferencePrimitiveUse = forwardRef<Element, Props>(
   ({ onClick, ...props }, ref) => {
     const { useReference } = useSmartVisionChatReferenceLink();
     return (
@@ -13,11 +14,9 @@ export const ReferenceUse = forwardRef<Element, Props>(
         type="button"
         {...props}
         ref={ref}
-        onClick={(e) => {
-          onClick?.(e);
-          useReference();
-        }}
+        onClick={composeEventHandlers(onClick, useReference)}
       />
     );
   },
 );
+ReferencePrimitiveUse.displayName = "ReferencePrimitiveUse";
