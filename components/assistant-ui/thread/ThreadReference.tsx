@@ -7,10 +7,8 @@ import {
   QuoteContentText,
   QuoteContentCloseButton,
 } from "@/components/wuhan/blocks/quote-content-01";
-import { useSmartVisionChatReferenceStore } from "@/runtime/smartVisionChatReferenceLink";
 
 export const ThreadReference = () => {
-  const text = useSmartVisionChatReferenceStore((s) => s.use);
 
   return (
     <Reference.ComposerContainer>
