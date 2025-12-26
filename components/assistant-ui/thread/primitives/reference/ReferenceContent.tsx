@@ -1,6 +1,6 @@
-import { useSmartVisionChatReferenceStore } from "@/runtime/smartVisionChatReferenceLink";
+import { useSmartVisionChatReferenceStore } from "@/runtime/smartVisionReferenceRuntime";
 
 export const ReferencePrimitiveContent = () => {
-  const text = useSmartVisionChatReferenceStore((s) => s.use);
+  const text = useSmartVisionChatReferenceStore((s) => s.reference);
   return <>{text}</>;
 };

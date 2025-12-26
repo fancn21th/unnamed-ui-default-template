@@ -6,31 +6,31 @@ import {
   useRef,
 } from "react";
 import { Primitive } from "@radix-ui/react-primitive";
-import { useSmartVisionChatReferenceLink } from "@/runtime/smartVisionChatReferenceLink";
+import {
+  ReferenceProvider,
+  useReferenceProviderContext,
+} from "@/runtime/smartVisionReferenceRuntime";
 import { useComposedRefs } from "@radix-ui/react-compose-refs";
 
-type PrimitiveDivProps = ComponentPropsWithoutRef<typeof Primitive.div>;
+type PrimitiveProps = ComponentPropsWithoutRef<typeof Primitive.div>;
 export type Element = ComponentRef<typeof Primitive.div>;
-export type Props = PrimitiveDivProps & {};
-export const ReferencePrimitiveRoot = forwardRef<Element, Props>(
-  (props, forwardedRef) => {
-    const localRef = useRef<HTMLDivElement>(null);
-    const ref = useComposedRefs(forwardedRef, localRef);
-    const { chooseReference, clearReference } =
-      useSmartVisionChatReferenceLink();
+export type Props = PrimitiveProps & {};
+const ReferenceRoot = forwardRef<Element, Props>((props, forwardedRef) => {
+  const localRef = useRef<HTMLDivElement>(null);
+  const ref = useComposedRefs(forwardedRef, localRef);
+  const { onChoose, onClear } = useReferenceProviderContext();
 
-    useEffect(() => {
-      const contentNode = localRef.current;
-      const handleMouseUp = () => {
-        const selection = window.getSelection();
-        const selectText = selection?.toString(); // 获取当前选中的文本
-        if (
-          selection &&
-          selectText &&
-          selectText.length > 0 &&
-          contentNode?.contains(selection.anchorNode)
-        ) {
-          // 定位
+  useEffect(() => {
+    const contentNode = localRef.current;
+    const onSelectionChange = () => {
+      const selection = window.getSelection();
+      if (!selection) return;
+      if (!contentNode) return;
+      const selectText = selection.toString(); // 获取当前选中的文本
+      if (selectText) {
+        /* 选中了文本 */
+        if (contentNode.contains(selection.anchorNode)) {
+          /* 范围内 */
           const range = selection.getRangeAt(0).getBoundingClientRect();
           const componentRect = localRef.current?.getBoundingClientRect() ?? {
             top: 0,
@@ -39,20 +39,29 @@ export const ReferencePrimitiveRoot = forwardRef<Element, Props>(
 
           const top = range.top - componentRect.top - 28; // 20px above the selected text
           const left = range.left - componentRect.left;
-          chooseReference(selectText, { top, left });
-        } else {
-          clearReference(false);
+          onChoose?.(selectText, { top, left });
         }
-      };
+      } else {
+        /* 未选中文本 */
+        onClear?.();
+      }
+    };
 
-      document.addEventListener("selectionchange", handleMouseUp);
-      return () => {
-        document.removeEventListener("selectionchange", handleMouseUp);
-        clearReference();
-      };
-    }, []);
-    return <Primitive.div {...props} ref={ref} />;
+    document.addEventListener("selectionchange", onSelectionChange);
+    return () => {
+      document.removeEventListener("selectionchange", onSelectionChange);
+    };
+  }, []);
+  return <Primitive.div {...props} ref={ref} />;
+});
+
+export const ReferencePrimitiveRoot = forwardRef<Element, Props>(
+  (props, forwardedRef) => {
+    return (
+      <ReferenceProvider>
+        <ReferenceRoot {...props} ref={forwardedRef} />
+      </ReferenceProvider>
+    );
   },
 );
-
 ReferencePrimitiveRoot.displayName = "ReferencePrimitiveRoot";
