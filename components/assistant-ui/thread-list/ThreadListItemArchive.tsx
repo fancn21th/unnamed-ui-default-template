@@ -2,16 +2,21 @@ import { ThreadListItemPrimitive } from "@assistant-ui/react";
 import { FC } from "react";
 import { TooltipIconButton } from "../tooltip-icon-button";
 import { ArchiveIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export const ThreadListItemArchive: FC = () => {
   return (
     <ThreadListItemPrimitive.Archive asChild>
       <TooltipIconButton
-        className="aui-thread-list-item-archive mr-3 ml-auto size-4 p-0 text-foreground hover:text-primary"
+        className={cn(
+          "size-4 p-0",
+          "text-[var(--text-secondary)]",
+          "hover:text-[var(--text-primary)]"
+        )}
         variant="ghost"
-        tooltip="Archive thread"
+        tooltip="归档对话"
       >
-        <ArchiveIcon />
+        <ArchiveIcon className="size-3" />
       </TooltipIconButton>
     </ThreadListItemPrimitive.Archive>
   );
