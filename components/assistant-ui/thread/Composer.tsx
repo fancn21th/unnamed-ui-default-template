@@ -3,11 +3,13 @@ import { ComposerPrimitive } from "@assistant-ui/react";
 import { ThreadScrollToBottom } from "./ThreadScrollToBottom";
 import { ComposerAttachments } from "../attachment";
 import { ComposerAction } from "./ComposerAction";
+import { ThreadReference } from "./ThreadReference";
 
 export const Composer: FC = () => {
   return (
     <div className="aui-composer-wrapper sticky bottom-0 mx-auto flex w-full max-w-[var(--thread-max-width)] flex-col gap-4 overflow-visible rounded-t-3xl bg-background pb-4 md:pb-6">
       <ThreadScrollToBottom />
+      <ThreadReference />
       <ComposerPrimitive.Root className="aui-composer-root relative flex w-full flex-col rounded-3xl border border-border bg-muted px-1 pt-2 shadow-[0_9px_9px_0px_rgba(0,0,0,0.01),0_2px_5px_0px_rgba(0,0,0,0.06)] dark:border-muted-foreground/15">
         <ComposerAttachments />
         <ComposerPrimitive.Input
