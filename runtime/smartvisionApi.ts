@@ -19,12 +19,22 @@ export class SmartVisionClient {
     this.baseURL = baseURL;
     this.appid = appid;
     this.token = token;
-    this.slug = slug;
+    // 优先从 URL 查询参数获取 slug，如果没有则使用环境变量
+    this.slug = this.getSlugFromUrl() || slug;
+  }
+
+  // 从 URL 查询参数中获取 slug
+  private getSlugFromUrl(): string | null {
+    if (typeof window === 'undefined') {
+      return null;
+    }
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('slug');
   }
 
   // 构造 API URL
   private get apiUrl(): string {
-    return `${this.baseURL}/${this.slug}1/api/apps`;
+    return `${this.baseURL}/api/apps`;
   }
 
   // 构造请求头
@@ -32,6 +42,7 @@ export class SmartVisionClient {
     return {
       Authorization: `Bearer ${this.token}`,
       ...(isFile ? {} : { "Content-Type": "application/json" }),
+    "instance-id": this.slug,
     };
   }
 
