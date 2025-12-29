@@ -26,7 +26,7 @@ export const AssistantMessage: FC = () => {
             <WuhanAIMessage
               className="break-words px-0"
               feedback={
-                <div className="aui-assistant-message-footer mt-2 flex px-0">
+                <div className="aui-assistant-message-footer mt-2 flex">
                   <BranchPicker />
                   <AssistantActionBar />
                 </div>
