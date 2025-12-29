@@ -54,7 +54,7 @@ const ReferenceRoot = forwardRef<Element, Props>((props, forwardedRef) => {
   }, []);
   return <Primitive.div {...props} ref={ref} />;
 });
-
+ReferenceRoot.displayName = "ReferenceRoot";
 export const ReferencePrimitiveRoot = forwardRef<Element, Props>(
   (props, forwardedRef) => {
     return (

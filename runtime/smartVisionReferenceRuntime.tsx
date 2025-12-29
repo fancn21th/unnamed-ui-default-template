@@ -1,20 +1,13 @@
 import { create, useStore } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import {
-  ComponentPropsWithoutRef,
-  type ComponentRef,
   createContext,
   FC,
-  forwardRef,
   PropsWithChildren,
   useCallback,
   useContext,
-  useEffect,
-  useRef,
   useState,
 } from "react";
-import { Primitive } from "@radix-ui/react-primitive";
-import { useComposedRefs } from "@radix-ui/react-compose-refs";
 
 type ReferenceType = {
   text: string;
@@ -47,21 +40,21 @@ export const useReferenceProviderContext = () => {
   return useContext(ReferenceContext);
 };
 
-interface SmartVisionChatReferenceLinkState {
+interface SmartVisionChatReferenceState {
   reference?: string;
 }
-const store = create(immer<SmartVisionChatReferenceLinkState>(() => ({})));
+const store = create(immer<SmartVisionChatReferenceState>(() => ({})));
 
 export const useSmartVisionChatReferenceStore = <U,>(
-  selector: (state: SmartVisionChatReferenceLinkState) => U,
+  selector: (state: SmartVisionChatReferenceState) => U,
 ) => useStore(store, selector);
-export const useSmartVisionChatReferenceLink = () => {
+export const useSmartVisionChatReferenceActions = () => {
   const clearReference = () => {
     store.setState((draft) => {
       draft.reference = undefined;
     });
   };
-  const useReference = useCallback((text: string) => {
+  const applyReference = useCallback((text: string) => {
     store.setState((draft) => {
       draft.reference = text;
     });
@@ -69,6 +62,6 @@ export const useSmartVisionChatReferenceLink = () => {
 
   return {
     clearReference,
-    useReference,
+     applyReference,
   };
 };
