@@ -25,7 +25,7 @@ const HistoryItemPrimitive = React.forwardRef<
       className={cn(
         "group/history-item",
         "[&_*]:!box-border",
-        "w-[214px] h-[34px]",
+        "w-full h-[34px]",
         "flex items-center",
         "gap-[var(--gap-md)]",
         "pt-[var(--padding-com-sm)]",

@@ -64,6 +64,139 @@ interface AIMessageProps extends AIMessagePrimitiveProps {
   errorContent?: React.ReactNode;
 }
 
+// ==================== 状态原语组件 ====================
+
+/**
+ * 三个圆点的加载动画原语组件
+ * @public
+ */
+const LoadingDots = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => {
+    return (
+      <>
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+            @keyframes loading-dot-bounce {
+              0%, 80%, 100% {
+                transform: scale(1);
+                opacity: 0.5;
+              }
+              40% {
+                transform: scale(1);
+                opacity: 1;
+              }
+            }
+          `,
+          }}
+        />
+        <div ref={ref} className={cn("flex items-center gap-1", className)} {...props}>
+          <div
+            className="w-1 h-1 rounded-full bg-[var(--bg-brand)]"
+            style={{
+              animation: "loading-dot-bounce 1.4s ease-in-out infinite",
+              animationDelay: "-0.32s",
+            }}
+          />
+          <div
+            className="w-1 h-1 rounded-full bg-[var(--bg-brand)]"
+            style={{
+              animation: "loading-dot-bounce 1.4s ease-in-out infinite",
+              animationDelay: "-0.16s",
+            }}
+          />
+          <div
+            className="w-1 h-1 rounded-full bg-[var(--bg-brand)]"
+            style={{
+              animation: "loading-dot-bounce 1.4s ease-in-out infinite",
+            }}
+          />
+        </div>
+      </>
+    );
+  },
+);
+LoadingDots.displayName = "LoadingDots";
+
+/**
+ * 消息生成中原语组件
+ * 用于构建生成中状态的UI
+ * @public
+ */
+interface MessageGeneratingPrimitiveProps
+  extends React.HTMLAttributes<HTMLDivElement> {
+  /**
+   * 加载指示器（如 LoadingDots）
+   */
+  indicator?: React.ReactNode;
+  /**
+   * 提示文本
+   */
+  text?: React.ReactNode;
+}
+
+const MessageGeneratingPrimitive = React.forwardRef<
+  HTMLDivElement,
+  MessageGeneratingPrimitiveProps
+>(({ indicator, text, className, ...props }, ref) => {
+  return (
+    <div
+      ref={ref}
+      className={cn("flex items-center gap-2", className)}
+      {...props}
+    >
+      {indicator}
+      {text && (
+        <span className="text-[var(--text-secondary)]">{text}</span>
+      )}
+    </div>
+  );
+});
+MessageGeneratingPrimitive.displayName = "MessageGeneratingPrimitive";
+
+/**
+ * 消息失败原语组件
+ * 用于构建失败状态的UI
+ * @public
+ */
+interface MessageFailedPrimitiveProps
+  extends React.HTMLAttributes<HTMLDivElement> {
+  /**
+   * 错误图标
+   */
+  icon?: React.ReactNode;
+  /**
+   * 错误消息
+   */
+  message?: React.ReactNode;
+  /**
+   * 操作按钮（如重试按钮）
+   */
+  actions?: React.ReactNode;
+}
+
+const MessageFailedPrimitive = React.forwardRef<
+  HTMLDivElement,
+  MessageFailedPrimitiveProps
+>(({ icon, message, actions, className, ...props }, ref) => {
+  return (
+    <div ref={ref} className={cn("flex flex-col gap-2", className)} {...props}>
+      {icon && message && (
+        <div className="flex items-center gap-2">
+          {icon}
+          {typeof message === "string" ? (
+            <span className="text-[var(--text-error)]">{message}</span>
+          ) : (
+            message
+          )}
+        </div>
+      )}
+      {actions}
+    </div>
+  );
+});
+MessageFailedPrimitive.displayName = "MessageFailedPrimitive";
+
 // ==================== 样式原语层（Primitives）====================
 
 /**
@@ -119,7 +252,9 @@ const MessageAIPrimitive = React.forwardRef<
         </div>
         {feedback && (
           <div
-            className={cn("[&_*]:!box-border", "pl-[var(--gap-lg)]", "pr-[var(--gap-lg)]")}
+            className={cn(
+              "[&_*]:!box-border"
+            )}
             role="group"
             aria-label="Message feedback"
           >
@@ -186,7 +321,7 @@ const MessageUserPrimitive = React.forwardRef<
         </div>
         {feedback && (
           <div
-            className={cn("mt-[var(--gap-md)]", "[&_*]:!box-border", "pl-[var(--gap-lg)]", "pr-[var(--gap-lg)]")}
+            className={cn("mt-[var(--gap-md)]", "[&_*]:!box-border")}
             role="group"
             aria-label="Message feedback"
           >
@@ -220,7 +355,7 @@ const AIMessage = React.forwardRef<HTMLDivElement, AIMessageProps>(
   ) => {
     const content = React.useMemo(() => {
       if (status === "generating") {
-        return generatingContent !== undefined ? generatingContent : children;
+        return generatingContent !== undefined ? generatingContent : null;
       }
       if (status === "failed") {
         return errorContent !== undefined ? errorContent : errorMessage;
@@ -270,6 +405,16 @@ export type {
   AIMessagePrimitiveProps,
   UserMessagePrimitiveProps,
   AIMessageProps,
+  MessageGeneratingPrimitiveProps,
+  MessageFailedPrimitiveProps,
 };
 
-export { MessageAIPrimitive, MessageUserPrimitive, AIMessage, UserMessage };
+export {
+  MessageAIPrimitive,
+  MessageUserPrimitive,
+  AIMessage,
+  UserMessage,
+  LoadingDots,
+  MessageGeneratingPrimitive,
+  MessageFailedPrimitive,
+};

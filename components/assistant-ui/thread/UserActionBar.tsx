@@ -7,7 +7,7 @@ export const UserActionBar: FC = () => {
   return (
     <ActionBarPrimitive.Root
       hideWhenRunning
-      autohide="not-last"
+      autohide="never"
       className="aui-user-action-bar-root flex flex-col items-end text-muted-foreground"
     >
       <ActionBarPrimitive.Edit asChild>
