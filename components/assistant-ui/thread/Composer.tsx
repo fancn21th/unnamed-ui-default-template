@@ -34,7 +34,7 @@ export const Composer: FC<ComposerProps> = ({ sticky = true }) => {
             aria-label="Message input"
             asChild
           >
-            <SenderTextarea />
+            <SenderTextarea className="caret-[var(--primary)]" />
           </ComposerPrimitive.Input>
           <SenderActionBar className="flex items-center justify-between">
             <ComposerPrimitive.AddAttachment asChild>
