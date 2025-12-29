@@ -7,7 +7,7 @@ import {
 } from "react";
 import { Primitive } from "@radix-ui/react-primitive";
 import { composeEventHandlers } from "@radix-ui/primitive";
-import { useSmartVisionActionLink } from "@/runtime/smartVisionActionLink";
+import { useSmartVisionActionActions } from "@/runtime/smartVisionActionRuntime";
 
 export type Props = PropsWithChildren<{ like?: boolean; dislike?: boolean }>;
 export const ActionBarPrimitiveLikeIf: FC<Props> = ({
@@ -15,7 +15,7 @@ export const ActionBarPrimitiveLikeIf: FC<Props> = ({
   dislike,
   children,
 }) => {
-  const { queryLikeStatus } = useSmartVisionActionLink();
+  const { queryLikeStatus } = useSmartVisionActionActions();
   const result = queryLikeStatus({ like, dislike });
   if (result) return <>{children}</>;
   return null;

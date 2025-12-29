@@ -2,7 +2,7 @@ import { ComponentPropsWithoutRef, type ComponentRef, forwardRef } from "react";
 import { Primitive } from "@radix-ui/react-primitive";
 import {
   useReferenceProviderContext,
-  useSmartVisionChatReferenceLink,
+  useSmartVisionChatReferenceActions,
 } from "@/runtime/smartVisionReferenceRuntime";
 import { composeEventHandlers } from "@radix-ui/primitive";
 
@@ -12,9 +12,9 @@ export type Props = PrimitiveProps & {};
 export const ReferencePrimitiveUse = forwardRef<Element, Props>(
   ({ onClick, ...props }, ref) => {
     const { reference, onClear } = useReferenceProviderContext();
-    const { useReference } = useSmartVisionChatReferenceLink();
+    const { applyReference } = useSmartVisionChatReferenceActions();
     const onUseReference = () => {
-      if (reference) useReference(reference.text);
+      if (reference) applyReference(reference.text);
       onClear?.();
       window.getSelection()?.removeAllRanges();
     };
