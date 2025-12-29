@@ -98,6 +98,7 @@ export type SmartVisionMessage =
       id: string;
       content: string | SmartVisionContentPart[];
       toolCalls?: SmartVisionToolCall[]; // AI 消息可以包含工具调用
+      is_upvote?: UpvoteStatus;
     }
   | {
       type: "tool";

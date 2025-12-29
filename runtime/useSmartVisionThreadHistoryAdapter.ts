@@ -62,7 +62,7 @@ class SmartVisionThreadHistoryAdapter implements ThreadHistoryAdapter {
             unstable_annotations: [],
             unstable_data: [],
             steps: [],
-            custom: {},
+            custom: { is_upvote: d.is_upvote },
           },
         } as ThreadAssistantMessage,
         parentId: null,
