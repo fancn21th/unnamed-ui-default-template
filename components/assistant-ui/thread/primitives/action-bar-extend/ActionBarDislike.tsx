@@ -1,24 +1,22 @@
 import { ComponentPropsWithoutRef, type ComponentRef, forwardRef } from "react";
 import { Primitive } from "@radix-ui/react-primitive";
-import { useSmartVisionChatReferenceLink } from "@/runtime/smartVisionReferenceRuntime";
+import { composeEventHandlers } from "@radix-ui/primitive";
+import { useSmartVisionActionLink } from "@/runtime/smartVisionActionLink";
 
 type PrimitiveProps = ComponentPropsWithoutRef<typeof Primitive.button>;
 export type Element = ComponentRef<typeof Primitive.button>;
 export type Props = PrimitiveProps & {};
-export const ReferencePrimitiveCancel = forwardRef<Element, Props>(
+export const ActionBarPrimitiveDislike = forwardRef<Element, Props>(
   ({ onClick, ...props }, ref) => {
-    const { clearReference } = useSmartVisionChatReferenceLink();
+    const { onDislike } = useSmartVisionActionLink();
     return (
       <Primitive.button
         type="button"
         {...props}
         ref={ref}
-        onClick={(e) => {
-          onClick?.(e);
-          clearReference();
-        }}
+        onClick={composeEventHandlers(onClick, onDislike)}
       />
     );
   },
 );
-ReferencePrimitiveCancel.displayName = "ReferencePrimitiveCancel";
+ActionBarPrimitiveDislike.displayName = "ActionBarPrimitiveDislike";
