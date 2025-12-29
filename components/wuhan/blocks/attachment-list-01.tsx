@@ -12,7 +12,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 // ==================== 常量定义 ====================
 const SCROLL_THRESHOLD = 1; // 滚动检测容差（处理浮点数精度问题）
 const SCROLL_RATIO = 0.8; // 每次滚动容器宽度的比例
-const SCROLL_PADDING = 4; // 滚动容器的垂直内边距（px）
+const SCROLL_PADDING = 0; // 滚动容器的垂直内边距（px）
 
 // ==================== 样式原语层（Primitives）====================
 // 这些组件只提供样式，不包含任何逻辑和业务假设
