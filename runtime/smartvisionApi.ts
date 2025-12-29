@@ -25,7 +25,7 @@ export class SmartVisionClient {
 
   // 构造 API URL
   private get apiUrl(): string {
-    return `${this.baseURL}/${this.slug}1/api/apps`;
+    return `${this.baseURL}/api/apps`;
   }
 
   // 构造请求头
@@ -33,6 +33,7 @@ export class SmartVisionClient {
     return {
       Authorization: `Bearer ${this.token}`,
       ...(isFile ? {} : { "Content-Type": "application/json" }),
+      "instance-id": this.slug,
     };
   }
 

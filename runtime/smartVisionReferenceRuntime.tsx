@@ -62,6 +62,6 @@ export const useSmartVisionChatReferenceActions = () => {
 
   return {
     clearReference,
-     applyReference,
+    applyReference,
   };
 };
