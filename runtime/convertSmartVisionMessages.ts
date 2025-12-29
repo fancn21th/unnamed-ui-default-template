@@ -16,6 +16,7 @@ export const convertSmartVisionMessages: useExternalMessageConverter.Callback<
   // 转换单个消息为 assistant-ui 格式
   if (messages.type === "human") {
     return {
+      id: messages.id,
       role: "user" as const,
       content:
         typeof messages.content === "string"
@@ -62,20 +63,33 @@ export const convertSmartVisionMessages: useExternalMessageConverter.Callback<
       });
 
       const convertedMessage = {
+        id: messages.id,
         role: "assistant" as const,
         content: convertedContent,
+        metadata: {
+          custom: {
+            is_upvote: messages.is_upvote,
+          },
+        },
       };
       console.log("📋 Converted array content message:", convertedMessage);
       return convertedMessage;
     } else {
       // 如果 content 是字符串，转换为 text 类型
       return {
+        id: messages.id,
         role: "assistant" as const,
         content: [{ type: "text" as const, text: String(messages.content) }],
+        metadata: {
+          custom: {
+            is_upvote: messages.is_upvote,
+          },
+        },
       };
     }
   }
   return {
+    id: messages.id,
     role: "system" as const,
     content: [{ type: "text" as const, text: String(messages.content) }],
   };
@@ -120,6 +134,7 @@ export const getSmartVisionMessage = (
           };
         }
       }),
+      is_upvote: message.metadata?.custom?.is_upvote,
     } as SmartVisionMessage;
   }
   return {

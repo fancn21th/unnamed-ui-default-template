@@ -4,6 +4,7 @@ import {
   MessageProps,
   SmartVisionChunk,
   SmartVisionMessage,
+  UpvoteStatus,
 } from "./types";
 import { appid, token, slug, baseURL } from "./config";
 import axios from "axios";
@@ -42,7 +43,7 @@ export class SmartVisionClient {
     return {
       Authorization: `Bearer ${this.token}`,
       ...(isFile ? {} : { "Content-Type": "application/json" }),
-    "instance-id": this.slug,
+      "instance-id": this.slug,
     };
   }
 
@@ -217,6 +218,9 @@ export class SmartVisionClient {
     return result?.data || [];
   }
 
+  /**
+   * 文件上传
+   * */
   async fileUpload(
     file: File,
     /**
@@ -236,6 +240,31 @@ export class SmartVisionClient {
     });
     const result = response.data;
     return result?.data;
+  }
+
+  /**
+   * 对消息进行点赞操作
+   * */
+  async messageUpvote(data: {
+    message_id: string;
+    is_upvote: UpvoteStatus;
+    content?: string;
+  }): Promise<{ is_upvote?: UpvoteStatus }> {
+    const headers = this.getHeaders();
+    const response = await fetch(`${this.apiUrl}/is-upvote`, {
+      headers,
+      body: JSON.stringify(data),
+      method: "POST",
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    if (!response.body) {
+      throw new Error("No response body");
+    }
+    const result = await response.json();
+    return result?.data || {};
   }
 }
 
@@ -269,4 +298,13 @@ export const uploadChatFile = (
   onProgress?: (progress: number) => void,
 ) => {
   return smartVisionClient.fileUpload(file, onProgress);
+};
+
+// 对消息进行点赞操作
+export const upvoteMessage = (data: {
+  message_id: string;
+  is_upvote: UpvoteStatus;
+  content?: string;
+}) => {
+  return smartVisionClient.messageUpvote(data);
 };
