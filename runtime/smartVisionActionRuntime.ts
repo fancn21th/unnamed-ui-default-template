@@ -1,6 +1,6 @@
 import { upvoteMessage } from "@/runtime/smartvisionApi";
 import { UpvoteStatus } from "@/runtime/types";
-import { create } from "zustand";
+import { create, useStore } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { useAssistantState } from "@assistant-ui/react";
 
@@ -12,6 +12,10 @@ const store = create(
 );
 export const useSmartVisionActionActions = () => {
   const messageId = useAssistantState((s) => s.message.id);
+  const upvoteStatus = useAssistantState(
+    (s) => s.message.metadata.custom.is_upvote,
+  );
+  const cacheUpvoteStatus = useStore(store, (s) => s.upvoteMap[messageId]);
   const queryLikeStatus = ({
     like,
     dislike,
@@ -19,28 +23,38 @@ export const useSmartVisionActionActions = () => {
     like?: boolean;
     dislike?: boolean;
   }): boolean => {
-    const status = store.getState().upvoteMap[messageId];
-    if (like && status === UpvoteStatus.Like) {
-      return true;
+    const status = cacheUpvoteStatus || upvoteStatus || UpvoteStatus.None;
+    if (like) {
+      return status === UpvoteStatus.Like;
+    } else if (like === false) {
+      return status !== UpvoteStatus.Like;
     }
-    if (dislike && status === UpvoteStatus.Unlike) {
-      return true;
+    if (dislike) {
+      return status === UpvoteStatus.Unlike;
+    } else if (dislike === false) {
+      return status !== UpvoteStatus.Unlike;
     }
-    return false;
+    return status === UpvoteStatus.None;
   };
   const onLike = async () => {
+    const status = cacheUpvoteStatus || upvoteStatus;
     const res = await upvoteMessage({
       message_id: messageId,
-      is_upvote: UpvoteStatus.Like,
+      is_upvote:
+        status === UpvoteStatus.Like ? UpvoteStatus.None : UpvoteStatus.Like,
     });
     store.setState((state) => {
       state.upvoteMap[messageId] = res.is_upvote ?? UpvoteStatus.None;
     });
   };
   const onDislike = async (content?: string) => {
+    const status = cacheUpvoteStatus || upvoteStatus;
     const res = await upvoteMessage({
       message_id: messageId,
-      is_upvote: UpvoteStatus.Unlike,
+      is_upvote:
+        status === UpvoteStatus.Unlike
+          ? UpvoteStatus.None
+          : UpvoteStatus.Unlike,
       content,
     });
     store.setState((state) => {
