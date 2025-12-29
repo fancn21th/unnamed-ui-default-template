@@ -19,7 +19,7 @@ interface ComposerProps {
 export const Composer: FC<ComposerProps> = ({ sticky = true }) => {
   return (
     <div className={cn(
-      "aui-composer-wrapper mx-auto flex w-full max-w-[var(--thread-max-width)] flex-col gap-4 overflow-visible rounded-t-3xl bg-background pb-4 md:pb-6",
+      "aui-composer-wrapper z-10 mx-auto flex w-full max-w-[var(--thread-max-width)] flex-col gap-4 overflow-visible rounded-t-3xl bg-background pb-4 md:pb-6",
       sticky && "sticky bottom-0"
     )}>
       <ThreadScrollToBottom />
