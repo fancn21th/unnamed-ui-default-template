@@ -12,7 +12,7 @@ export const ThreadReference = () => {
 
   return (
     <Reference.ComposerContainer>
-      <QuoteContent>
+      <QuoteContent className="mb-[calc(-1*var(--gap-xs))]">
         <QuoteContentLeading>
           <CornerDownRight className="w-4 h-4" />
         </QuoteContentLeading>

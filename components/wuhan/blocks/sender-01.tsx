@@ -4,7 +4,7 @@ import * as React from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Loader2, Paperclip, Send } from "lucide-react";
+import { Loader2, Paperclip, ArrowUp } from "lucide-react";
 
 // ==================== 类型定义 ====================
 // 完全通用的类型，不强制任何业务概念
@@ -57,16 +57,17 @@ ButtonPrimitive.displayName = "ButtonPrimitive";
  * 容器样式原语
  * 提供基础的容器样式，用户完全控制内容
  */
+export interface ContainerPrimitiveProps extends React.ComponentPropsWithoutRef<"form"> {}
 
 export const ContainerPrimitive = React.forwardRef<
   HTMLFormElement,
-  React.ComponentPropsWithoutRef<"form">
+  ContainerPrimitiveProps
 >(({ children, className, ...props }, ref) => {
   return (
     <form
       ref={ref}
       className={cn(
-        "relative flex w-full flex-col border transition-colors has-[:focus-visible]:border-primary",
+        "relative flex w-full flex-col border transition-colors",
         "rounded-[var(--radius-2xl)]",
         "p-[var(--padding-com-lg)]",
         "gap-[var(--gap-xl)]",
@@ -84,8 +85,7 @@ ContainerPrimitive.displayName = "ContainerPrimitive";
  * 区域容器样式原语
  * 提供基础的区域布局样式，用户完全控制内容
  */
-export interface RegionPrimitiveProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+export interface RegionPrimitiveProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
   /**
    * 是否显示底部边框
@@ -134,23 +134,27 @@ export function RegionPrimitive({
  * 上传附件按钮样式原语
  * 提供上传附件按钮的基础样式
  */
+export interface AttachmentButtonPrimitiveProps extends React.ComponentProps<
+  typeof Button
+> {}
+
 export const AttachmentButtonPrimitive = React.forwardRef<
   HTMLButtonElement,
-  React.ComponentProps<typeof Button>
+  AttachmentButtonPrimitiveProps
 >(({ className, children, ...props }, ref) => {
   return (
     <Button
       ref={ref}
       {...props}
       className={cn(
-        "gap-2 border p-2",
+        "p-2 gap-2 border",
         "h-[var(--size-com-md)]",
         "w-[var(--size-com-md)]",
         "text-[var(--text-primary)]",
         "rounded-lg",
         "bg-[var(--bg-container)]",
         "border-[var(--border-neutral)]",
-        "transition-colors hover:bg-[var(--bg-neutral-light-hover)]",
+        "hover:bg-[var(--bg-neutral-light-hover)] transition-colors",
         className,
       )}
     >
@@ -164,8 +168,9 @@ AttachmentButtonPrimitive.displayName = "AttachmentButtonPrimitive";
  * 模式按钮样式原语（如深度思考、联网搜索等）
  * 提供模式选择按钮的基础样式和状态
  */
-export interface ModeButtonPrimitiveProps
-  extends React.ComponentProps<typeof Button> {
+export interface ModeButtonPrimitiveProps extends React.ComponentProps<
+  typeof Button
+> {
   /**
    * 是否选中状态
    */
@@ -181,7 +186,7 @@ export const ModeButtonPrimitive = React.forwardRef<
       ref={ref}
       {...props}
       className={cn(
-        "gap-1 rounded-lg border border-[var(--border-neutral)] px-3",
+        "rounded-lg gap-1 px-3 border border-[var(--border-neutral)]",
         "transition-colors",
         "h-[var(--size-com-md)]",
         "text-sm",
@@ -189,7 +194,7 @@ export const ModeButtonPrimitive = React.forwardRef<
         !selected && "bg-transparent hover:bg-[var(--bg-neutral-light-hover)]",
         // selected 状态
         selected &&
-          "border-[var(--border-brand-light-hover)] bg-[var(--bg-brand-light)] hover:bg-[var(--bg-brand-light)]",
+          "bg-[var(--bg-brand-light)] border-[var(--border-brand-light-hover)] hover:bg-[var(--bg-brand-light)]",
         selected ? "text-[var(--text-brand)]" : "text-[var(--text-primary)]",
         className,
       )}
@@ -205,8 +210,9 @@ ModeButtonPrimitive.displayName = "ModeButtonPrimitive";
  * 发送按钮样式原语
  * 提供圆形发送按钮的基础样式和状态
  */
-export interface SendButtonPrimitiveProps
-  extends React.ComponentProps<typeof Button> {
+export interface SendButtonPrimitiveProps extends React.ComponentProps<
+  typeof Button
+> {
   /**
    * 是否正在生成中
    */
@@ -233,22 +239,18 @@ export const SendButtonPrimitive = React.forwardRef<
     },
     ref,
   ) => {
-    const isDisabled = disabled || generating;
-
     return (
       <Button
         ref={ref}
         {...props}
-        disabled={isDisabled}
+        disabled={disabled}
         className={cn(
-          "h-8 w-8 gap-2 rounded-full p-2",
+          "w-8 h-8 rounded-full p-2 gap-2",
           "bg-[var(--primary)]",
           "text-[var(--text-inverse)]",
           "transition-opacity",
           // 禁用状态：添加透明度（使用 bg-mask 的 alpha 值 0.8）
-          isDisabled && !generating && "opacity-80",
-          // 生成中状态：完全不透明
-          generating && "opacity-100",
+          disabled && "opacity-80",
           className,
         )}
         aria-label={generating ? "Generating" : "Send"}
@@ -256,7 +258,7 @@ export const SendButtonPrimitive = React.forwardRef<
         {generating
           ? (generatingContent ??
             children ?? <Loader2 className="size-4 animate-spin" />)
-          : (children ?? <Send className="size-4" />)}
+          : (children ?? <ArrowUp className="size-4" />)}
       </Button>
     );
   },
@@ -267,8 +269,7 @@ SendButtonPrimitive.displayName = "SendButtonPrimitive";
  * 输入区域样式原语
  * 提供文本域区域的布局样式
  */
-export interface InputRegionPrimitiveProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+export interface InputRegionPrimitiveProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
   /**
    * 文本域前的上传附件按钮
@@ -292,7 +293,7 @@ export function InputRegionPrimitive({
       {attachmentButton && (
         <div className="flex items-center">{attachmentButton}</div>
       )}
-      <div className="relative flex-1">{children}</div>
+      <div className="flex-1 relative">{children}</div>
       {actions && <div className="flex items-center gap-2">{actions}</div>}
     </div>
   );
@@ -303,8 +304,7 @@ export function InputRegionPrimitive({
  * 提供底部操作栏的基础样式，用户完全控制内容结构
  * 注意：这是一个简单的容器组件，仅提供基础的顶部内边距
  */
-export interface ActionBarPrimitiveProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+export interface ActionBarPrimitiveProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
 }
 

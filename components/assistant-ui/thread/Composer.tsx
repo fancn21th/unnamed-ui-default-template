@@ -19,12 +19,12 @@ interface ComposerProps {
 export const Composer: FC<ComposerProps> = ({ sticky = true }) => {
   return (
     <div className={cn(
-      "aui-composer-wrapper mx-auto flex w-full max-w-[var(--thread-max-width)] flex-col gap-4 overflow-visible rounded-t-3xl bg-background pb-4 md:pb-6",
+      "aui-composer-wrapper z-10 mx-auto flex w-full max-w-[var(--thread-max-width)] flex-col gap-4 overflow-visible rounded-t-3xl bg-background pb-4 md:pb-6",
       sticky && "sticky bottom-0"
     )}>
       <ThreadScrollToBottom />
       <ComposerPrimitive.Root asChild>
-        <SenderContainer className="aui-composer-root shadow-[0_9px_9px_0px_rgba(0,0,0,0.01),0_2px_5px_0px_rgba(0,0,0,0.06)] dark:border-muted-foreground/15">
+        <SenderContainer className="aui-composer-root dark:border-muted-foreground/15">
           <ThreadReference />
           <ComposerAttachmentsRegion />
           <ComposerPrimitive.Input

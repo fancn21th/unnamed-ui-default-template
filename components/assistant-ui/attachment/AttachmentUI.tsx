@@ -70,7 +70,7 @@ export const AttachmentUI: FC = () => {
     <AttachmentCard
       variant="ghost"
       className={cn(
-        isImage ? "h-14 w-14 p-0" : "h-14 max-w-[200px]",
+        isImage ? "h-14 w-14 p-0 border border-[var(--divider-neutral-basic)]" : "h-14 w-[200px]",
         !isImage && "gap-[var(--gap-sm)] px-[var(--padding-com-md)]",
       )}
       aria-label={`${fileType} attachment`}
