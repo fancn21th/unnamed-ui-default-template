@@ -8,12 +8,10 @@ import { AttachmentCardItem } from "./AttachmentCardItem";
 
 export const UserMessageAttachments: FC = () => {
   return (
-    <div className="aui-user-message-attachments-end col-start-2 row-start-2 flex flex-row justify-end empty:hidden">
-      <AttachmentList className="!w-auto max-w-full">
-        <MessagePrimitive.Attachments
-          components={{ Attachment: AttachmentCardItem }}
-        />
-      </AttachmentList>
+    <div className="aui-user-message-attachments-end col-start-2 row-start-2 flex flex-col items-end gap-2 empty:hidden w-full max-w-full">
+      <MessagePrimitive.Attachments
+        components={{ Attachment: AttachmentCardItem }}
+      />
     </div>
   );
 };
@@ -39,7 +37,7 @@ export const ComposerAddAttachment: FC = () => {
         className="aui-composer-add-attachment size-[34px] rounded-full p-1 text-xs font-semibold hover:bg-muted-foreground/15 dark:border-muted-foreground/15 dark:hover:bg-muted-foreground/30"
         aria-label="Add Attachment"
       >
-        <PlusIcon className="aui-attachment-add-icon size-5 stroke-[1.5px]" />
+        <PlusIcon className="aui-attachment-add-icon size-5 stroke-[1.5px] hover:bg-[var(--bg-neutral-light)]" />
       </TooltipIconButton>
     </ComposerPrimitive.AddAttachment>
   );

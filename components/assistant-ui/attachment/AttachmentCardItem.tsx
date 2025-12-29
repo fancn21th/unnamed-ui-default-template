@@ -70,7 +70,7 @@ export const AttachmentCardItem: FC = () => {
     <AttachmentCard
       variant="ghost"
       className={cn(
-        isImage ? "h-14 w-14 p-0 border border-[var(--divider-neutral-basic)]" : "h-14 w-[200px]",
+        isImage ? "h-14 w-14 p-0 border border-[var(--divider-neutral-basic)]" : isComposer ? "h-14 w-[200px]" : "h-14 w-fit max-w-full",
         !isImage && "gap-[var(--gap-sm)] px-[var(--padding-com-md)]",
       )}
       aria-label={`${fileType} attachment`}
@@ -111,7 +111,7 @@ export const AttachmentCardItem: FC = () => {
   );
 
   return (
-    <AttachmentPrimitive.Root>
+    <AttachmentPrimitive.Root className={!isComposer && !isImage ? "w-fit max-w-full" : undefined}>
       {isImage ? (
         <AttachmentPreviewDialog>{card}</AttachmentPreviewDialog>
       ) : (

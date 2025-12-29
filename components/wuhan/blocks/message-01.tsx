@@ -230,6 +230,7 @@ const MessageAIPrimitive = React.forwardRef<
       >
         <div
           className={cn(
+            "w-full",
             "pt-[var(--gap-md)]",
             "pr-[var(--gap-lg)]",
             "pb-[var(--gap-md)]",
@@ -290,7 +291,7 @@ const MessageUserPrimitive = React.forwardRef<
   ) => {
     return (
       <div
-        className="[&_*]:!box-border w-fit max-w-full"
+        className="[&_*]:!box-border w-fit max-w-[70%]"
         ref={ref}
         role={role}
         aria-label={ariaLabel}
@@ -298,6 +299,7 @@ const MessageUserPrimitive = React.forwardRef<
       >
         <div
           className={cn(
+            "w-full",
             "pt-[var(--gap-md)]",
             "pr-[var(--gap-lg)]",
             "pb-[var(--gap-md)]",

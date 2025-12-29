@@ -28,10 +28,9 @@ export const TextareaPrimitive = React.forwardRef<
       {...props}
       className={cn(
         "resize-none border-none p-0 shadow-none focus-visible:ring-0",
-        // 默认两行高度，最多五行，超出显示滚动条
-        // 注意：这里假设 line-height 已经包含了行间距，实际高度可能因 padding 而略有差异
         "min-h-[calc(var(--line-height-2)*2)]",
         "max-h-[calc(var(--line-height-2)*5)]",
+        "leading-[var(--line-height-2)]",
         "overflow-y-auto",
         className,
       )}
