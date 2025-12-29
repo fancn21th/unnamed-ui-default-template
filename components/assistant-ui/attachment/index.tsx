@@ -8,8 +8,8 @@ import { AttachmentCardItem } from "./AttachmentCardItem";
 
 export const UserMessageAttachments: FC = () => {
   return (
-    <div className="aui-user-message-attachments-end col-span-full col-start-1 row-start-1 flex w-full flex-row justify-end empty:hidden">
-      <AttachmentList className="w-full">
+    <div className="aui-user-message-attachments-end col-start-2 row-start-2 flex flex-row justify-end empty:hidden">
+      <AttachmentList className="!w-auto max-w-full">
         <MessagePrimitive.Attachments
           components={{ Attachment: AttachmentCardItem }}
         />
