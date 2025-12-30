@@ -10,9 +10,18 @@ import { MessageSquareQuote } from "lucide-react";
 import { MessageError } from "./MessageError";
 import { MessageAvatarHeader } from "@/components/wuhan/blocks/avatar-header-01";
 import { TooltipIconButton } from "../tooltip-icon-button";
-import { DislikeFeedbackProvider } from "./primitives/action-bar-extend/DislikeFeedbackContext";
+import { DislikeFeedbackForm } from "./primitives/action-bar-extend/DislikeFeedbackForm";
+import { useSmartVisionActionActions } from "@/runtime/smartVisionActionRuntime";
 
 export const AssistantMessage: FC = () => {
+  const { isFeedbackOpen, closeFeedback, onDislike } = useSmartVisionActionActions();
+
+  const handleFeedbackSubmit = (data: { option?: string; content?: string }) => {
+    // Pass content to onDislike (maintaining backward compatibility)
+    onDislike(data.content);
+    // Note: option could be stored separately if needed in the future
+  };
+
   return (
     <MessagePrimitive.Root asChild>
       <div
@@ -25,18 +34,25 @@ export const AssistantMessage: FC = () => {
             <div className="flex justify-start">
               <MessageAvatarHeader name="Assistant" time="12:25" />
             </div>
-            <DislikeFeedbackProvider>
-              <WuhanAIMessage
-                className="break-words px-0"
-                feedback={
-                  <div className="aui-assistant-message-footer mt-2 flex flex-col">
-                    <div className="flex">
-                      <BranchPicker />
-                      <AssistantActionBar />
-                    </div>
+            <WuhanAIMessage
+              className="break-words px-0"
+              feedback={
+                <div className="aui-assistant-message-footer mt-2 flex flex-col">
+                  <div className="flex">
+                    <BranchPicker />
+                    <AssistantActionBar />
                   </div>
-                }
-              >
+                  {isFeedbackOpen && (
+                    <div className="mt-2">
+                      <DislikeFeedbackForm
+                        onSubmit={handleFeedbackSubmit}
+                        onClose={closeFeedback}
+                      />
+                    </div>
+                  )}
+                </div>
+              }
+            >
               <div className="aui-assistant-message-content leading-7 break-words">
                 <MessagePrimitive.Parts
                   components={{
@@ -52,7 +68,6 @@ export const AssistantMessage: FC = () => {
                 <MessageError />
               </div>
             </WuhanAIMessage>
-            </DislikeFeedbackProvider>
 
             <Reference.ActionBar className={"flex h-8 rounded-[var(--radius-lg)] border border-[var(--border-neutral)] bg-[var(--bg-container)] py-1 px-1 gap-1"}>
               <Reference.Use className={"flex gap-1"}>
