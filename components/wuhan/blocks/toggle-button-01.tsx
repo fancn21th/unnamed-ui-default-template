@@ -110,6 +110,7 @@ export const ToggleButtonPrimitive = React.forwardRef<
             "bg-[var(--bg-container)]",
             "border-[var(--border-brand-light-hover)]",
             "text-[var(--text-brand)]",
+            "hover:bg-[var(--bg-container)]",
           ],
         ],
         // 紧凑样式（用于sender组件等场景）
@@ -128,7 +129,7 @@ export const ToggleButtonPrimitive = React.forwardRef<
             "bg-[var(--bg-brand-light)]",
             "border-[var(--border-brand-light-hover)]",
             "text-[var(--text-brand)]",
-            "hover:bg-[var(--bg-brand-light)]",
+            "hover:bg-[var(--bg-container)]",
           ],
         ],
         className,

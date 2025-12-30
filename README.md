@@ -8,14 +8,17 @@
 NEXT_PUBLIC_TOKEN=7914e1fd043f4aaabb14ba8fcd5bd58b
 NEXT_PUBLIC_SLUG=/aiapp/v6u3qm67jmau
 NEXT_PUBLIC_BASE_URL=https://smartvision-dev.digitalchina.com/
+
+2. Start the development server at root directory
+
 ```
 ## 分支管理 / Branching
 
-- design system branch
+- 设计系统分支 / design system branch
 
   design system components of [unnamed-ui](https://github.com/fancn21th/unnamed-ui) integration
 
-- smartvision branch
+- smartvision 分支 / smartvision branch
 
   connect to SmartVision API
 

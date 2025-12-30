@@ -9,8 +9,19 @@ import { Reference } from "./primitives/reference";
 import { MessageSquareQuote } from "lucide-react";
 import { MessageError } from "./MessageError";
 import { MessageAvatarHeader } from "@/components/wuhan/blocks/avatar-header-01";
+import { TooltipIconButton } from "../tooltip-icon-button";
+import { DislikeFeedbackForm } from "./primitives/action-bar-extend/DislikeFeedbackForm";
+import { useSmartVisionActionActions } from "@/runtime/smartVisionActionRuntime";
 
 export const AssistantMessage: FC = () => {
+  const { isFeedbackOpen, closeFeedback, onDislike } = useSmartVisionActionActions();
+
+  const handleFeedbackSubmit = (data: { option?: string; content?: string }) => {
+    // Pass content to onDislike (maintaining backward compatibility)
+    onDislike(data.content);
+    // Note: option could be stored separately if needed in the future
+  };
+
   return (
     <MessagePrimitive.Root asChild>
       <div
@@ -26,9 +37,19 @@ export const AssistantMessage: FC = () => {
             <WuhanAIMessage
               className="break-words px-0"
               feedback={
-                <div className="aui-assistant-message-footer mt-2 flex">
-                  <BranchPicker />
-                  <AssistantActionBar />
+                <div className="aui-assistant-message-footer mt-2 flex flex-col">
+                  <div className="flex">
+                    <BranchPicker />
+                    <AssistantActionBar />
+                  </div>
+                  {isFeedbackOpen && (
+                    <div className="mt-2">
+                      <DislikeFeedbackForm
+                        onSubmit={handleFeedbackSubmit}
+                        onClose={closeFeedback}
+                      />
+                    </div>
+                  )}
                 </div>
               }
             >
@@ -48,10 +69,11 @@ export const AssistantMessage: FC = () => {
               </div>
             </WuhanAIMessage>
 
-            <Reference.ActionBar className={"flex bg-accent p-1"}>s
+            <Reference.ActionBar className={"flex h-8 rounded-[var(--radius-lg)] border border-[var(--border-neutral)] bg-[var(--bg-container)] py-1 px-1 gap-1"}>
               <Reference.Use className={"flex gap-1"}>
-                <MessageSquareQuote />
-                引用
+                <TooltipIconButton tooltip="引用" side="bottom" variant="ghost" size="icon">
+                  <MessageSquareQuote />
+                </TooltipIconButton>
               </Reference.Use>
             </Reference.ActionBar>
           </div>

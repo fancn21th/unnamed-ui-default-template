@@ -6,9 +6,13 @@ import { useAssistantState } from "@assistant-ui/react";
 
 interface SmartVisionChatActionState {
   upvoteMap: Record<string, UpvoteStatus>;
+  feedbackOpenMap: Record<string, boolean>;
 }
 const store = create(
-  immer<SmartVisionChatActionState>(() => ({ upvoteMap: {} })),
+  immer<SmartVisionChatActionState>(() => ({ 
+    upvoteMap: {},
+    feedbackOpenMap: {},
+  })),
 );
 export const useSmartVisionActionActions = () => {
   const messageId = useAssistantState((s) => s.message.id);
@@ -61,9 +65,26 @@ export const useSmartVisionActionActions = () => {
       state.upvoteMap[messageId] = res.is_upvote ?? UpvoteStatus.None;
     });
   };
+  const openFeedback = () => {
+    store.setState((state) => {
+      state.feedbackOpenMap[messageId] = true;
+    });
+  };
+
+  const closeFeedback = () => {
+    store.setState((state) => {
+      state.feedbackOpenMap[messageId] = false;
+    });
+  };
+
+  const isFeedbackOpen = useStore(store, (s) => s.feedbackOpenMap[messageId] ?? false);
+
   return {
     onLike,
     onDislike,
     queryLikeStatus,
+    openFeedback,
+    closeFeedback,
+    isFeedbackOpen,
   };
 };
