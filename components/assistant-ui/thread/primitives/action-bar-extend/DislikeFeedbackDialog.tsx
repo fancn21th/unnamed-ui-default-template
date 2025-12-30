@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 type Props = PropsWithChildren<{
   onSubmit?: (content?: string) => void;
 }>;
-export const AttachmentPreviewDialog: FC<Props> = ({ children, onSubmit }) => {
+export const DislikeFeedbackDialog: FC<Props> = ({ children, onSubmit }) => {
   const [open, setOpen] = useState(false);
   const [content, setContent] = useState<string>();
   const onOpenChange = (visible: boolean) => {

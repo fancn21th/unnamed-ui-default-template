@@ -7,6 +7,8 @@ import { MessageError } from "./MessageError";
 import { AssistantActionBar } from "./AssistantActionBar";
 import { Reference } from "./primitives/reference";
 import { MessageSquareQuote } from "lucide-react";
+import { ActionBarExtend } from "./primitives/action-bar-extend";
+import { DislikeFeedbackForm } from "@/components/assistant-ui/thread/primitives/action-bar-extend/DislikeFeedbackForm";
 
 export const AssistantMessage: FC = () => {
   return (
@@ -38,6 +40,9 @@ export const AssistantMessage: FC = () => {
           <BranchPicker />
           <AssistantActionBar />
         </div>
+        <ActionBarExtend.If dislikeFeedback>
+          <DislikeFeedbackForm />
+        </ActionBarExtend.If>
       </div>
     </MessagePrimitive.Root>
   );
