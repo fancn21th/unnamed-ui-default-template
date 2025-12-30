@@ -25,7 +25,7 @@ export const AssistantMessage: FC = () => {
         data-role="assistant"
       >
         <Reference.Root asChild>
-          <div className="mx-2">
+          <div className="">
             {/* MessageAvatarHeader 显示在顶部，左对齐 */}
             <div className="flex justify-start">
               <MessageAvatarHeader name="Assistant" time="12:25" />

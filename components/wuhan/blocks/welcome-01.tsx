@@ -101,7 +101,7 @@ export const WelcomeTextPrimitive = React.forwardRef<
     <div
       ref={ref}
       className={cn(
-        "text-[var(--text-primary)]",
+        "text-[var(--text-title)]",
         "font-semibold",
         "text-xl leading-[var(--line-height-4)] tracking-[0px]",
         "[&_*]:!box-border",

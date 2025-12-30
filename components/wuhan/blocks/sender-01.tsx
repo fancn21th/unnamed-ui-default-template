@@ -34,6 +34,7 @@ export const TextareaPrimitive = React.forwardRef<
         "min-h-[calc(var(--line-height-2)*2)]",
         "max-h-[calc(var(--line-height-2)*5)]",
         "overflow-y-auto",
+        // "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
         "leading-[var(--line-height-2)]",
         // 光标颜色使用主题色
         "caret-[var(--primary)]",
@@ -158,7 +159,7 @@ export const AttachmentButtonPrimitive = React.forwardRef<
         "rounded-lg",
         "bg-[var(--bg-container)]",
         "border-[var(--border-neutral)]",
-        "hover:bg-[var(--bg-neutral-light-hover)] transition-colors",
+        "hover:bg-[var(--bg-neutral-light)] transition-colors",
         className,
       )}
     >
@@ -290,7 +291,7 @@ export function ActionBarPrimitive({
   ...props
 }: ActionBarPrimitiveProps) {
   return (
-    <div className={cn("pt-2", className)} {...props}>
+    <div className={cn("", className)} {...props}>
       {children}
     </div>
   );
