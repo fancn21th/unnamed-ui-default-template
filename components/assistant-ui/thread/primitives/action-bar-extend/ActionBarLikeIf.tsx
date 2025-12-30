@@ -1,7 +1,6 @@
 import { FC, type PropsWithChildren } from "react";
 import {
   useSmartVisionActionActions,
-  useSmartVisionActionStore,
 } from "@/runtime/smartVisionActionRuntime";
 
 export type Props = PropsWithChildren<{
