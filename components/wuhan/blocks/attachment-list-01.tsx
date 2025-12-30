@@ -13,6 +13,10 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 const SCROLL_THRESHOLD = 1; // 滚动检测容差（处理浮点数精度问题）
 const SCROLL_RATIO = 0.8; // 每次滚动容器宽度的比例
 const SCROLL_PADDING = 0; // 滚动容器的垂直内边距（px）
+const DELETE_BUTTON_OFFSET = 4; // 删除按钮向上偏移量（px，对应 -top-1 = -4px）
+const DELETE_BUTTON_HEIGHT = 20; // 删除按钮高度（px，对应 w-5 h-5 = 20px）
+// 滚动容器顶部 padding，用于为删除按钮留出空间（删除按钮偏移 + 一半高度 + 安全边距）
+const SCROLL_CONTAINER_PADDING_TOP = DELETE_BUTTON_OFFSET + DELETE_BUTTON_HEIGHT / 2 + 2; // 4 + 10 + 2 = 16px
 
 // ==================== 样式原语层（Primitives）====================
 // 这些组件只提供样式，不包含任何逻辑和业务假设
@@ -198,7 +202,7 @@ const AttachmentCardDeleteButton = React.forwardRef<
         "opacity-0 pointer-events-none",
         "group-hover/card:opacity-100 group-hover/card:pointer-events-auto",
         "transition-opacity duration-150",
-        "hover:bg-[var(--bg-neutral-light-hover)]",
+        "hover:bg-[var(--bg-neutral-light)]",
         "transition-colors",
         className,
       )}
@@ -409,7 +413,8 @@ function AttachmentListPrimitive({
         onScroll={scheduleCheckScrollability}
         className="overflow-x-auto overflow-y-visible no-scrollbar relative [&::-webkit-scrollbar]:hidden"
         style={{
-          paddingTop: shouldApplyPadding ? `${SCROLL_PADDING}px` : "0px",
+          // 始终为删除按钮留出顶部空间（删除按钮向上偏移 4px，高度 20px，需要至少 14px 的 padding）
+          paddingTop: `${SCROLL_CONTAINER_PADDING_TOP}px`,
           paddingBottom: shouldApplyPadding ? `${SCROLL_PADDING}px` : "0px",
           scrollbarWidth: "none",
           msOverflowStyle: "none",
@@ -449,7 +454,7 @@ function AttachmentListPrimitive({
               "border border-[var(--border-neutral)]",
               "p-[var(--padding-com-xs)]",
               "flex items-center justify-center",
-              "hover:bg-[var(--bg-neutral-light-hover)]",
+              "hover:bg-[var(--bg-neutral-light)]",
               "transition-colors",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
             )}
@@ -486,7 +491,7 @@ function AttachmentListPrimitive({
               "border border-[var(--border-neutral)]",
               "p-[var(--padding-com-xs)]",
               "flex items-center justify-center",
-              "hover:bg-[var(--bg-neutral-light-hover)]",
+              "hover:bg-[var(--bg-neutral-light)]",
               "transition-colors",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
             )}
