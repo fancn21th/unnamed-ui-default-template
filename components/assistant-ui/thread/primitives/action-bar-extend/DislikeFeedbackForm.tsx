@@ -9,16 +9,7 @@ import {
   FeedbackSubmitButtonPrimitive,
 } from "@/components/wuhan/blocks/feedback-01";
 import { ToggleButtonGroupPrimitive } from "@/components/wuhan/blocks/toggle-button-01";
-
-export interface DislikeFeedbackData {
-  options?: string[];
-  content?: string;
-}
-
-type Props = {
-  onSubmit?: (data: DislikeFeedbackData) => void;
-  onClose?: () => void;
-};
+import { useSmartVisionActionActions } from "@/runtime/smartVisionActionRuntime";
 
 const FEEDBACK_OPTIONS: Array<{ id: string; label: string }> = [
   { id: "1", label: "有害/不安全" },
@@ -30,36 +21,35 @@ const FEEDBACK_OPTIONS: Array<{ id: string; label: string }> = [
 
 const OTHER_OPTION_ID = "5";
 
-export const DislikeFeedbackForm: FC<Props> = ({ onSubmit, onClose }) => {
+export const DislikeFeedbackForm: FC = () => {
   const [content, setContent] = useState<string>("");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-
+  const { onCancelDislikeFeedback, onSubmitDislikeFeedback } =
+    useSmartVisionActionActions();
   const hasOtherSelected = selectedIds.includes(OTHER_OPTION_ID);
   const hasAnySelected = selectedIds.length > 0;
 
   const handleSubmit = () => {
-    onSubmit?.({
-      options: selectedIds.length > 0 ? selectedIds : undefined,
-      content: content || undefined,
-    });
+    const feedback = [
+      ...FEEDBACK_OPTIONS.filter(
+        (d) => d.id !== OTHER_OPTION_ID && selectedIds.includes(d.id),
+      ).map((d) => d.label),
+      content,
+    ].join(",");
+    onSubmitDislikeFeedback(feedback);
     // Reset form state
     setContent("");
     setSelectedIds([]);
-    onClose?.();
-  };
-
-  const handleClose = () => {
-    // Reset form state on close
-    setContent("");
-    setSelectedIds([]);
-    onClose?.();
   };
 
   return (
-    <FeedbackContainerPrimitive className="w-[var(--thread-max-width)]" onClose={handleClose}>
+    <FeedbackContainerPrimitive
+      className="w-[var(--thread-max-width)]"
+      onClose={onCancelDislikeFeedback}
+    >
       <FeedbackHeaderPrimitive
         title="有什么问题?"
-        onClose={handleClose}
+        onClose={onCancelDislikeFeedback}
       />
       <ToggleButtonGroupPrimitive
         options={FEEDBACK_OPTIONS}
@@ -72,16 +62,20 @@ export const DislikeFeedbackForm: FC<Props> = ({ onSubmit, onClose }) => {
           <FeedbackInputPrimitive
             placeholder="请输入详细描述..."
             value={content}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => setContent(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setContent(e.target.value)
+            }
           />
         </FeedbackInputContainerPrimitive>
       )}
       <div>
-        <FeedbackSubmitButtonPrimitive disabled={!hasAnySelected} onClick={handleSubmit}>
+        <FeedbackSubmitButtonPrimitive
+          disabled={!hasAnySelected}
+          onClick={handleSubmit}
+        >
           提交
         </FeedbackSubmitButtonPrimitive>
       </div>
     </FeedbackContainerPrimitive>
   );
 };
-
