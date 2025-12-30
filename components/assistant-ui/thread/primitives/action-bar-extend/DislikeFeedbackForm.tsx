@@ -11,7 +11,7 @@ import {
 import { ToggleButtonGroupPrimitive } from "@/components/wuhan/blocks/toggle-button-01";
 
 export interface DislikeFeedbackData {
-  option?: string;
+  options?: string[];
   content?: string;
 }
 
@@ -28,50 +28,56 @@ const FEEDBACK_OPTIONS: Array<{ id: string; label: string }> = [
   { id: "5", label: "其他" },
 ];
 
-const DEFAULT_OPTION = "1";
+const OTHER_OPTION_ID = "5";
 
 export const DislikeFeedbackForm: FC<Props> = ({ onSubmit, onClose }) => {
   const [content, setContent] = useState<string>("");
-  const [selectedOption, setSelectedOption] = useState<string>(DEFAULT_OPTION);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  const hasOtherSelected = selectedIds.includes(OTHER_OPTION_ID);
+  const hasAnySelected = selectedIds.length > 0;
 
   const handleSubmit = () => {
     onSubmit?.({
-      option: selectedOption,
+      options: selectedIds.length > 0 ? selectedIds : undefined,
       content: content || undefined,
     });
     // Reset form state
     setContent("");
-    setSelectedOption(DEFAULT_OPTION);
+    setSelectedIds([]);
     onClose?.();
   };
 
   const handleClose = () => {
     // Reset form state on close
     setContent("");
-    setSelectedOption(DEFAULT_OPTION);
+    setSelectedIds([]);
     onClose?.();
   };
 
   return (
-    <FeedbackContainerPrimitive onClose={handleClose}>
+    <FeedbackContainerPrimitive className="w-[var(--thread-max-width)]" onClose={handleClose}>
       <FeedbackHeaderPrimitive
         title="有什么问题?"
         onClose={handleClose}
       />
       <ToggleButtonGroupPrimitive
         options={FEEDBACK_OPTIONS}
-        selectedId={selectedOption}
-        onOptionChange={setSelectedOption}
+        multiple={true}
+        selectedIds={selectedIds}
+        onOptionsChange={setSelectedIds}
       />
-      <FeedbackInputContainerPrimitive>
-        <FeedbackInputPrimitive
-          placeholder="请输入详细描述..."
-          value={content}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setContent(e.target.value)}
-        />
-      </FeedbackInputContainerPrimitive>
+      {hasOtherSelected && (
+        <FeedbackInputContainerPrimitive>
+          <FeedbackInputPrimitive
+            placeholder="请输入详细描述..."
+            value={content}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setContent(e.target.value)}
+          />
+        </FeedbackInputContainerPrimitive>
+      )}
       <div>
-        <FeedbackSubmitButtonPrimitive onClick={handleSubmit}>
+        <FeedbackSubmitButtonPrimitive disabled={!hasAnySelected} onClick={handleSubmit}>
           提交
         </FeedbackSubmitButtonPrimitive>
       </div>

@@ -92,7 +92,7 @@ interface FeedbackSubmitButtonPrimitiveProps extends React.ComponentProps<
 const FeedbackContainerPrimitive = React.forwardRef<
   HTMLDivElement,
   FeedbackContainerPrimitiveProps
->(({ className, onClose, children, ...props }, ref) => {
+>(({ className, children, ...props }, ref) => {
   return (
     <div
       ref={ref}

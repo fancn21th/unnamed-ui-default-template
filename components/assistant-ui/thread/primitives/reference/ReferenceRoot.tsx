@@ -51,7 +51,7 @@ const ReferenceRoot = forwardRef<Element, Props>((props, forwardedRef) => {
     return () => {
       document.removeEventListener("selectionchange", onSelectionChange);
     };
-  }, []);
+  }, [onChoose, onClear]);
   return <Primitive.div {...props} ref={ref} />;
 });
 ReferenceRoot.displayName = "ReferenceRoot";
