@@ -9,6 +9,7 @@ import { Reference } from "./primitives/reference";
 import { MessageSquareQuote } from "lucide-react";
 import { MessageError } from "./MessageError";
 import { MessageAvatarHeader } from "@/components/wuhan/blocks/avatar-header-01";
+import { TooltipIconButton } from "../tooltip-icon-button";
 
 export const AssistantMessage: FC = () => {
   return (
@@ -48,10 +49,11 @@ export const AssistantMessage: FC = () => {
               </div>
             </WuhanAIMessage>
 
-            <Reference.ActionBar className={"flex bg-accent p-1"}>s
+            <Reference.ActionBar className={"flex h-8 rounded-lg border border-[var(--border-neutral)] bg-[var(--bg-container)] py-1 px-1 gap-1"}>
               <Reference.Use className={"flex gap-1"}>
-                <MessageSquareQuote />
-                引用
+                <TooltipIconButton tooltip="引用" side="bottom" variant="ghost" size="icon">
+                  <MessageSquareQuote />
+                </TooltipIconButton>
               </Reference.Use>
             </Reference.ActionBar>
           </div>

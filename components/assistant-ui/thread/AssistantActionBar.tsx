@@ -21,7 +21,7 @@ export const AssistantActionBar: FC = () => {
       <ActionBarExtend.Like asChild>
         <TooltipIconButton tooltip="Like">
           <ActionBarExtend.If like>
-            <ThumbsUp fill="#232323" />
+            <ThumbsUp className="fill-[var(--primary)] stroke-none" />
           </ActionBarExtend.If>
           <ActionBarExtend.If like={false}>
             <ThumbsUp />
@@ -31,7 +31,7 @@ export const AssistantActionBar: FC = () => {
       <ActionBarExtend.Dislike asChild>
         <TooltipIconButton tooltip="Dislike">
           <ActionBarExtend.If dislike>
-            <ThumbsDown fill="#232323" />
+            <ThumbsDown className="fill-[var(--primary)] stroke-none" />
           </ActionBarExtend.If>
           <ActionBarExtend.If dislike={false}>
             <ThumbsDown />
