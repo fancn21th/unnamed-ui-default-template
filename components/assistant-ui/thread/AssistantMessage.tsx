@@ -7,6 +7,8 @@ import { BranchPicker } from "./BranchPicker";
 import { AssistantActionBar } from "./AssistantActionBar";
 import { Reference } from "./primitives/reference";
 import { MessageSquareQuote } from "lucide-react";
+import { ActionBarExtend } from "./primitives/action-bar-extend";
+import { DislikeFeedbackForm } from "@/components/assistant-ui/thread/primitives/action-bar-extend/DislikeFeedbackForm";
 import { MessageError } from "./MessageError";
 import { MessageAvatarHeader } from "@/components/wuhan/blocks/avatar-header-01";
 import { TooltipIconButton } from "../tooltip-icon-button";
@@ -62,7 +64,7 @@ export const AssistantMessage: FC = () => {
                       indicator={<LoadingDots />}
                       text="正在生成中..."
                     />,
-                    
+
                   }}
                 />
                 <MessageError />
