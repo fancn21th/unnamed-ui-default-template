@@ -8,28 +8,13 @@ export type Element = ComponentRef<typeof Primitive.button>;
 export type Props = PrimitiveProps & {};
 export const ActionBarPrimitiveDislike = forwardRef<Element, Props>(
   ({ onClick, ...props }, ref) => {
-    const { onDislike, queryLikeStatus, openFeedback } = useSmartVisionActionActions();
-    const result = queryLikeStatus({ dislike: true });
-    if (result) {
-      return (
-        <Primitive.button
-          type="button"
-          {...props}
-          ref={ref}
-          onClick={composeEventHandlers(onClick, () => {
-            onDislike();
-          })}
-        />
-      );
-    }
+    const { onDislikeClick } = useSmartVisionActionActions();
     return (
       <Primitive.button
         type="button"
         {...props}
         ref={ref}
-        onClick={composeEventHandlers(onClick, () => {
-          openFeedback();
-        })}
+        onClick={composeEventHandlers(onClick, onDislikeClick)}
       />
     );
   },
