@@ -19,33 +19,35 @@ export const ThreadList: FC = () => {
     <ThreadListPrimitive.Root asChild>
       <SidebarContentPrimitive>
       {/* New Button */}
-      <div className="mt-[var(--gap-lg)]">
+      <div>
         <ThreadListNew />
       </div>
 
       {/* Divider */}
-      <SidebarDividerPrimitive />
+      <SidebarDividerPrimitive className="m-0"/>
 
-      <SidebarHistoryTitle>历史对话</SidebarHistoryTitle>
+      <div className="flex flex-col flex-1 min-h-0 gap-[var(--gap-lg)]">
+        <SidebarHistoryTitle className="m-0">历史对话</SidebarHistoryTitle>
 
-      {/* Search */}
-      <SidebarHistorySearchPrimitive>
-        <SidebarHistorySearchContainer>
-          <SidebarHistorySearchIcon>
-            <Search className="size-4" />
-          </SidebarHistorySearchIcon>
-          <SidebarHistorySearchInput placeholder="搜索" />
-        </SidebarHistorySearchContainer>
-      </SidebarHistorySearchPrimitive>
+        {/* Search */}
+        <SidebarHistorySearchPrimitive className="m-0">
+          <SidebarHistorySearchContainer>
+            <SidebarHistorySearchIcon>
+              <Search className="size-4" />
+            </SidebarHistorySearchIcon>
+            <SidebarHistorySearchInput placeholder="搜索" />
+          </SidebarHistorySearchContainer>
+        </SidebarHistorySearchPrimitive>
 
-      {/* History */}
-      <SidebarHistoryPrimitive>
+        {/* History */}
+        <SidebarHistoryPrimitive>
 
-        {/* List */}
-        <SidebarHistoryListPrimitive>
-          <ThreadListItems />
+          {/* List */}
+          <SidebarHistoryListPrimitive className="gap-[var(--gap-xs)]">
+            <ThreadListItems />
           </SidebarHistoryListPrimitive>
         </SidebarHistoryPrimitive>
+      </div>
       </SidebarContentPrimitive>
     </ThreadListPrimitive.Root>
   );

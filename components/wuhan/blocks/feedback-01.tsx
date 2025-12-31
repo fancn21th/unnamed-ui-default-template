@@ -105,7 +105,7 @@ const FeedbackContainerPrimitive = React.forwardRef<
         "pb-[var(--margin-com-xl)]",
         "pl-[var(--padding-com-xl)]",
         "gap-3",
-        "bg-[var(--bg-page-neutral)]",
+        "bg-[var(--bg-page-secondary)]",
         "flex flex-col",
         className,
       )}
@@ -241,7 +241,11 @@ const FeedbackInputPrimitive = React.forwardRef<
         className,
       )}
     >
-      <SidebarHistorySearchInput ref={ref} {...props} />
+      <SidebarHistorySearchInput 
+        ref={ref} 
+        className="caret-[var(--primary)]"
+        {...props} 
+      />
     </SidebarHistorySearchContainer>
   );
 });

@@ -72,7 +72,8 @@
   --border-brand-active: var(--border-brand-active);
   --border-brand-hover: var(--border-brand-hover);
   --border-brand: var(--border-brand);
-  --bg-page-neutral: var(--bg-page-neutral);
+  --bg-page-secondary: var(--bg-page-secondary);
+  --bg-container-secondary: var(--bg-container-secondary);
   --bg-page-brand: var(--bg-page-brand);
   --bg-page: var(--bg-page);
   --color-bg-mask: var(--bg-mask);
@@ -333,7 +334,8 @@
   --bg-neutral-light-hover: var(--neutral-200);
   --bg-page: var(--neutral-0);
   --bg-page-brand: var(--brand-50);
-  --bg-page-neutral: var(--neutral-50);
+  --bg-page-secondary: var(--neutral-50);
+  --bg-container-secondary: var(--neutral-50);
   --bg-success: var(--success-600);
   --bg-success-active: var(--success-700);
   --bg-success-hover: var(--success-500);
@@ -679,7 +681,8 @@
   --bg-neutral-light-hover: var(--neutral-200);
   --bg-page: var(--neutral-0);
   --bg-page-brand: var(--brand-50);
-  --bg-page-neutral: var(--neutral-50);
+  --bg-page-secondary: var(--neutral-50);
+  --bg-container-secondary: var(--neutral-50);
   --bg-success: var(--success-600);
   --bg-success-active: var(--success-700);
   --bg-success-hover: var(--success-500);
