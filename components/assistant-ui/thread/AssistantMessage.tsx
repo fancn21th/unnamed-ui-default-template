@@ -62,19 +62,9 @@ export const AssistantMessage: FC = () => {
                 <MessageError />
               </div>
             </WuhanAIMessage>
-
-            <Reference.ActionBar
-              className={
-                "flex h-8 gap-1 rounded-[var(--radius-lg)] border border-[var(--border-neutral)] bg-[var(--bg-container)] px-1 py-1"
-              }
-            >
-              <Reference.Use className={"flex gap-1"}>
-                <TooltipIconButton
-                  tooltip="引用"
-                  side="bottom"
-                  variant="ghost"
-                  size="icon"
-                >
+            <Reference.ActionBar className={"flex h-8 rounded-[var(--radius-lg)] border border-[var(--border-neutral)] bg-[var(--bg-container)] py-1 px-[calc(var(--gap-xs)-1px)] gap-1"}>
+              <Reference.Use className={"flex gap-1"} asChild>
+                <TooltipIconButton tooltip="引用"  side="bottom" variant="ghost" size="icon">
                   <MessageSquareQuote />
                 </TooltipIconButton>
               </Reference.Use>

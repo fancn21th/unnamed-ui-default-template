@@ -44,7 +44,7 @@ const SidebarContentPrimitive = React.forwardRef<
       className={cn(
         "min-h-0",
         "flex flex-col",
-        "gap-[var(--gap-md)]",
+        "gap-[var(--gap-xl)]",
         className,
       )}
       {...props}

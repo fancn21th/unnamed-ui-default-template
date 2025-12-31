@@ -37,7 +37,7 @@ const ReferenceRoot = forwardRef<Element, Props>((props, forwardedRef) => {
             left: 0,
           };
 
-          const top = range.top - componentRect.top - 28; // 20px above the selected text
+          const top = range.top - componentRect.top - 24; // 20px above the selected text
           const left = range.left - componentRect.left;
           onChoose?.(selectText, { top, left });
         }

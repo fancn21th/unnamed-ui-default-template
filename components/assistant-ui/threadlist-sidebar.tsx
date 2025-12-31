@@ -30,16 +30,19 @@ export function ThreadListSidebar({
     <Sidebar 
       {...props} 
       collapsible="icon" 
-      className="border-none"
+      className="border-none group-data-[state=collapsed]:border-r"
       style={{
         "--sidebar-width-icon": "56px",
         ...props.style,
       } as React.CSSProperties}
     >
-      <SidebarPrimitive className={cn(
-        "shrink-0 w-full opacity-100 bg-[var(--bg-page-neutral)] overflow-hidden transition-all duration-200",
-        isCollapsed ? "p-2 bg-[var(--background)]" : "p-[var(--padding-com-lg)]"
-      )}>
+      <SidebarPrimitive 
+        className={cn(
+          "shrink-0 w-full opacity-100 bg-[var(--bg-page-secondary)] overflow-hidden transition-all duration-200",
+          isCollapsed ? "p-2 bg-[var(--background)] border-r" : "p-[var(--padding-com-lg)]"
+        )}
+        style={isCollapsed ? { borderColor: "var(--border-neutral)", borderRightWidth: "1px" } : undefined}
+      >
         <SidebarContentPrimitive>
           {/* Header */}
           <SidebarHeaderPrimitive className={cn(
