@@ -7,15 +7,19 @@ const useFileSrc = (file: File | undefined) => {
 
   useEffect(() => {
     if (!file) {
+      queueMicrotask(() => {
+        setSrc(undefined);
+      });
       return;
     }
 
     const objectUrl = URL.createObjectURL(file);
-    setSrc(objectUrl);
+    queueMicrotask(() => {
+      setSrc(objectUrl);
+    });
 
     return () => {
       URL.revokeObjectURL(objectUrl);
-      setSrc(undefined);
     };
   }, [file]);
 
