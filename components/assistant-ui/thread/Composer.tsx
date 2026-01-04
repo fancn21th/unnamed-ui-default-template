@@ -19,34 +19,36 @@ interface ComposerProps {
 export const Composer: FC<ComposerProps> = ({ sticky = true }) => {
   return (
     <div className={cn(
-      "aui-composer-wrapper z-10 mx-auto flex w-full max-w-[var(--thread-max-width)] flex-col gap-4 overflow-visible rounded-t-3xl bg-background pb-4 md:pb-6",
+      "aui-composer-wrapper z-10 mx-auto flex w-full max-w-[var(--thread-max-width)] flex-col gap-0 overflow-visible rounded-t-3xl bg-background pb-4 md:pb-6",
       sticky && "sticky bottom-0"
     )}>
       <ThreadScrollToBottom />
       <ComposerPrimitive.Root asChild>
-        <SenderContainer className="aui-composer-root dark:border-muted-foreground/15">
+        <SenderContainer className="aui-composer-root gap-0 dark:border-muted-foreground/15">
           <div className="flex flex-col gap-3">
             <ThreadReference />
             <ComposerAttachmentsRegion />
           </div>
-          <ComposerPrimitive.Input
-            placeholder="Send a message..."
-            rows={1}
-            autoFocus
-            aria-label="Message input"
-            asChild
-          >
-            <SenderTextarea className="caret-[var(--primary)]" />
-          </ComposerPrimitive.Input>
-          <SenderActionBar className="flex items-center justify-between">
-            <ComposerPrimitive.AddAttachment asChild>
-              <SenderAttachmentButton
-                className="cursor-pointer"
-                aria-label="Add Attachment"
-              />
-            </ComposerPrimitive.AddAttachment>
-            <ComposerAction />
-          </SenderActionBar>
+          <div className="flex flex-col gap-4">
+            <ComposerPrimitive.Input
+              placeholder="Send a message..."
+              rows={1}
+              autoFocus
+              aria-label="Message input"
+              asChild
+            >
+              <SenderTextarea className="caret-[var(--primary)]" />
+            </ComposerPrimitive.Input>
+            <SenderActionBar className="flex items-center justify-between">
+              <ComposerPrimitive.AddAttachment asChild>
+                <SenderAttachmentButton
+                  className="cursor-pointer"
+                  aria-label="Add Attachment"
+                />
+              </ComposerPrimitive.AddAttachment>
+              <ComposerAction />
+            </SenderActionBar>
+          </div>
         </SenderContainer>
       </ComposerPrimitive.Root>
     </div>

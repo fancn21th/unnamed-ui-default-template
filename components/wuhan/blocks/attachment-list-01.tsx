@@ -413,6 +413,7 @@ function AttachmentListPrimitive({
           // 始终为删除按钮留出顶部空间（删除按钮向上偏移 4px，高度 20px，需要至少 14px 的 padding）
           paddingTop: `${SCROLL_CONTAINER_PADDING_TOP}px`,
           paddingBottom: shouldApplyPadding ? `${SCROLL_PADDING}px` : "0px",
+          marginTop: "-4px",
           scrollbarWidth: "none",
           msOverflowStyle: "none",
         }}
