@@ -92,6 +92,7 @@ export type SmartVisionMessage =
       id: string;
       content: string | SmartVisionContentPart[];
       readonly attachments?: readonly CompleteAttachment[] | undefined;
+      readonly reference?: string;
     }
   | {
       type: "ai";
