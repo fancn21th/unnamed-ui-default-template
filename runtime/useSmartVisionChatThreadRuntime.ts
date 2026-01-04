@@ -12,12 +12,18 @@ import {
 import { SmartVisionContentPart, SmartVisionMessage } from "@/runtime/types";
 import { useSmartVisionExternalHistory } from "./useSmartVisionExternalHistory";
 import { smartVisionFileAttachmentAdapter } from "./SmartVisionFileAttachmentAdapter";
+import {
+  useSmartVisionChatReferenceActions,
+  useSmartVisionChatReferenceStore,
+} from "@/runtime/smartVisionReferenceRuntime";
 
 export const useSmartVisionChatThreadRuntime = () => {
   const [isRunning, setIsRunning] = useState(false);
   const { messages, sendMessage, setMessages } = useSmartVisionMessages();
+  const { clearReference } = useSmartVisionChatReferenceActions();
 
   const handleSendMessage = async (newMessages: SmartVisionMessage[]) => {
+    clearReference();
     try {
       setIsRunning(true);
       await sendMessage(newMessages);
@@ -41,6 +47,7 @@ export const useSmartVisionChatThreadRuntime = () => {
     getSmartVisionMessage,
     setMessages,
   );
+  const reference = useSmartVisionChatReferenceStore((s) => s.reference);
   const runtime = useExternalStoreRuntime({
     isRunning,
     messages: threadMessages,
@@ -59,6 +66,7 @@ export const useSmartVisionChatThreadRuntime = () => {
           return { type: "text", text: "" } as SmartVisionContentPart;
         }),
         attachments: message.attachments,
+        reference: reference,
       };
       await handleSendMessage([userMessage]);
     },

@@ -68,12 +68,17 @@ export class SmartVisionClient {
       })
       .flat()
       .filter(Boolean);
+    const referenced_query = params.messages
+      .filter((d) => d.type === "human")
+      .map((d) => d.reference)
+      .filter(Boolean)
+      .join();
     // 构造请求体（参考 smartversion 的格式）
     const body = {
       // app_id: "-2",
       files: files,
       query: query,
-      referenced_query: "",
+      referenced_query,
       response_mode: "streaming",
       stream: true,
       task_id: params.taskId,
