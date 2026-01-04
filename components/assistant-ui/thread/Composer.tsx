@@ -25,8 +25,10 @@ export const Composer: FC<ComposerProps> = ({ sticky = true }) => {
       <ThreadScrollToBottom />
       <ComposerPrimitive.Root asChild>
         <SenderContainer className="aui-composer-root dark:border-muted-foreground/15">
-          <ThreadReference />
-          <ComposerAttachmentsRegion />
+          <div className="flex flex-col gap-3">
+            <ThreadReference />
+            <ComposerAttachmentsRegion />
+          </div>
           <ComposerPrimitive.Input
             placeholder="Send a message..."
             rows={1}
