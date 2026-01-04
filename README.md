@@ -1,6 +1,6 @@
 # Default Template for Unnamed UI
 
-## 如何开始 / Getting Started
+## 开始开发 / Getting Started
 
 1. Create a `.env` file in the root directory of the project and add the following environment variables:
 
@@ -25,6 +25,6 @@ NEXT_PUBLIC_BASE_URL=https://smartvision-dev.digitalchina.com/
 ## 哲学 / Philosophy
 
 - do less and focus on more important things
-- agile extreme programming practices
+
 
 
