@@ -67,6 +67,7 @@ export const useSmartVisionChatThreadRuntime = () => {
         }),
         attachments: message.attachments,
         reference: reference,
+        created_at: Date.now(),
       };
       await handleSendMessage([userMessage]);
     },
