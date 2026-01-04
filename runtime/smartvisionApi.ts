@@ -261,6 +261,44 @@ export class SmartVisionClient {
     const result = await response.json();
     return result?.data || {};
   }
+
+  /**
+   * 获取配置
+   * */
+  async loadConfig() {
+    const headers = this.getHeaders();
+    const response = await fetch(`${this.apiUrl}/config`, {
+      headers,
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    if (!response.body) {
+      throw new Error("No response body");
+    }
+    const result = await response.json();
+    return result || {};
+  }
+
+  /**
+   * 获取应用配置
+   * */
+  async getApp() {
+    const headers = this.getHeaders();
+    const response = await fetch(`${this.apiUrl}/getApp`, {
+      headers,
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    if (!response.body) {
+      throw new Error("No response body");
+    }
+    const result = await response.json();
+    return result || {};
+  }
 }
 
 // 创建单例实例
@@ -302,4 +340,14 @@ export const upvoteMessage = (data: {
   content?: string;
 }) => {
   return smartVisionClient.messageUpvote(data);
+};
+
+// 获取配置
+export const loadConfig = () => {
+  return smartVisionClient.loadConfig();
+};
+
+// 获取App配置
+export const getApp = () => {
+  return smartVisionClient.getApp();
 };

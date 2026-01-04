@@ -71,6 +71,7 @@ export const convertSmartVisionMessages: useExternalMessageConverter.Callback<
             is_upvote: messages.is_upvote,
           },
         },
+        createdAt: new Date(messages.created_at),
       };
       console.log("📋 Converted array content message:", convertedMessage);
       return convertedMessage;
@@ -80,6 +81,7 @@ export const convertSmartVisionMessages: useExternalMessageConverter.Callback<
         id: messages.id,
         role: "assistant" as const,
         content: [{ type: "text" as const, text: String(messages.content) }],
+        createdAt: new Date(messages.created_at),
         metadata: {
           custom: {
             is_upvote: messages.is_upvote,
@@ -135,6 +137,7 @@ export const getSmartVisionMessage = (
         }
       }),
       is_upvote: message.metadata?.custom?.is_upvote,
+      created_at: message.createdAt.getTime(),
     } as SmartVisionMessage;
   }
   return {

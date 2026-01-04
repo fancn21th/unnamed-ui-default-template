@@ -93,6 +93,7 @@ export type SmartVisionMessage =
       content: string | SmartVisionContentPart[];
       readonly attachments?: readonly CompleteAttachment[] | undefined;
       readonly reference?: string;
+      created_at: number;
     }
   | {
       type: "ai";
@@ -100,6 +101,7 @@ export type SmartVisionMessage =
       content: string | SmartVisionContentPart[];
       toolCalls?: SmartVisionToolCall[]; // AI 消息可以包含工具调用
       is_upvote?: UpvoteStatus;
+      created_at: number;
     }
   | {
       type: "tool";
@@ -239,4 +241,84 @@ export interface FileUploadResponse {
   name: string;
   url: string;
   extension: string;
+}
+
+export interface InstructionsItem {
+  appId?: number;
+  description?: string;
+  id?: number;
+  name?: string;
+}
+export interface UserInput {
+  label?: string;
+  variable?: string;
+  required?: boolean;
+  options?: string[];
+}
+interface Model {
+  completion_params?: {
+    top_p?: string;
+    frequency_penalty?: string;
+    max_tokens?: string;
+    presence_penalty?: string;
+    temperature?: string;
+  };
+  provider?: string;
+  api_key?: string;
+  api_base?: string;
+  name?: string;
+  model_id?: string;
+  is_mix_think?: boolean;
+}
+interface SuggestedQuestionsAfterAnswer {
+  enabled?: boolean;
+}
+interface MultiRoundConversationEnhancement {
+  enabled?: boolean;
+}
+interface FilesConfig {
+  chunk_size?: number;
+  output_type?: number;
+  api_key?: string;
+  splitter_name?: string;
+  vector_type?: string;
+  pc_chunk_size?: number[];
+  api_host?: string;
+  model_id?: number;
+  pc_chunk_overlap?: number;
+  chunk_overlap?: number;
+  embedding_type?: string;
+  chunk_type?: string;
+}
+interface AgentMode {
+  custom_upload_enabled?: boolean;
+  rag_function?: string;
+  files_config?: FilesConfig;
+  tools?: number[];
+  toolsets?: any;
+  mcp_servers?: any;
+  workflows?: any;
+  enabled?: boolean;
+}
+export interface ConfigResponse {
+  application_name?: string;
+  tenant_id?: string;
+  instructions?: InstructionsItem[];
+  user_input_form?: Record<string, UserInput>[];
+  default_questions?: { enabled: boolean; data: string[] };
+  pre_prompt?: string;
+  model?: Model;
+  opening_statement?: { enabled: boolean; data: string };
+  suggested_questions_after_answer?: SuggestedQuestionsAfterAnswer;
+  application_id?: string;
+  multi_round_conversation_enhancement?: MultiRoundConversationEnhancement;
+  agent_mode?: AgentMode;
+  avatar?: string;
+  voice_chat_enabled?: boolean;
+  memory_config?: {
+    enabled: boolean;
+    prompt_type?: string;
+  };
+  variables_metadata?: any[];
+  enable_websearch?: boolean;
 }

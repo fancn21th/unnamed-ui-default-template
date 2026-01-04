@@ -55,6 +55,7 @@ export const useSmartVisionMessages = () => {
                 argsText: JSON.stringify(thoughtArgs, null, 2),
               },
             ],
+            created_at: Date.now(),
           };
 
           console.log("🔗 创建工具调用消息，ID:", agentThoughtMessage.id);
@@ -69,6 +70,7 @@ export const useSmartVisionMessages = () => {
               id: aiResponseId,
               type: "ai",
               content: chunk.answer, // 🎯 直接设置内容
+              created_at: Date.now(),
             };
             setMessages((prev) => [...prev, aiMessage]);
             responseContent = chunk.answer;
@@ -116,6 +118,7 @@ export const useSmartVisionMessages = () => {
           id: generateUniqueId("ai_error"),
           type: "ai",
           content: "抱歉，发生了错误。请稍后重试。",
+          created_at: Date.now(),
         };
         setMessages((prev) => [...prev, errorMessage]);
       }
