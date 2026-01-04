@@ -7,7 +7,6 @@ const useFileSrc = (file: File | undefined) => {
 
   useEffect(() => {
     if (!file) {
-      setSrc(undefined);
       return;
     }
 
@@ -16,6 +15,7 @@ const useFileSrc = (file: File | undefined) => {
 
     return () => {
       URL.revokeObjectURL(objectUrl);
+      setSrc(undefined);
     };
   }, [file]);
 
