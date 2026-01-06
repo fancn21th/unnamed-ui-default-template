@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import { MessagePrimitive } from "@assistant-ui/react";
+import { MessagePrimitive, useAssistantState } from "@assistant-ui/react";
 import {
   LoadingDots,
   MessageGeneratingPrimitive,
@@ -16,12 +16,20 @@ import { MessageError } from "./MessageError";
 import { MessageAvatarHeader } from "@/components/wuhan/blocks/avatar-header-01";
 import { TooltipIconButton } from "../tooltip-icon-button";
 import { DislikeFeedbackForm } from "./primitives/action-bar-extend/DislikeFeedbackForm";
+import { cn } from "@/lib/utils";
 
 export const AssistantMessage: FC = () => {
+  const isLastMessage = useAssistantState((state) => {
+    const messages = state.thread.messages;
+    const currentMessageId = state.message.id;
+    const lastMessage = messages[messages.length - 1];
+    return lastMessage?.id === currentMessageId;
+  });
+
   return (
     <MessagePrimitive.Root asChild>
       <div
-        className="aui-assistant-message-root relative mx-auto w-full max-w-[var(--thread-max-width)] animate-in py-4 duration-150 ease-out fade-in slide-in-from-bottom-1 last:mb-24"
+        className="aui-assistant-message-root group/assistant-message relative mx-auto w-full max-w-[var(--thread-max-width)] animate-in py-4 duration-150 ease-out fade-in slide-in-from-bottom-1 last:mb-24"
         data-role="assistant"
       >
         <Reference.Root asChild>
@@ -36,7 +44,14 @@ export const AssistantMessage: FC = () => {
                 <div className="aui-assistant-message-footer mt-2 flex flex-col">
                   <div className="flex">
                     <BranchPicker />
-                    <AssistantActionBar />
+                    <div className={cn(
+                      "transition-opacity",
+                      isLastMessage 
+                        ? "opacity-100 pointer-events-auto" 
+                        : "opacity-0 pointer-events-none group-hover/assistant-message:opacity-100 group-hover/assistant-message:pointer-events-auto"
+                    )}>
+                      <AssistantActionBar />
+                    </div>
                   </div>
                   <ActionBarExtend.If dislikeFeedback>
                     <div className="mt-2">

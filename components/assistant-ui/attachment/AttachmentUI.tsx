@@ -74,7 +74,6 @@ export const AttachmentUI: FC = () => {
         !isImage && "gap-[var(--gap-sm)] px-[var(--padding-com-md)]",
       )}
       aria-label={`${fileType} attachment`}
-      title={name}
     >
       <AttachmentCardLeading
         className={cn(

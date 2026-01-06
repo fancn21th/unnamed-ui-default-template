@@ -1,17 +1,20 @@
 import type { FC } from "react";
+import { useState } from "react";
 import { ThreadListItemPrimitive } from "@assistant-ui/react";
 import {
   HistoryItemPrimitive,
   HistoryItemTitlePrimitive,
   HistoryItemHoverTrailingPrimitive,
 } from "@/components/wuhan/blocks/history-item-01";
-import { ThreadListItemArchive } from "./ThreadListItemArchive";
+import { ThreadListItemActions } from "./ThreadListItemActions";
 
 export const ThreadListItem: FC = () => {
+  const [moreOpen, setMoreOpen] = useState(false);
+
   return (
     <ThreadListItemPrimitive.Root asChild className="aui-thread-list-item cursor-pointer">
       <ThreadListItemPrimitive.Trigger asChild>
-        <HistoryItemPrimitive asChild>
+        <HistoryItemPrimitive asChild data-active={moreOpen ? "true" : undefined}>
           <div>
             <HistoryItemTitlePrimitive>
               <ThreadListItemPrimitive.Title fallback="新建对话" />
@@ -20,7 +23,7 @@ export const ThreadListItem: FC = () => {
               onClick={(e) => e.stopPropagation()}
               onMouseDown={(e) => e.stopPropagation()}
             >
-              <ThreadListItemArchive />
+              <ThreadListItemActions onOpenChange={setMoreOpen} />
             </HistoryItemHoverTrailingPrimitive>
           </div>
         </HistoryItemPrimitive>
