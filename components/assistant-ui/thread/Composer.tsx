@@ -11,6 +11,11 @@ import { ComposerAttachmentsRegion } from "./ComposerAttachmentsRegion";
 import { ComposerAction } from "./ComposerAction";
 import { ThreadReference } from "./ThreadReference";
 import { cn } from "@/lib/utils";
+import {
+  BlockTooltip,
+  BlockTooltipTrigger,
+  BlockTooltipContent,
+} from "@/components/wuhan/blocks/tooltip-01";
 
 interface ComposerProps {
   sticky?: boolean;
@@ -40,12 +45,17 @@ export const Composer: FC<ComposerProps> = ({ sticky = true }) => {
               <SenderTextarea className="caret-[var(--primary)]" />
             </ComposerPrimitive.Input>
             <SenderActionBar className="flex items-center justify-between">
-              <ComposerPrimitive.AddAttachment asChild>
-                <SenderAttachmentButton
-                  className="cursor-pointer"
-                  aria-label="Add Attachment"
-                />
-              </ComposerPrimitive.AddAttachment>
+              <BlockTooltip>
+                <BlockTooltipTrigger asChild>
+                  <ComposerPrimitive.AddAttachment asChild>
+                    <SenderAttachmentButton
+                      className="cursor-pointer"
+                      aria-label="Add Attachment"
+                    />
+                  </ComposerPrimitive.AddAttachment>
+                </BlockTooltipTrigger>
+                <BlockTooltipContent side="top">上传附件</BlockTooltipContent>
+              </BlockTooltip>
               <ComposerAction />
             </SenderActionBar>
           </div>

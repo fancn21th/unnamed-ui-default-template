@@ -4,7 +4,7 @@ import * as React from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Loader2, Paperclip, ArrowUp } from "lucide-react";
+import { Loader2, Plus, ArrowUp } from "lucide-react";
 import { ToggleButtonPrimitive } from "@/components/wuhan/blocks/toggle-button-01";
 
 // ==================== 类型定义 ====================
@@ -163,7 +163,7 @@ export const AttachmentButtonPrimitive = React.forwardRef<
         className,
       )}
     >
-      {children ?? <Paperclip className="size-4" />}
+      {children ?? <Plus className="size-4" />}
     </Button>
   );
 });

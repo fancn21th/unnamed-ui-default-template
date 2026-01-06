@@ -16,9 +16,9 @@ import {
   SidebarFooterPrimitive,
 } from "@/components/wuhan/blocks/sidebar-01";
 import { ThreadList } from "@/components/assistant-ui/thread-list";
-import { Button } from "@/components/ui/button";
 import { ThreadListPrimitive } from "@assistant-ui/react";
 import { cn } from "@/lib/utils";
+import { TooltipIconButton } from "@/components/assistant-ui/tooltip-icon-button";
 
 export function ThreadListSidebar({
   ...props
@@ -52,16 +52,21 @@ export function ThreadListSidebar({
               <>
                 {/* Collapsed: Only show two icons */}
                 <SidebarHeaderAction className="w-full flex justify-center">
-                  <SidebarTrigger />
+                <TooltipIconButton
+                    tooltip="展开侧边栏"
+                    asChild
+                  >
+                    <SidebarTrigger className="size-8 rounded-[var(--radius-lg)] hover:bg-[var(--bg-neutral-light)]" />
+                  </TooltipIconButton>
                 </SidebarHeaderAction>
                 <ThreadListPrimitive.New asChild>
-                  <Button
-                    variant="ghost"
+                  <TooltipIconButton
+                    tooltip="新对话"
                     size="icon"
-                    className="size-8"
+                    className="size-8 rounded-[var(--radius-lg)] hover:bg-[var(--bg-neutral-light)]"
                   >
                     <SquarePlus className="size-4" />
-                  </Button>
+                  </TooltipIconButton>
                 </ThreadListPrimitive.New>
               </>
             ) : (
@@ -73,7 +78,12 @@ export function ThreadListSidebar({
                   <SidebarHeaderTitle>问学</SidebarHeaderTitle>
                 </SidebarHeaderLeading>
                 <SidebarHeaderAction>
-                  <SidebarTrigger />
+                  <TooltipIconButton
+                    tooltip="收起侧边栏"
+                    asChild
+                  >
+                    <SidebarTrigger className="size-8 rounded-[var(--radius-lg)] hover:bg-[var(--bg-neutral-light)]" />
+                  </TooltipIconButton>
                 </SidebarHeaderAction>
               </>
             )}

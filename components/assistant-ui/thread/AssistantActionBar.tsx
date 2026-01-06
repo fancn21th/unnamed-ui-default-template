@@ -19,7 +19,7 @@ export const AssistantActionBar: FC = () => {
       className="aui-assistant-action-bar-root  col-start-3 row-start-2 -ml-1 flex gap-1 text-muted-foreground data-floating:absolute data-floating:rounded-md data-floating:border data-floating:bg-background data-floating:p-1 data-floating:shadow-sm"
     >
       <ActionBarExtend.Like asChild>
-        <TooltipIconButton tooltip="Like">
+        <TooltipIconButton tooltip="点赞">
           <ActionBarExtend.If like>
             <ThumbsUp className="fill-[var(--primary)] stroke-none" />
           </ActionBarExtend.If>
@@ -29,7 +29,7 @@ export const AssistantActionBar: FC = () => {
         </TooltipIconButton>
       </ActionBarExtend.Like>
       <ActionBarExtend.Dislike asChild>
-        <TooltipIconButton tooltip="Dislike">
+        <TooltipIconButton tooltip="点踩">
           <ActionBarExtend.If dislike>
             <ThumbsDown className="fill-[var(--primary)] stroke-none" />
           </ActionBarExtend.If>
@@ -39,7 +39,7 @@ export const AssistantActionBar: FC = () => {
         </TooltipIconButton>
       </ActionBarExtend.Dislike>
       <ActionBarPrimitive.Copy asChild>
-        <TooltipIconButton tooltip="Copy">
+        <TooltipIconButton tooltip="复制">
           <MessagePrimitive.If copied>
             <CheckIcon />
           </MessagePrimitive.If>
@@ -49,7 +49,7 @@ export const AssistantActionBar: FC = () => {
         </TooltipIconButton>
       </ActionBarPrimitive.Copy>
       <ActionBarPrimitive.Reload asChild>
-        <TooltipIconButton tooltip="Refresh">
+        <TooltipIconButton tooltip="重新生成">
           <RefreshCwIcon />
         </TooltipIconButton>
       </ActionBarPrimitive.Reload>

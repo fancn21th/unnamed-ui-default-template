@@ -4,25 +4,38 @@ import { ComponentPropsWithRef, forwardRef } from "react";
 import { Slottable } from "@radix-ui/react-slot";
 
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+  BlockTooltip,
+  BlockTooltipContent,
+  BlockTooltipTrigger,
+} from "@/components/wuhan/blocks/tooltip-01";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export type TooltipIconButtonProps = ComponentPropsWithRef<typeof Button> & {
   tooltip: string;
   side?: "top" | "bottom" | "left" | "right";
+  asChild?: boolean;
 };
 
 export const TooltipIconButton = forwardRef<
   HTMLButtonElement,
   TooltipIconButtonProps
->(({ children, tooltip, side = "bottom", className, ...rest }, ref) => {
+>(({ children, tooltip, side = "bottom", className, asChild = false, ...rest }, ref) => {
+  if (asChild) {
+    // When asChild is true, wrap the children directly without creating a Button
+    return (
+      <BlockTooltip>
+        <BlockTooltipTrigger asChild>
+          {children}
+        </BlockTooltipTrigger>
+        <BlockTooltipContent side={side}>{tooltip}</BlockTooltipContent>
+      </BlockTooltip>
+    );
+  }
+
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
+    <BlockTooltip>
+      <BlockTooltipTrigger asChild>
         <Button
           variant="ghost"
           size="sm"
@@ -33,9 +46,9 @@ export const TooltipIconButton = forwardRef<
           <Slottable>{children}</Slottable>
           <span className="aui-sr-only sr-only">{tooltip}</span>
         </Button>
-      </TooltipTrigger>
-      <TooltipContent side={side}>{tooltip}</TooltipContent>
-    </Tooltip>
+      </BlockTooltipTrigger>
+      <BlockTooltipContent side={side}>{tooltip}</BlockTooltipContent>
+    </BlockTooltip>
   );
 });
 

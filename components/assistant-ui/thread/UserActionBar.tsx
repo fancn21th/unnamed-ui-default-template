@@ -11,7 +11,7 @@ export const UserActionBar: FC = () => {
       className="aui-user-action-bar-root flex flex-col items-end text-muted-foreground"
     >
       <ActionBarPrimitive.Edit asChild>
-        <TooltipIconButton tooltip="Edit" className="aui-user-action-edit hover:w-6 hover:h-6 hover:p-1">
+        <TooltipIconButton tooltip="编辑" className="aui-user-action-edit hover:w-6 hover:h-6 hover:p-1">
           <PencilIcon />
         </TooltipIconButton>
       </ActionBarPrimitive.Edit>
