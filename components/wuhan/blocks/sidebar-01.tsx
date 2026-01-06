@@ -141,7 +141,7 @@ const SidebarHeaderIcon = React.forwardRef<
       {...props}
     />
   );
-});
+}); 
 SidebarHeaderIcon.displayName = "SidebarHeaderIcon";
 
 /**

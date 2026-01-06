@@ -43,9 +43,10 @@ export function ThreadListSidebar({
         )}
         style={isCollapsed ? { borderColor: "var(--border-neutral)", borderRightWidth: "1px" } : undefined}
       >
-        <SidebarContentPrimitive>
+        <SidebarContentPrimitive className="flex-1 min-h-0">
           {/* Header */}
           <SidebarHeaderPrimitive className={cn(
+            "shrink-0",
             isCollapsed && "flex-col gap-2 items-center justify-start"
           )}>
             {isCollapsed ? (
