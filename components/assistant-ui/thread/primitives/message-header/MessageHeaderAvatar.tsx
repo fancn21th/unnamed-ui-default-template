@@ -1,18 +1,18 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar as UIAvatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar } from "@/components/wuhan/blocks/avatar-header-01";
 import { useSmartVisionConfigStore } from "@/runtime/smartVisionConfigRuntime";
 import {
   ComponentPropsWithoutRef,
   type ComponentRef,
   forwardRef,
 } from "react";
-import { Primitive } from "@radix-ui/react-primitive";
 import { cn } from "@/lib/utils";
 
-type PrimitiveProps = ComponentPropsWithoutRef<typeof Primitive.div>;
-export type Element = ComponentRef<typeof Primitive.div>;
+type PrimitiveProps = ComponentPropsWithoutRef<typeof Avatar>;
+export type Element = ComponentRef<typeof Avatar>;
 export type Props = PrimitiveProps & {};
 export const MessageHeaderPrimitiveAvatar = forwardRef<Element, Props>(
-  ({ className, ...props }, ref) => {
+  ({ className, children, ...props }, ref) => {
     const src = useSmartVisionConfigStore((s) => {
       if (s.config?.avatar) {
         return s.config?.avatar;
@@ -20,23 +20,37 @@ export const MessageHeaderPrimitiveAvatar = forwardRef<Element, Props>(
       const logoData = s.appConfig?.app_icon?.condensedLogoUrl;
       return logoData?.status ? logoData.logoUrl : "";
     });
-    return (
-      <Avatar className="message-header-avatar">
-        <AvatarImage
-          src={src}
-          alt="message header avatar"
-          className="message-header-image object-cover"
-        />
-        <AvatarFallback delayMs={200}>
-          <Primitive.div
-            ref={ref}
-            {...props}
-            className={cn(
-              "message-header-fallback-icon size-8 text-muted-foreground",
-              className,
-            )}
+    
+    // 如果有配置的头像图片，使用 UI Avatar 组件显示图片
+    if (src) {
+      return (
+        <UIAvatar className="message-header-avatar">
+          <AvatarImage
+            src={src}
+            alt="message header avatar"
+            className="message-header-image object-cover"
           />
-        </AvatarFallback>
+          <AvatarFallback delayMs={200}>
+            <Avatar
+              ref={ref}
+              {...props}
+              className={cn(className)}
+            >
+              {children}
+            </Avatar>
+          </AvatarFallback>
+        </UIAvatar>
+      );
+    }
+    
+    // 如果没有配置头像，直接使用 Avatar 原语样式
+    return (
+      <Avatar
+        ref={ref}
+        {...props}
+        className={cn(className)}
+      >
+        {children}
       </Avatar>
     );
   },

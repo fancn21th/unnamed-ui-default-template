@@ -1,10 +1,10 @@
 import { ComponentPropsWithoutRef, type ComponentRef, forwardRef } from "react";
-import { Primitive } from "@radix-ui/react-primitive";
+import { AvatarTime } from "@/components/wuhan/blocks/avatar-header-01";
 import { useAssistantState } from "@assistant-ui/react";
 import moment from "moment";
 
-type PrimitiveProps = ComponentPropsWithoutRef<typeof Primitive.span>;
-export type Element = ComponentRef<typeof Primitive.span>;
+type PrimitiveProps = ComponentPropsWithoutRef<typeof AvatarTime>;
+export type Element = ComponentRef<typeof AvatarTime>;
 export type Props = PrimitiveProps & {
   format?: string;
 };
@@ -14,9 +14,9 @@ export const MessageHeaderPrimitiveTime = forwardRef<Element, Props>(
       moment(message.createdAt).format(format || "M月D日 HH:mm"),
     );
     return (
-      <Primitive.span ref={ref} {...props}>
+      <AvatarTime ref={ref} {...props}>
         {time}
-      </Primitive.span>
+      </AvatarTime>
     );
   },
 );

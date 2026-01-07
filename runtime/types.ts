@@ -26,6 +26,7 @@ export interface SmartVisionChunk {
   tool?: string | null;
   tool_labels?: Record<string, Record<string, unknown>> | null;
   tool_input?: Record<string, unknown> | string | null; // 修改为支持对象格式
+  tool_execute_time?: number | null; // 工具执行耗时（秒）
   message_files?: string[] | null;
   type?: string | null;
   belongs_to?: string | null;

@@ -32,19 +32,22 @@ export const AssistantMessage: FC = () => {
         className="aui-assistant-message-root group/assistant-message relative mx-auto w-full max-w-[var(--thread-max-width)] animate-in py-4 duration-150 ease-out fade-in slide-in-from-bottom-1 last:mb-24"
         data-role="assistant"
       >
-        <MessageHeader.Root className="flex justify-start gap-1">
-          <MessageHeader.Avatar asChild>
-            <BotMessageSquare />
-          </MessageHeader.Avatar>
-          <MessageHeader.Name>Assistant UI</MessageHeader.Name>
-          <MessageHeader.Time />
-        </MessageHeader.Root>
+        {/* MessageHeader 显示在顶部，左对齐 */}
+        <div className="flex justify-start">
+          <MessageHeader.Root>
+            <MessageHeader.Avatar className="flex items-center justify-center">
+              <BotMessageSquare className="size-4" />
+            </MessageHeader.Avatar>
+            <MessageHeader.Name>Assistant</MessageHeader.Name>
+            <MessageHeader.Time />
+          </MessageHeader.Root>
+        </div>
         <Reference.Root asChild>
           <div className="">
             <WuhanAIMessage
               className="px-0 break-words"
               feedback={
-                <div className="aui-assistant-message-footer mt-2 flex flex-col">
+                <div className="aui-assistant-message-footer mt-2 mx-2 flex flex-col">
                   <div className="flex">
                     <BranchPicker />
                     <div className={cn(

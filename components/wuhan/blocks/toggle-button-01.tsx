@@ -30,7 +30,7 @@ export interface ToggleButtonPrimitiveProps extends React.ButtonHTMLAttributes<H
  * 开关按钮组容器样式原语属性
  * @public
  */
-export interface ToggleButtonGroupPrimitiveProps extends React.HTMLAttributes<HTMLDivElement> {}
+export type ToggleButtonGroupPrimitiveProps = React.HTMLAttributes<HTMLDivElement>;
 
 // ==================== 样式原语层（Primitives）====================
 // 这些组件只提供样式，不包含任何逻辑和业务假设

@@ -167,7 +167,10 @@ export const useSmartVisionMessages = () => {
 
           if (chunk.tool && !HIDE_TOOL.includes(chunk.tool)) {
             // 创建 agent_thought 工具调用消息
-            const toolCallMsg: ToolCallMessagePart = {
+            // 根据文档：通过 observation 字段判断状态（存在=完成，不存在=执行中）
+            const toolCallMsg: ToolCallMessagePart & {
+              tool_execute_time?: number;
+            } = {
               id: chunk.id,
               type: "tool-call",
               // @ts-expect-error 类型问题
@@ -176,8 +179,12 @@ export const useSmartVisionMessages = () => {
               args: {},
               // @ts-expect-error 类型问题
               argsText: chunk.tool_input,
-              result: chunk.observation || "",
+              // observation 字段：存在=完成，不存在=执行中
+              // 注意：只有当 observation 存在时才设置 result，否则保持 undefined
+              result: chunk.observation || undefined,
               labels: chunk.tool_labels?.[chunk.tool],
+              // 保存工具执行耗时（秒）
+              tool_execute_time: chunk.tool_execute_time ?? undefined,
             };
             if (chunk.message_id)
               updateMessageContent(chunk.message_id, toolCallMsg);

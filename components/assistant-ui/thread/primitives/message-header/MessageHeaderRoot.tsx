@@ -1,11 +1,11 @@
 import { ComponentPropsWithoutRef, type ComponentRef, forwardRef } from "react";
-import { Primitive } from "@radix-ui/react-primitive";
+import { AvatarHeader } from "@/components/wuhan/blocks/avatar-header-01";
 
-type PrimitiveProps = ComponentPropsWithoutRef<typeof Primitive.div>;
-export type Element = ComponentRef<typeof Primitive.div>;
+type PrimitiveProps = ComponentPropsWithoutRef<typeof AvatarHeader>;
+export type Element = ComponentRef<typeof AvatarHeader>;
 export type Props = PrimitiveProps & {};
 export const MessageHeaderPrimitiveRoot = forwardRef<Element, Props>((props, ref) => {
-  return <Primitive.div ref={ref} {...props} />;
+  return <AvatarHeader ref={ref} {...props} />;
 });
 
 MessageHeaderPrimitiveRoot.displayName = "MessageHeaderRoot";
