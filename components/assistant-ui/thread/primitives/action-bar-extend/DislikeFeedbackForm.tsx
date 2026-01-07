@@ -8,7 +8,10 @@ import {
   FeedbackInputPrimitive,
   FeedbackSubmitButtonPrimitive,
 } from "@/components/wuhan/blocks/feedback-01";
-import { ToggleButtonGroupPrimitive } from "@/components/wuhan/blocks/toggle-button-01";
+import {
+  ToggleButtonGroupPrimitive,
+  ToggleButtonPrimitive,
+} from "@/components/wuhan/blocks/toggle-button-01";
 import { useSmartVisionActionActions } from "@/runtime/smartVisionActionRuntime";
 
 const FEEDBACK_OPTIONS: Array<{ id: string; label: string }> = [
@@ -51,12 +54,24 @@ export const DislikeFeedbackForm: FC = () => {
         title="有什么问题?"
         onClose={onCancelDislikeFeedback}
       />
-      <ToggleButtonGroupPrimitive
-        options={FEEDBACK_OPTIONS}
-        multiple={true}
-        selectedIds={selectedIds}
-        onOptionsChange={setSelectedIds}
-      />
+      <ToggleButtonGroupPrimitive>
+        {FEEDBACK_OPTIONS.map((option) => (
+          <ToggleButtonPrimitive
+            key={option.id}
+            selected={selectedIds.includes(option.id)}
+            multiple={true}
+            onClick={() => {
+              setSelectedIds((prev) =>
+                prev.includes(option.id)
+                  ? prev.filter((id) => id !== option.id)
+                  : [...prev, option.id],
+              );
+            }}
+          >
+            {option.label}
+          </ToggleButtonPrimitive>
+        ))}
+      </ToggleButtonGroupPrimitive>
       {hasOtherSelected && (
         <FeedbackInputContainerPrimitive>
           <FeedbackInputPrimitive

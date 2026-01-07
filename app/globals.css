@@ -359,7 +359,7 @@
   --border-error-hover: var(--error-500);
   --border-error-light: var(--error-300);
   --border-error-light-hover: var(--error-400);
-  --border-neutral: var(--neutral-300);
+  --border-neutral: var(--neutral-200);
   --border-success: var(--success-600);
   --border-success-active: var(--success-700);
   --border-success-hover: var(--success-500);
@@ -390,8 +390,8 @@
   --code-number: #9e9ca6;
   --destructive: var(--error-600);
   --destructive-foreground: var(--neutral-0);
-  --divider-neutral-basic: var(--neutral-300);
-  --divider-neutral-strong: var(--neutral-400);
+  --divider-neutral-basic: var(--neutral-200);
+  --divider-neutral-strong: var(--neutral-300);
   --error: var(--error-600);
   --error-100: #ffebe9;
   --error-10000: #660d1c;
@@ -706,7 +706,7 @@
   --border-error-hover: var(--error-500);
   --border-error-light: var(--error-300);
   --border-error-light-hover: var(--error-400);
-  --border-neutral: var(--neutral-300);
+  --border-neutral: var(--neutral-200);
   --border-success: var(--success-600);
   --border-success-active: var(--success-700);
   --border-success-hover: var(--success-500);
@@ -754,8 +754,8 @@
   --color-fd-secondary-foreground: var(--color-fd-foreground);
   --destructive: var(--error-600);
   --destructive-foreground: var(--neutral-0);
-  --divider-neutral-basic: var(--neutral-300);
-  --divider-neutral-strong: var(--neutral-400);
+  --divider-neutral-basic: var(--neutral-200);
+  --divider-neutral-strong: var(--neutral-300);
   --error: var(--error-600);
   --error-100: #ffebe9;
   --error-1000: oklch(0.95138 0.01657 26.648);

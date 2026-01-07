@@ -16,8 +16,9 @@ import {
 // ==================== 类型定义 ====================
 
 /**
- * 反馈按钮原语属性（已废弃，请使用 ToggleButtonPrimitive）
- * @deprecated 请使用 ToggleButtonPrimitive from toggle-button block
+ * 反馈按钮原语属性
+ * 注意：这是 ToggleButtonPrimitive 的别名类型
+ * 为了向后兼容保留此类型，建议直接使用 ToggleButtonPrimitiveProps from toggle-button block
  * @public
  */
 type FeedbackButtonPrimitiveProps = React.ComponentProps<
@@ -54,8 +55,9 @@ interface FeedbackHeaderPrimitiveProps extends Omit<
 }
 
 /**
- * 反馈按钮组原语属性（已废弃，请使用 ToggleButtonGroupPrimitive）
- * @deprecated 请使用 ToggleButtonGroupPrimitive from toggle-button block
+ * 反馈按钮组原语属性
+ * 注意：这是 ToggleButtonGroupPrimitive 的别名类型
+ * 为了向后兼容保留此类型，建议直接使用 ToggleButtonGroupPrimitiveProps from toggle-button block
  * @public
  */
 type FeedbackButtonGroupPrimitiveProps = React.ComponentProps<
@@ -92,7 +94,7 @@ interface FeedbackSubmitButtonPrimitiveProps extends React.ComponentProps<
 const FeedbackContainerPrimitive = React.forwardRef<
   HTMLDivElement,
   FeedbackContainerPrimitiveProps
->(({ className, children, ...props }, ref) => {
+>(({ className, onClose, children, ...props }, ref) => {
   return (
     <div
       ref={ref}
@@ -178,8 +180,9 @@ const FeedbackHeaderPrimitive = React.forwardRef<
 FeedbackHeaderPrimitive.displayName = "FeedbackHeaderPrimitive";
 
 /**
- * 反馈按钮样式原语（已废弃，请使用 ToggleButtonPrimitive）
- * @deprecated 请使用 ToggleButtonPrimitive from toggle-button block
+ * 反馈按钮样式原语
+ * 注意：这是 ToggleButtonPrimitive 的别名，默认使用 default 变体
+ * 为了向后兼容保留此导出，建议直接使用 ToggleButtonPrimitive from toggle-button block
  * @public
  */
 const FeedbackButtonPrimitive = React.forwardRef<
@@ -191,15 +194,16 @@ const FeedbackButtonPrimitive = React.forwardRef<
 FeedbackButtonPrimitive.displayName = "FeedbackButtonPrimitive";
 
 /**
- * 反馈按钮组样式原语（已废弃，请使用 ToggleButtonGroupPrimitive）
- * @deprecated 请使用 ToggleButtonGroupPrimitive from toggle-button block
+ * 反馈按钮组样式原语
+ * 注意：这是 ToggleButtonGroupPrimitive 的别名
+ * 为了向后兼容保留此导出，建议直接使用 ToggleButtonGroupPrimitive from toggle-button block
  * @public
  */
 const FeedbackButtonGroupPrimitive = React.forwardRef<
   HTMLDivElement,
   FeedbackButtonGroupPrimitiveProps
->(({ variant = "default", ...props }, ref) => {
-  return <ToggleButtonGroupPrimitive ref={ref} variant={variant} {...props} />;
+>(({ ...props }, ref) => {
+  return <ToggleButtonGroupPrimitive ref={ref} {...props} />;
 });
 FeedbackButtonGroupPrimitive.displayName = "FeedbackButtonGroupPrimitive";
 
@@ -241,11 +245,7 @@ const FeedbackInputPrimitive = React.forwardRef<
         className,
       )}
     >
-      <SidebarHistorySearchInput 
-        ref={ref} 
-        className="caret-[var(--primary)]"
-        {...props} 
-      />
+      <SidebarHistorySearchInput ref={ref} {...props} />
     </SidebarHistorySearchContainer>
   );
 });

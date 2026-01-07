@@ -44,7 +44,7 @@ const SidebarContentPrimitive = React.forwardRef<
       className={cn(
         "min-h-0",
         "flex flex-col",
-        "gap-[var(--gap-xl)]",
+        "gap-[var(--gap-md)]",
         className,
       )}
       {...props}
@@ -141,7 +141,7 @@ const SidebarHeaderIcon = React.forwardRef<
       {...props}
     />
   );
-}); 
+});
 SidebarHeaderIcon.displayName = "SidebarHeaderIcon";
 
 /**
