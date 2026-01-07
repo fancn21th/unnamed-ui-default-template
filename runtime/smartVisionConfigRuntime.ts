@@ -11,6 +11,7 @@ interface SmartVisionConfigState {
 }
 const store = create(immer<SmartVisionConfigState>(() => ({})));
 
+export const getAppConfig = () => { return store.getState().config;}
 export const useSmartVisionConfigStore = <U>(
   selector: (state: SmartVisionConfigState) => U,
 ) => useStore(store, selector);

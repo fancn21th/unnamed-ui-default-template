@@ -1,9 +1,6 @@
 "use client";
 
 // SmartVision API 消息类型定义
-
-import { CompleteAttachment } from "@assistant-ui/react";
-
 export type SmartVisionEventType =
   | "agent_message" // 智能体消息
   | "agent_thought" // 智能体消息类型工具消息
@@ -37,40 +34,6 @@ export interface SmartVisionChunk {
   message?: string | null;
 }
 
-// 基础消息内容类型
-export type SmartVisionContentPart =
-  | { type: "text"; text: string }
-  | { type: "text_delta"; text: string }
-  | { type: "image_url"; image_url: string | { url: string } }
-  | {
-      type: "tool-call";
-      toolCallId: string;
-      toolName: string;
-      args: unknown;
-      argsText: string;
-    }
-  | {
-      type: "tool-result";
-      toolCallId: string;
-      result: unknown;
-      isError?: boolean;
-    };
-
-// 工具调用相关类型
-export interface SmartVisionToolCall {
-  id: string;
-  toolName: string;
-  toolInput: Record<string, unknown>;
-  toolLabels?: Record<string, Record<string, unknown>>;
-  status?: "running" | "finished" | "error";
-  observation?: string;
-  position?: number;
-  messageId?: string;
-}
-
-// 工具执行状态
-export type SmartVisionToolStatus = "running" | "finished" | "error";
-
 export interface ConversationItem {
   id: string;
   name: string;
@@ -80,41 +43,7 @@ export interface ConversationItem {
   created_at: number;
   updated_at: number;
 }
-// SmartVision 消息类型（类似 LangChain 的消息结构）
-export type SmartVisionMessage =
-  | {
-      type: "system";
-      id: string;
-      content: string;
-    }
-  | {
-      type: "human";
-      id: string;
-      content: string | SmartVisionContentPart[];
-      readonly attachments?: readonly CompleteAttachment[] | undefined;
-      readonly reference?: string;
-      created_at: number;
-    }
-  | {
-      type: "ai";
-      id: string;
-      content: string | SmartVisionContentPart[];
-      toolCalls?: SmartVisionToolCall[]; // AI 消息可以包含工具调用
-      is_upvote?: UpvoteStatus;
-      created_at: number;
-    }
-  | {
-      type: "tool";
-      id: string;
-      name: string;
-      tool_call_id: string;
-      content: string;
-      artifact?: unknown;
-      status?: "success" | "error" | "running";
-      toolInput?: Record<string, unknown>;
-      toolLabels?: Record<string, Record<string, unknown>>;
-      observation?: string;
-    };
+
 
 /** 审查匹配项 */
 export interface ReviewStepContent {
@@ -145,7 +74,7 @@ export interface MultimodalContent {
     url: string;
   };
   tool?: {
-    tool_labels?: Record<string, any>;
+    tool_labels?: Record<string, string>;
     tool?: string;
     tool_input?: string;
     tool_execute_time?: number;
@@ -214,6 +143,7 @@ export interface MessageProps {
     exec_steps: ExecSteps[];
     observation?: string;
     created_at: number;
+    id: string;
   })[];
   message_files: {
     id: string;
@@ -322,3 +252,10 @@ export interface ConfigResponse {
   variables_metadata?: any[];
   enable_websearch?: boolean;
 }
+
+export type Toolset = {
+  id: number;
+  provider_type: "builtin" | "api";
+  avatar?: string;
+  name: string;
+};

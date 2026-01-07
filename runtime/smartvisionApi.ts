@@ -3,11 +3,13 @@ import {
   FileUploadResponse,
   MessageProps,
   SmartVisionChunk,
-  SmartVisionMessage,
+  Toolset,
   UpvoteStatus,
 } from "./types";
 import { appid, token, slug, baseURL } from "./config";
 import axios from "axios";
+import { ThreadUserMessage } from "@assistant-ui/react";
+import { getAppConfig } from "@/runtime/smartVisionConfigRuntime";
 
 // SmartVision API 客户端
 export class SmartVisionClient {
@@ -39,7 +41,7 @@ export class SmartVisionClient {
 
   // 发送消息并返回流式响应
   async *sendMessage(params: {
-    messages: SmartVisionMessage[];
+    messages: ThreadUserMessage;
     conversationId?: string;
     taskId?: string;
   }): AsyncGenerator<SmartVisionChunk> {
@@ -47,35 +49,23 @@ export class SmartVisionClient {
     const headers = this.getHeaders();
 
     // 将 SmartVisionMessage 转换为 API 所需的格式
-    const allMessageContents = params.messages
-      .filter((d) => d.type === "human")
-      .map((d) => d.content);
-    const query =
-      allMessageContents
-        .map((d) => {
-          if (typeof d === "string") {
-            return [d];
-          }
-          return d.filter((d) => d.type === "text").map((d) => d.text);
-        })
-        .flat()
-        .filter(Boolean)
-        .at(-1) || "";
-    const files = params.messages
-      .filter((d) => d.type === "human")
+    const allMessageContents = params.messages.content;
+    const query = allMessageContents
       .map((d) => {
-        return d.attachments?.map((d) => d.id) || [];
+        if (d.type === "text") {
+          return d.text;
+        }
+        return null;
       })
-      .flat()
-      .filter(Boolean);
-    const referenced_query = params.messages
-      .filter((d) => d.type === "human")
-      .map((d) => d.reference)
       .filter(Boolean)
-      .join();
+      .join("");
+    const files = params.messages.attachments.map((d) => d.id).filter(Boolean);
+    const referenced_query = params.messages.metadata.custom
+      ?.reference as string;
+    const tools = params.messages.metadata.custom?.tools as Toolset[];
     // 构造请求体（参考 smartversion 的格式）
     const body = {
-      // app_id: "-2",
+      app_id: getAppConfig()?.application_id,
       files: files,
       query: query,
       referenced_query,
@@ -85,9 +75,15 @@ export class SmartVisionClient {
       conversation_id: params.conversationId,
       chat_sys_variable: {},
       chat_template_kwargs: {
-        crawler_search: false,
-        enable_thinking: false,
       },
+      // ...(tools.length
+      //   ? {
+      //       agent_mode: {
+      //         enabled: true,
+      //         toolsets: tools,
+      //       },
+      //     }
+      //   : {}),
       // model: {
       //   model_id: 3081,
       //   provider: "dcmodel",
@@ -306,7 +302,7 @@ export const smartVisionClient = new SmartVisionClient();
 
 // 便捷的发送消息函数
 export const sendSmartVisionMessage = (params: {
-  messages: SmartVisionMessage[];
+  messages: ThreadUserMessage;
   conversationId?: string;
   taskId?: string;
 }) => {
