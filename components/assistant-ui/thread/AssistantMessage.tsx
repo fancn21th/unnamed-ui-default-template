@@ -5,17 +5,17 @@ import {
   MessageGeneratingPrimitive,
   AIMessage as WuhanAIMessage,
 } from "../../wuhan/blocks/message-01";
-import { MarkdownText } from "../markdown-text";
-import { ToolFallback } from "../tool-fallback";
+import { MarkdownText, Image } from "../messages";
+import { ToolFallback } from "../tools/tool-fallback";
 import { BranchPicker } from "./BranchPicker";
 import { AssistantActionBar } from "./AssistantActionBar";
 import { Reference } from "./primitives/reference";
-import { MessageSquareQuote } from "lucide-react";
+import { BotMessageSquare, MessageSquareQuote } from "lucide-react";
 import { ActionBarExtend } from "./primitives/action-bar-extend";
 import { MessageError } from "./MessageError";
-import { MessageAvatarHeader } from "@/components/wuhan/blocks/avatar-header-01";
 import { TooltipIconButton } from "../tooltip-icon-button";
-import { DislikeFeedbackForm } from "./primitives/action-bar-extend/DislikeFeedbackForm";
+import { DislikeFeedbackForm } from "@/components/assistant-ui/thread/primitives/action-bar-extend/DislikeFeedbackForm";
+import { MessageHeader } from "@/components/assistant-ui/thread/primitives/message-header";
 import { cn } from "@/lib/utils";
 
 export const AssistantMessage: FC = () => {
@@ -32,12 +32,15 @@ export const AssistantMessage: FC = () => {
         className="aui-assistant-message-root group/assistant-message relative mx-auto w-full max-w-[var(--thread-max-width)] animate-in py-4 duration-150 ease-out fade-in slide-in-from-bottom-1 last:mb-24"
         data-role="assistant"
       >
+        <MessageHeader.Root className="flex justify-start gap-1">
+          <MessageHeader.Avatar asChild>
+            <BotMessageSquare />
+          </MessageHeader.Avatar>
+          <MessageHeader.Name>Assistant UI</MessageHeader.Name>
+          <MessageHeader.Time />
+        </MessageHeader.Root>
         <Reference.Root asChild>
           <div className="">
-            {/* MessageAvatarHeader 显示在顶部，左对齐 */}
-            <div className="flex justify-start">
-              <MessageAvatarHeader name="Assistant" time="12:25" />
-            </div>
             <WuhanAIMessage
               className="px-0 break-words"
               feedback={
@@ -61,10 +64,11 @@ export const AssistantMessage: FC = () => {
                 </div>
               }
             >
-              <div className="aui-assistant-message-content leading-7 break-words">
+              <div className="aui-assistant-message-content mx-2 leading-7 break-words text-foreground">
                 <MessagePrimitive.Parts
                   components={{
                     Text: MarkdownText,
+                    Image: Image,
                     tools: { Fallback: ToolFallback },
                     Empty: () => (
                       <MessageGeneratingPrimitive

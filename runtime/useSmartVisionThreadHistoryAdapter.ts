@@ -1,15 +1,18 @@
 import { useMemo } from "react";
 import {
   AssistantApi,
+  ImageMessagePart,
   ThreadAssistantMessage,
   ThreadHistoryAdapter,
   ThreadMessage,
   ThreadUserMessage,
+  ToolCallMessagePart,
   useAssistantApi,
 } from "@assistant-ui/react";
 import { getConversationsMessages } from "@/runtime/smartvisionApi";
 import { nanoid } from "nanoid";
 import moment from "moment";
+import { HIDE_TOOL } from "@/runtime/constants";
 
 class SmartVisionThreadHistoryAdapter implements ThreadHistoryAdapter {
   constructor(private store: AssistantApi) {}
@@ -44,6 +47,38 @@ class SmartVisionThreadHistoryAdapter implements ThreadHistoryAdapter {
         } as ThreadUserMessage,
         parentId: null,
       });
+      const assistant_message_files = d.message_files?.filter(
+        (file) => file.belongs_to === "assistant",
+      );
+      const toolContents = d.agent_thoughts
+        .filter((d) => d.tool && !HIDE_TOOL.includes(d.tool))
+        .map((d) => {
+          return {
+            type: "tool-call",
+            toolCallId: d.id,
+            toolName: d.tool,
+            labels: d.tool_labels?.[d.tool!],
+            argsText: d.tool_input,
+            result: d.observation,
+          } as ToolCallMessagePart & { labels?: Record<string, string> };
+        });
+      const imageContents = d.agent_thoughts
+        .filter((d) => d.files)
+        .map((d) => {
+          return d.files?.map((id) => {
+            const file = assistant_message_files?.find(
+              (item) => item.id === id,
+            );
+            if (file && file.type == "image") {
+              return {
+                type: "image",
+                image: file?.url,
+                filename:file.name,
+              } as ImageMessagePart;
+            }
+          });
+        })
+        .flat();
       messages.push({
         message: {
           id: d.id,
@@ -51,6 +86,8 @@ class SmartVisionThreadHistoryAdapter implements ThreadHistoryAdapter {
           role: "assistant",
           status: { type: "complete", reason: "unknown" },
           content: [
+            ...toolContents,
+            ...imageContents,
             {
               type: "text",
               text: d.answer,

@@ -1,19 +1,153 @@
-import type { SmartVisionMessage } from "./types";
 import { useCallback, useState } from "react";
 import { sendSmartVisionMessage } from "./smartvisionApi";
-import { findMessageById, generateUniqueId } from "./helpers";
-import { useAssistantApi } from "@assistant-ui/react";
+import {
+  ImageMessagePart,
+  TextMessagePart,
+  ThreadAssistantMessage,
+  ThreadAssistantMessagePart,
+  ThreadMessage,
+  ThreadUserMessage,
+  ToolCallMessagePart,
+  useAssistantApi,
+} from "@assistant-ui/react";
 import { initializeThreadId } from "@/runtime/smartVisionThreadListAdapterLink";
+import { HIDE_TOOL } from "@/runtime/constants";
+import { v4 as UUIDv4 } from "uuid";
 
 export const useSmartVisionMessages = () => {
   const api = useAssistantApi();
-  const [messages, setMessages] = useState<SmartVisionMessage[]>([]);
+  const [messages, setMessages] = useState<ThreadMessage[]>([]);
 
-  const sendMessage = useCallback(async (newMessages: SmartVisionMessage[]) => {
+  const updateMessageContent = useCallback(
+    (msgId: string, content: ThreadAssistantMessagePart) => {
+      setMessages((prev) => {
+        const existingMsgIndex = prev.findIndex((d) => d.id === msgId);
+
+        if (existingMsgIndex !== -1) {
+          const existingMsg = prev[existingMsgIndex];
+
+          // 查找是否已有相同 id 的 content part
+          const existingPartIndex = existingMsg.content.findIndex(
+            //@ts-expect-error 类型问题
+            (part) => part.id === content.id,
+          );
+
+          let newContent: ThreadAssistantMessagePart[];
+
+          if (existingPartIndex !== -1) {
+            const existingPart = existingMsg.content[existingPartIndex];
+
+            if (
+              existingPart.type === "text" &&
+              content.type === "text" &&
+              content.text
+            ) {
+              // ✅ 创建新的 text part，不修改原对象
+              const newTextPart: TextMessagePart = {
+                ...existingPart,
+                text: existingPart.text + content.text, // 累加
+              };
+
+              //@ts-expect-error 类型问题
+              newContent = [
+                ...existingMsg.content.slice(0, existingPartIndex),
+                newTextPart,
+                ...existingMsg.content.slice(existingPartIndex + 1),
+              ];
+            } else if (
+              existingPart.type === "tool-call" &&
+              content.type === "tool-call"
+            ) {
+              // ✅ 合并 tool-call
+              const newToolCallPart: ToolCallMessagePart = {
+                ...existingPart,
+                ...content,
+              };
+
+              //@ts-expect-error 类型问题
+              newContent = [
+                ...existingMsg.content.slice(0, existingPartIndex),
+                newToolCallPart,
+                ...existingMsg.content.slice(existingPartIndex + 1),
+              ];
+            } else if (
+              existingPart.type === "image" &&
+              content.type === "image"
+            ) {
+              // ✅ 合并 file
+              const newToolCallPart: ImageMessagePart = {
+                ...existingPart,
+                ...content,
+              };
+
+              //@ts-expect-error 类型问题
+              newContent = [
+                ...existingMsg.content.slice(0, existingPartIndex),
+                newToolCallPart,
+                ...existingMsg.content.slice(existingPartIndex + 1),
+              ];
+            } else {
+              // 类型不匹配？按新内容处理（或报错）
+
+              //@ts-expect-error 类型问题
+              newContent = [...existingMsg.content, content];
+            }
+          } else {
+            // 没有找到相同 id 的 part，直接添加
+            //@ts-expect-error 类型问题
+            newContent = [...existingMsg.content, content];
+          }
+
+          // ✅ 构造新消息对象
+          const updatedMsg = {
+            ...existingMsg,
+            content: newContent,
+          };
+
+          // ✅ 构造新 messages 数组
+          return [
+            ...prev.slice(0, existingMsgIndex),
+            updatedMsg,
+            ...prev.slice(existingMsgIndex + 1),
+          ] as ThreadMessage[];
+        } else {
+          // 消息不存在，创建新消息
+          const newMsg: ThreadAssistantMessage = {
+            id: msgId,
+            role: "assistant",
+            content: [content],
+            createdAt: new Date(),
+            status: { type: "running" },
+            metadata: {
+              unstable_state: null,
+              unstable_annotations: [],
+              unstable_data: [],
+              custom: {},
+              steps: [],
+            },
+          };
+          return [...prev, newMsg];
+        }
+      });
+    },
+    [],
+  );
+  const completeMessage = useCallback((msgId: string) => {
+    setMessages((prev) => {
+      const updated = [...prev];
+      const find = updated.find((d) => d.id === msgId);
+      if (find) {
+        //@ts-expect-error 类型问题
+        find.status = { type: "complete", reason: "unknown" };
+      }
+      return updated;
+    });
+  }, []);
+  const sendMessage = useCallback(async (newMessages: ThreadUserMessage) => {
     // 🆕 为 AI 回复创建专门的消息ID
-    let aiResponseId: string | null = null; // 🆕 延迟初始化
     const remoteId = api.threadListItem().getState().remoteId;
     const localId = api.threadListItem().getState().id;
+    let msgId: string | undefined = undefined;
     try {
       // 调用 SmartVision API
       const generator = sendSmartVisionMessage({
@@ -22,73 +156,54 @@ export const useSmartVisionMessages = () => {
       });
 
       // 🆕 只添加用户消息，不提前创建 AI 占位符
-      setMessages((prev) => [...prev, ...newMessages]);
-
-      let responseContent = "";
+      setMessages((prev) => [...prev, newMessages]);
 
       // 处理流式响应
       for await (const chunk of generator) {
         // console.log("📥 Processing chunk:", chunk);
-
+        msgId = chunk.message_id;
         if (chunk.event === "agent_thought") {
           console.log("🧠 检测到 agent_thought 事件:", chunk);
 
-          // 准备 agent_thought 参数
-          const thoughtArgs = {
-            thought: chunk.thought || "",
-            tool: chunk.tool || "",
-            tool_input: chunk.tool_input || null,
-            observation: chunk.observation || "",
-            timestamp: new Date().toISOString(),
-          };
-
-          // 创建 agent_thought 工具调用消息
-          const agentThoughtMessage: SmartVisionMessage = {
-            id: generateUniqueId("agent_thought"),
-            type: "ai",
-            content: [
-              {
-                type: "tool-call",
-                toolCallId: `thought_${Date.now()}`,
-                toolName: "agent_thought",
-                args: thoughtArgs,
-                argsText: JSON.stringify(thoughtArgs, null, 2),
-              },
-            ],
-          };
-
-          console.log("🔗 创建工具调用消息，ID:", agentThoughtMessage.id);
-          setMessages((prev) => [...prev, agentThoughtMessage]);
-        }
-
-        if (chunk.event === "agent_message" && chunk.answer) {
-          // 🆕 第一次收到 agent_message 时创建 AI 回复
-          if (!aiResponseId) {
-            aiResponseId = generateUniqueId("ai_response");
-            const aiMessage: SmartVisionMessage = {
-              id: aiResponseId,
-              type: "ai",
-              content: chunk.answer, // 🎯 直接设置内容
+          if (chunk.tool && !HIDE_TOOL.includes(chunk.tool)) {
+            // 创建 agent_thought 工具调用消息
+            const toolCallMsg: ToolCallMessagePart = {
+              id: chunk.id,
+              type: "tool-call",
+              // @ts-expect-error 类型问题
+              toolCallId: chunk.id,
+              toolName: chunk.tool,
+              args: {},
+              // @ts-expect-error 类型问题
+              argsText: chunk.tool_input,
+              result: chunk.observation || "",
+              labels: chunk.tool_labels?.[chunk.tool],
             };
-            setMessages((prev) => [...prev, aiMessage]);
-            responseContent = chunk.answer;
-          } else {
-            // 🆕 后续更新已存在的 AI 回复
-            responseContent += chunk.answer;
-            setMessages((prev) => {
-              const updated = [...prev];
-              const targetIndex = findMessageById(updated, aiResponseId!);
-              if (targetIndex !== -1) {
-                updated[targetIndex] = {
-                  ...updated[targetIndex],
-                  content: responseContent,
-                };
-              }
-              return updated;
-            });
+            if (chunk.message_id)
+              updateMessageContent(chunk.message_id, toolCallMsg);
           }
+        }
+        if (chunk.event === "message_file" && chunk.url) {
+          if (chunk.type === "image") {
+            const toolCallMsg: ImageMessagePart = {
+              // @ts-expect-error 类型问题
+              id: chunk.id,
+              type: "image",
+              image: chunk.url,
+            };
+            if (chunk.message_id)
+              updateMessageContent(chunk.message_id, toolCallMsg);
+          }
+        }
+        if (chunk.event === "agent_message" && chunk.answer) {
+          const textMsg: TextMessagePart = {
+            //@ts-expect-error 类型问题
+            id: chunk.id,
+            type: "text",
+            text: chunk.answer,
+          };
 
-          console.log("💬 更新 AI 回复，ID:", aiResponseId);
+          if (chunk.message_id) updateMessageContent(chunk.message_id, textMsg);
         }
         if (chunk.conversation_id) {
           initializeThreadId(localId, chunk.conversation_id);
@@ -96,30 +211,15 @@ export const useSmartVisionMessages = () => {
       }
     } catch (error) {
       console.error("❌ SmartVision API error:", error);
-
-      // 🆕 错误处理：只在已创建 AI 消息时更新
-      if (aiResponseId) {
-        setMessages((prev) => {
-          const updated = [...prev];
-          const targetIndex = findMessageById(updated, aiResponseId!);
-          if (targetIndex !== -1) {
-            updated[targetIndex] = {
-              ...updated[targetIndex],
-              content: "抱歉，发生了错误。请稍后重试。",
-            };
-          }
-          return updated;
-        });
-      } else {
-        // 🆕 如果还没创建 AI 消息，直接添加错误消息
-        const errorMessage: SmartVisionMessage = {
-          id: generateUniqueId("ai_error"),
-          type: "ai",
-          content: "抱歉，发生了错误。请稍后重试。",
-        };
-        setMessages((prev) => [...prev, errorMessage]);
-      }
+      const textMsg: TextMessagePart = {
+        //@ts-expect-error 类型问题
+        id: UUIDv4(),
+        type: "text",
+        text: "抱歉，发生了错误。请稍后重试。",
+      };
+      updateMessageContent(UUIDv4(), textMsg);
     } finally {
+      if (msgId) completeMessage(msgId);
     }
   }, []);
 

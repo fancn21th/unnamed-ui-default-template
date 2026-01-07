@@ -1,23 +1,25 @@
 import {
-  useExternalMessageConverter,
+  ThreadMessage,
+  ThreadUserMessage,
   useExternalStoreRuntime,
   useRuntimeAdapters,
 } from "@assistant-ui/react";
 import { useState } from "react";
 import { useSmartVisionMessages } from "./useSmartVisionMessages";
-import {
-  convertSmartVisionMessages,
-  getSmartVisionMessage,
-} from "./convertSmartVisionMessages";
-import { SmartVisionContentPart, SmartVisionMessage } from "@/runtime/types";
 import { useSmartVisionExternalHistory } from "./useSmartVisionExternalHistory";
 import { smartVisionFileAttachmentAdapter } from "./SmartVisionFileAttachmentAdapter";
+import {
+  useSmartVisionChatReferenceActions,
+  useSmartVisionChatReferenceStore,
+} from "@/runtime/smartVisionReferenceRuntime";
 
 export const useSmartVisionChatThreadRuntime = () => {
   const [isRunning, setIsRunning] = useState(false);
   const { messages, sendMessage, setMessages } = useSmartVisionMessages();
+  const { clearReference } = useSmartVisionChatReferenceActions();
 
-  const handleSendMessage = async (newMessages: SmartVisionMessage[]) => {
+  const handleSendMessage = async (newMessages: ThreadUserMessage) => {
+    clearReference();
     try {
       setIsRunning(true);
       await sendMessage(newMessages);
@@ -28,42 +30,39 @@ export const useSmartVisionChatThreadRuntime = () => {
     }
   };
 
-  // 转换消息格式为 assistant-ui 标准格式
-  const threadMessages = useExternalMessageConverter({
-    callback: convertSmartVisionMessages,
-    messages,
-    isRunning,
-  });
-
   const contextAdapters = useRuntimeAdapters();
   const isLoading = useSmartVisionExternalHistory(
     contextAdapters?.history,
-    getSmartVisionMessage,
     setMessages,
   );
+  const reference = useSmartVisionChatReferenceStore((s) => s.reference);
   const runtime = useExternalStoreRuntime({
     isRunning,
-    messages: threadMessages,
-    setMessages: (messages) =>
-      setMessages(messages.map(getSmartVisionMessage).filter(Boolean).flat()),
+    messages: messages,
+    setMessages: (messages) => setMessages(messages as ThreadMessage[]),
     onNew: async (message) => {
       console.log("🚀 SmartVision onNew:", message);
 
-      // 创建用户消息
-      const userMessage: SmartVisionMessage = {
+      await handleSendMessage({
         id: `user_${Date.now()}`,
-        type: "human",
-        content: message.content.map((c) => {
-          if (c.type === "text")
-            return { type: "text", text: c.text } as SmartVisionContentPart;
-          return { type: "text", text: "" } as SmartVisionContentPart;
-        }),
-        attachments: message.attachments,
-      };
-      await handleSendMessage([userMessage]);
+        ...message,
+        metadata: {
+          ...message.metadata,
+          custom: {
+            ...message.metadata.custom,
+            reference: reference,
+            // tools: [
+            //   {
+            //     id: 1657,
+            //     name: "饼图",
+            //     provider_type: "builtin",
+            //   },
+            // ],
+          },
+        },
+      } as ThreadUserMessage);
     },
-    onImport: (messages) =>
-      setMessages(messages.map(getSmartVisionMessage).filter(Boolean).flat()),
+    onImport: (messages) => setMessages(messages as ThreadMessage[]),
     onEdit: async () => {},
     isLoading,
     adapters: {
