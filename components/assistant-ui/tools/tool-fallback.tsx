@@ -3,10 +3,15 @@ import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
+/**
+ * 默认工具调用
+ * */
 export const ToolFallback: ToolCallMessagePartComponent = ({
   toolName,
   argsText,
   result,
+  //@ts-expect-error labels 可能不存在
+  labels,
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
   return (
@@ -14,7 +19,7 @@ export const ToolFallback: ToolCallMessagePartComponent = ({
       <div className="aui-tool-fallback-header flex items-center gap-2 px-4">
         <CheckIcon className="aui-tool-fallback-icon size-4" />
         <p className="aui-tool-fallback-title flex-grow">
-          Used tool: <b>{toolName}</b>
+          Used tool: <b>{labels["zh_Hans"] || toolName}</b>
         </p>
         <Button onClick={() => setIsCollapsed(!isCollapsed)}>
           {isCollapsed ? <ChevronUpIcon /> : <ChevronDownIcon />}

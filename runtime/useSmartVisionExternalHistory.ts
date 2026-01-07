@@ -1,13 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ThreadHistoryAdapter,
-  ThreadMessage,
   useAssistantApi,
 } from "@assistant-ui/react";
 
 export const useSmartVisionExternalHistory = <TMessage>(
   historyAdapter: ThreadHistoryAdapter | undefined,
-  toStoreMessage: (messages: ThreadMessage) => TMessage,
   onSetMessages: (messages: TMessage[]) => void,
 ) => {
   const loadedRef = useRef(false);
@@ -41,7 +39,7 @@ export const useSmartVisionExternalHistory = <TMessage>(
         if (repo && repo.messages.length > 0) {
           onSetMessagesRef.current(
             repo.messages
-              .map((d) => toStoreMessage(d.message))
+              .map((d) => d.message)
               .filter(Boolean)
               .flat() as TMessage[],
           );
