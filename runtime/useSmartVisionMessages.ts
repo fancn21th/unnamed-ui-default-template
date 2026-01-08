@@ -11,12 +11,14 @@ import {
   useAssistantApi,
 } from "@assistant-ui/react";
 import { initializeThreadId } from "@/runtime/smartVisionThreadListAdapterLink";
+import { useSmartVisionConfigActions } from "@/runtime/smartVisionConfigRuntime";
 import { HIDE_TOOL } from "@/runtime/constants";
 import { v4 as UUIDv4 } from "uuid";
 
 export const useSmartVisionMessages = () => {
   const api = useAssistantApi();
   const [messages, setMessages] = useState<ThreadMessage[]>([]);
+  const { getSelectedAgents } = useSmartVisionConfigActions();
 
   const updateMessageContent = useCallback(
     (msgId: string, content: ThreadAssistantMessagePart) => {
@@ -143,85 +145,92 @@ export const useSmartVisionMessages = () => {
       return updated;
     });
   }, []);
-  const sendMessage = useCallback(async (newMessages: ThreadUserMessage) => {
-    // 🆕 为 AI 回复创建专门的消息ID
-    const remoteId = api.threadListItem().getState().remoteId;
-    const localId = api.threadListItem().getState().id;
-    let msgId: string | undefined = undefined;
-    try {
-      // 调用 SmartVision API
-      const generator = sendSmartVisionMessage({
-        messages: newMessages,
-        conversationId: remoteId,
-      });
+  const sendMessage = useCallback(
+    async (newMessages: ThreadUserMessage) => {
+      // 🆕 为 AI 回复创建专门的消息ID
+      const remoteId = api.threadListItem().getState().remoteId;
+      const localId = api.threadListItem().getState().id;
+      let msgId: string | undefined = undefined;
+      try {
+        // 获取选中的 agents
+        const selectedAgents = getSelectedAgents();
+        // 调用 SmartVision API
+        const generator = sendSmartVisionMessage({
+          messages: newMessages,
+          conversationId: remoteId,
+          agentMode: selectedAgents,
+        });
 
-      // 🆕 只添加用户消息，不提前创建 AI 占位符
-      setMessages((prev) => [...prev, newMessages]);
+        // 🆕 只添加用户消息，不提前创建 AI 占位符
+        setMessages((prev) => [...prev, newMessages]);
 
-      // 处理流式响应
-      for await (const chunk of generator) {
-        // console.log("📥 Processing chunk:", chunk);
-        msgId = chunk.message_id;
-        if (chunk.event === "agent_thought") {
-          console.log("🧠 检测到 agent_thought 事件:", chunk);
+        // 处理流式响应
+        for await (const chunk of generator) {
+          // console.log("📥 Processing chunk:", chunk);
+          msgId = chunk.message_id;
+          if (chunk.event === "agent_thought") {
+            console.log("🧠 检测到 agent_thought 事件:", chunk);
 
-          if (chunk.tool && !HIDE_TOOL.includes(chunk.tool)) {
-            // 创建 agent_thought 工具调用消息
-            const toolCallMsg: ToolCallMessagePart = {
+            if (chunk.tool && !HIDE_TOOL.includes(chunk.tool)) {
+              // 创建 agent_thought 工具调用消息
+              const toolCallMsg: ToolCallMessagePart = {
+                id: chunk.id,
+                type: "tool-call",
+                // @ts-expect-error 类型问题
+                toolCallId: chunk.id,
+                toolName: chunk.tool,
+                args: {},
+                // @ts-expect-error 类型问题
+                argsText: chunk.tool_input,
+                result: chunk.observation || "",
+                labels: chunk.tool_labels?.[chunk.tool],
+              };
+              if (chunk.message_id)
+                updateMessageContent(chunk.message_id, toolCallMsg);
+            }
+          }
+          if (chunk.event === "message_file" && chunk.url) {
+            if (chunk.type === "image") {
+              const toolCallMsg: ImageMessagePart = {
+                // @ts-expect-error 类型问题
+                id: chunk.id,
+                type: "image",
+                image: chunk.url,
+              };
+              if (chunk.message_id)
+                updateMessageContent(chunk.message_id, toolCallMsg);
+            }
+          }
+          if (chunk.event === "agent_message" && chunk.answer) {
+            const textMsg: TextMessagePart = {
+              //@ts-expect-error 类型问题
               id: chunk.id,
-              type: "tool-call",
-              // @ts-expect-error 类型问题
-              toolCallId: chunk.id,
-              toolName: chunk.tool,
-              args: {},
-              // @ts-expect-error 类型问题
-              argsText: chunk.tool_input,
-              result: chunk.observation || "",
-              labels: chunk.tool_labels?.[chunk.tool],
+              type: "text",
+              text: chunk.answer,
             };
+
             if (chunk.message_id)
-              updateMessageContent(chunk.message_id, toolCallMsg);
+              updateMessageContent(chunk.message_id, textMsg);
+          }
+          if (chunk.conversation_id) {
+            initializeThreadId(localId, chunk.conversation_id);
           }
         }
-        if (chunk.event === "message_file" && chunk.url) {
-          if (chunk.type === "image") {
-            const toolCallMsg: ImageMessagePart = {
-              // @ts-expect-error 类型问题
-              id: chunk.id,
-              type: "image",
-              image: chunk.url,
-            };
-            if (chunk.message_id)
-              updateMessageContent(chunk.message_id, toolCallMsg);
-          }
-        }
-        if (chunk.event === "agent_message" && chunk.answer) {
-          const textMsg: TextMessagePart = {
-            //@ts-expect-error 类型问题
-            id: chunk.id,
-            type: "text",
-            text: chunk.answer,
-          };
-
-          if (chunk.message_id) updateMessageContent(chunk.message_id, textMsg);
-        }
-        if (chunk.conversation_id) {
-          initializeThreadId(localId, chunk.conversation_id);
-        }
+      } catch (error) {
+        console.error("❌ SmartVision API error:", error);
+        const textMsg: TextMessagePart = {
+          //@ts-expect-error 类型问题
+          id: UUIDv4(),
+          type: "text",
+          text: "抱歉，发生了错误。请稍后重试。",
+        };
+        updateMessageContent(UUIDv4(), textMsg);
+      } finally {
+        if (msgId) completeMessage(msgId);
       }
-    } catch (error) {
-      console.error("❌ SmartVision API error:", error);
-      const textMsg: TextMessagePart = {
-        //@ts-expect-error 类型问题
-        id: UUIDv4(),
-        type: "text",
-        text: "抱歉，发生了错误。请稍后重试。",
-      };
-      updateMessageContent(UUIDv4(), textMsg);
-    } finally {
-      if (msgId) completeMessage(msgId);
-    }
-  }, []);
+    },
+    [getSelectedAgents],
+  );
 
   return {
     messages,

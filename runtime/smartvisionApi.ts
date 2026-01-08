@@ -59,6 +59,7 @@ export class SmartVisionClient {
     messages: ThreadUserMessage;
     conversationId?: string;
     taskId?: string;
+    agentMode?: any;
   }): AsyncGenerator<SmartVisionChunk> {
     const url = `${this.apiUrl}/chat`;
     const headers = this.getHeaders();
@@ -115,6 +116,12 @@ export class SmartVisionClient {
       // },
       // messages: apiMessages,
     };
+
+    const requestBody = Object.assign(
+      {},
+      body,
+      params.agentMode ? { agent_mode: params.agentMode } : {},
+    );
     const queue = new AsyncQueue<SendMessageEvent>();
 
     const controller = new AbortController();
@@ -157,7 +164,7 @@ export class SmartVisionClient {
     fetchEventSource(url, {
       method: "POST",
       headers,
-      body: JSON.stringify(body),
+      body: JSON.stringify(requestBody),
       signal: controller.signal,
       onmessage,
       onerror,
@@ -181,7 +188,7 @@ export class SmartVisionClient {
           continue;
         }
         if (event.type === "complete") {
-          break
+          break;
         }
         yield event.value;
       }
@@ -344,6 +351,7 @@ export const sendSmartVisionMessage = (params: {
   messages: ThreadUserMessage;
   conversationId?: string;
   taskId?: string;
+  agentMode?: any;
 }) => {
   return smartVisionClient.sendMessage(params);
 };
