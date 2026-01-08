@@ -6,8 +6,5 @@
 // 导出主组件
 export { Sender } from "./Sender";
 
-// 导出适配器
-export { SenderAdapter } from "./SenderAdapter";
-
 // 导出类型
-export type { SenderProps } from "./types";
+export type { SenderProps, SuggestionItem, SuggestionDataProvider } from "./types";

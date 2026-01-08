@@ -1,10 +1,12 @@
 "use client";
 
 import { useEditor, EditorContent } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
 import { useEffect, type FC } from "react";
-import type { SenderProps } from "./types";
-import "./sender.css";
+import type { SenderProps, SuggestionItem } from "./types";
+import { createEditorExtensions } from "./extensions";
+import "tippy.js/dist/tippy.css";
+import "./styles/sender.css";
+import "./styles/suggestion.css";
 
 /**
  * Tiptap 富文本输入组件
@@ -13,23 +15,26 @@ import "./sender.css";
 export const Sender: FC<SenderProps> = ({
   value = "",
   onChange,
+  onMentionsChange,
   onSubmit,
   disabled = false,
   autoFocus = true,
   placeholder = "Send a message...",
   className,
+  suggestionDataProvider,
+  onSuggestionSelect,
+  renderMentionLabel,
+  renderSuggestionList,
 }) => {
   const editor = useEditor({
     immediatelyRender: false,
     editable: !disabled,
-    extensions: [
-      StarterKit.configure({
-        heading: false,
-        codeBlock: false,
-        horizontalRule: false,
-        blockquote: false,
-      }),
-    ],
+    extensions: createEditorExtensions({
+      suggestionDataProvider,
+      onSuggestionSelect,
+      renderMentionLabel,
+      renderSuggestionList,
+    }),
     content: value,
     editorProps: {
       attributes: {
@@ -42,7 +47,9 @@ export const Sender: FC<SenderProps> = ({
         // Enter 键提交，Shift+Enter 换行
         if (event.key === "Enter" && !event.shiftKey && !disabled) {
           event.preventDefault();
-          const text = editor?.getText() || "";
+          // 从 view.state 获取当前文本内容
+          const text = view.state.doc.textContent;
+          console.log("getText()", text);
           if (text.trim() && onSubmit) {
             const shouldContinue = onSubmit(text);
             // 如果 onSubmit 返回 false，则不清空编辑器
@@ -58,9 +65,23 @@ export const Sender: FC<SenderProps> = ({
     onUpdate: ({ editor }) => {
       const text = editor.getText();
       onChange?.(text);
+      
+      // 提取当前编辑器中的所有 mention 节点
+      if (onMentionsChange) {
+        const mentions: SuggestionItem[] = [];
+        editor.state.doc.descendants((node) => {
+          if (node.type.name === "mention" || node.type.name === "slashMention") {
+            mentions.push({
+              value: node.attrs.id,
+              label: node.attrs.label,
+            });
+          }
+        });
+        onMentionsChange(mentions);
+      }
     },
     autofocus: autoFocus && !disabled,
-  });
+  }, [suggestionDataProvider, renderMentionLabel, renderSuggestionList]); // 添加依赖项，数据变化时重新创建编辑器
 
   // 同步外部 value 到编辑器
   useEffect(() => {

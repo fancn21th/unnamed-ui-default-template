@@ -4,7 +4,7 @@ import { ThreadScrollToBottom } from "./ThreadScrollToBottom";
 import { ComposerAttachments } from "../attachment";
 import { ComposerAction } from "./ComposerAction";
 import { ThreadReference } from "./ThreadReference";
-import { SenderAdapter } from "../../sender/SenderAdapter";
+import { SenderInput } from "./SenderInput";
 
 export const Composer: FC = () => {
   return (
@@ -20,7 +20,7 @@ export const Composer: FC = () => {
           autoFocus
           aria-label="Message input"
         /> */}
-        <SenderAdapter />
+        <SenderInput />
         <ComposerAction />
       </ComposerPrimitive.Root>
     </div>

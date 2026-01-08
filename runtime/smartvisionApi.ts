@@ -42,6 +42,7 @@ export class SmartVisionClient {
     messages: SmartVisionMessage[];
     conversationId?: string;
     taskId?: string;
+    agentMode?: any;
   }): AsyncGenerator<SmartVisionChunk> {
     const url = `${this.apiUrl}/chat`;
     const headers = this.getHeaders();
@@ -105,12 +106,17 @@ export class SmartVisionClient {
       // },
       // messages: apiMessages,
     };
+    const requestBody = Object.assign(
+      {},
+      body,
+      params.agentMode ? { agent_mode: params.agentMode } : {},
+    );
 
     try {
       const response = await fetch(url, {
         method: "POST",
         headers,
-        body: JSON.stringify(body),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
@@ -309,6 +315,7 @@ export const sendSmartVisionMessage = (params: {
   messages: SmartVisionMessage[];
   conversationId?: string;
   taskId?: string;
+  agentMode?: any;
 }) => {
   return smartVisionClient.sendMessage(params);
 };

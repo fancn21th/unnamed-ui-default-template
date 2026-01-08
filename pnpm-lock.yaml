@@ -44,6 +44,9 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: ^1.2.8
         version: 1.2.8(@types/react-dom@19.1.7(@types/react@19.1.9))(@types/react@19.1.9)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      '@tiptap/extension-mention':
+        specifier: ^3.15.0
+        version: 3.15.0(@tiptap/core@3.15.0(@tiptap/pm@3.15.0))(@tiptap/pm@3.15.0)(@tiptap/suggestion@3.15.0(@tiptap/core@3.15.0(@tiptap/pm@3.15.0))(@tiptap/pm@3.15.0))
       '@tiptap/pm':
         specifier: ^3.15.0
         version: 3.15.0
@@ -53,6 +56,9 @@ importers:
       '@tiptap/starter-kit':
         specifier: ^3.15.0
         version: 3.15.0
+      '@tiptap/suggestion':
+        specifier: ^3.15.0
+        version: 3.15.0(@tiptap/core@3.15.0(@tiptap/pm@3.15.0))(@tiptap/pm@3.15.0)
       ai:
         specifier: ^5.0.65
         version: 5.0.65(zod@4.1.13)
@@ -107,6 +113,9 @@ importers:
       tailwind-merge:
         specifier: ^3.3.1
         version: 3.3.1
+      tippy.js:
+        specifier: ^6.3.7
+        version: 6.3.7
       undici:
         specifier: 7.16.0
         version: 7.16.0
@@ -624,6 +633,9 @@ packages:
   '@opentelemetry/api@1.9.0':
     resolution: {integrity: sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg==}
     engines: {node: '>=8.0.0'}
+
+  '@popperjs/core@2.11.8':
+    resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
 
   '@radix-ui/primitive@1.1.3':
     resolution: {integrity: sha512-JTF99U/6XIjCBo0wqkU5sK10glYe27MRRsfwoiq5zzOEZLHU3A3KCMa5X/azekYRCJ0HlwI0crAXS/5dEHTzDg==}
@@ -1174,6 +1186,13 @@ packages:
       '@tiptap/core': ^3.15.0
       '@tiptap/pm': ^3.15.0
 
+  '@tiptap/extension-mention@3.15.0':
+    resolution: {integrity: sha512-Ymf3yaU187PSkzbYxLPTBd0PRtRo4ZGIp5SGxPZB2s0yTRz+yw9SQaDcabP8jtBFfHlkXJvoXai0xT0N+9j6TA==}
+    peerDependencies:
+      '@tiptap/core': ^3.15.0
+      '@tiptap/pm': ^3.15.0
+      '@tiptap/suggestion': ^3.15.0
+
   '@tiptap/extension-ordered-list@3.15.0':
     resolution: {integrity: sha512-YL2LIfQMNhU1sY0wB2WkYvuoMEY29YHNg76w8upcJgnB9S04kAxDe9N5epPeVeOSBoRuDFGQVFd11XUUXYlfzg==}
     peerDependencies:
@@ -1220,6 +1239,12 @@ packages:
 
   '@tiptap/starter-kit@3.15.0':
     resolution: {integrity: sha512-9IyRV4Th8D7a2/sYSB2W/kOxPGoL+9B5cWEoaVznlxS3vS2MF8+PsBcPXAtS2WEcq2g+rLppKyKrj72TDU+CUw==}
+
+  '@tiptap/suggestion@3.15.0':
+    resolution: {integrity: sha512-FTbwYDZFWtYwVvuZWhzudL5ljVtmQWtx/6rZuA2RAc2sV8SojjAEPSkCl5kdSPNxsMjWIM+YZUaQT0vRXzttpg==}
+    peerDependencies:
+      '@tiptap/core': ^3.15.0
+      '@tiptap/pm': ^3.15.0
 
   '@tybys/wasm-util@0.10.0':
     resolution: {integrity: sha512-VyyPYFlOMNylG45GoAe0xDoLwWuowvf92F9kySqzYh8vmYm7D2u4iUJKa1tOUpS70Ku13ASrOkS4ScXFsTaCNQ==}
@@ -3194,6 +3219,9 @@ packages:
     resolution: {integrity: sha512-tX5e7OM1HnYr2+a2C/4V0htOcSQcoSTH9KgJnVvNm5zm/cyEWKJ7j7YutsH9CxMdtOkkLFy2AHrMci9IM8IPZQ==}
     engines: {node: '>=12.0.0'}
 
+  tippy.js@6.3.7:
+    resolution: {integrity: sha512-E1d3oP2emgJ9dRQZdf3Kkn0qJgI6ZLpyS5z6ZkY1DF3kaQaBsGZsndEpHwx+eC+tYM41HaSNvNtLx8tU57FzTQ==}
+
   to-regex-range@5.0.1:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
     engines: {node: '>=8.0'}
@@ -3894,6 +3922,8 @@ snapshots:
 
   '@opentelemetry/api@1.9.0': {}
 
+  '@popperjs/core@2.11.8': {}
+
   '@radix-ui/primitive@1.1.3': {}
 
   '@radix-ui/react-arrow@1.1.7(@types/react-dom@19.1.7(@types/react@19.1.9))(@types/react@19.1.9)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
@@ -4387,6 +4417,12 @@ snapshots:
       '@tiptap/core': 3.15.0(@tiptap/pm@3.15.0)
       '@tiptap/pm': 3.15.0
 
+  '@tiptap/extension-mention@3.15.0(@tiptap/core@3.15.0(@tiptap/pm@3.15.0))(@tiptap/pm@3.15.0)(@tiptap/suggestion@3.15.0(@tiptap/core@3.15.0(@tiptap/pm@3.15.0))(@tiptap/pm@3.15.0))':
+    dependencies:
+      '@tiptap/core': 3.15.0(@tiptap/pm@3.15.0)
+      '@tiptap/pm': 3.15.0
+      '@tiptap/suggestion': 3.15.0(@tiptap/core@3.15.0(@tiptap/pm@3.15.0))(@tiptap/pm@3.15.0)
+
   '@tiptap/extension-ordered-list@3.15.0(@tiptap/extension-list@3.15.0(@tiptap/core@3.15.0(@tiptap/pm@3.15.0))(@tiptap/pm@3.15.0))':
     dependencies:
       '@tiptap/extension-list': 3.15.0(@tiptap/core@3.15.0(@tiptap/pm@3.15.0))(@tiptap/pm@3.15.0)
@@ -4475,6 +4511,11 @@ snapshots:
       '@tiptap/extension-text': 3.15.0(@tiptap/core@3.15.0(@tiptap/pm@3.15.0))
       '@tiptap/extension-underline': 3.15.0(@tiptap/core@3.15.0(@tiptap/pm@3.15.0))
       '@tiptap/extensions': 3.15.0(@tiptap/core@3.15.0(@tiptap/pm@3.15.0))(@tiptap/pm@3.15.0)
+      '@tiptap/pm': 3.15.0
+
+  '@tiptap/suggestion@3.15.0(@tiptap/core@3.15.0(@tiptap/pm@3.15.0))(@tiptap/pm@3.15.0)':
+    dependencies:
+      '@tiptap/core': 3.15.0(@tiptap/pm@3.15.0)
       '@tiptap/pm': 3.15.0
 
   '@tybys/wasm-util@0.10.0':
@@ -6906,6 +6947,10 @@ snapshots:
     dependencies:
       fdir: 6.4.6(picomatch@4.0.3)
       picomatch: 4.0.3
+
+  tippy.js@6.3.7:
+    dependencies:
+      '@popperjs/core': 2.11.8
 
   to-regex-range@5.0.1:
     dependencies:
