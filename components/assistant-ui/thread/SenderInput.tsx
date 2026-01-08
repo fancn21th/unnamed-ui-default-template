@@ -1,9 +1,13 @@
 "use client";
 
-import { type FC, useCallback, useMemo, useState } from "react";
+import { type FC, useCallback, useMemo, useState,useRef } from "react";
+
 import { useAssistantApi, useAssistantState } from "@assistant-ui/react";
-import { useSmartVisionConfigStore, useSmartVisionConfigActions } from "@/runtime/smartVisionConfigRuntime";
-import { Sender } from "../../sender/Sender";
+import {
+  useSmartVisionConfigStore,
+  useSmartVisionConfigActions,
+} from "@/runtime/smartVisionConfigRuntime";
+import { Sender, type SenderRef } from "../../sender";
 import type { SuggestionItem } from "../../sender/types";
 import {
   ComponentPanelContainerPrimitive,
@@ -29,11 +33,18 @@ export type BusinessSuggestionItem = SuggestionItem & {
 export const SenderInput: FC = () => {
   const api = useAssistantApi();
   const { syncSelectedAgents } = useSmartVisionConfigActions();
+  const senderRef = useRef<SenderRef>(null);
 
   // 从 store 获取原始配置数据
-  const mcpServers = useSmartVisionConfigStore((s) => s?.config?.agent_mode?.mcp_servers);
-  const toolsets = useSmartVisionConfigStore((s) => s?.config?.agent_mode?.toolsets);
-  const workflows = useSmartVisionConfigStore((s) => s?.config?.agent_mode?.workflows);
+  const mcpServers = useSmartVisionConfigStore(
+    (s) => s?.config?.agent_mode?.mcp_servers,
+  );
+  const toolsets = useSmartVisionConfigStore(
+    (s) => s?.config?.agent_mode?.toolsets,
+  );
+  const workflows = useSmartVisionConfigStore(
+    (s) => s?.config?.agent_mode?.workflows,
+  );
 
   // 使用 useMemo 缓存转换结果，避免无限循环
   const businessSuggestionDataProvider = useMemo(() => {
@@ -85,15 +96,17 @@ export const SenderInput: FC = () => {
   );
 
   // Mention 标签变化时的回调 - 收集并同步所有 agents
-  const handleMentionsChange = useCallback((mentions: SuggestionItem[]) => {
-    // 收集完整的原始数据（通过 id 查找确定类型）
-    const selectedMcpServers: AgentConfig[] = [];
-    const selectedToolsets: AgentConfig[] = [];
-    const selectedWorkflows: AgentConfig[] = [];
+  const handleMentionsChange = useCallback(
+    (mentions: SuggestionItem[]) => {
+      // 收集完整的原始数据（通过 id 查找确定类型）
+      const selectedMcpServers: AgentConfig[] = [];
+      const selectedToolsets: AgentConfig[] = [];
+      const selectedWorkflows: AgentConfig[] = [];
 
-    mentions.forEach((mention) => {
-      const id = mention.value;
-      
+      mentions.forEach((mention) => {
+        const id = mention.value;
+
+        // 在三个数据源中查找匹配的配置
       // 在三个数据源中查找匹配的配置
       const mcpServer = (mcpServers || []).find((server: AgentConfig) => server.id === id);
       if (mcpServer) {
@@ -112,38 +125,46 @@ export const SenderInput: FC = () => {
         selectedWorkflows.push(workflow);
         return;
       }
-    });
-
-    console.log("Selected agents:", selectedMcpServers, selectedToolsets, selectedWorkflows);
-    
-    // 同步完整数据到 store（传递 id 数组）
-    syncSelectedAgents(
-      selectedToolsets.map((t) => t.id),
-      selectedMcpServers.map((s) => s.id),
-      selectedWorkflows.map((w) => w.id)
-    );
-  }, [syncSelectedAgents, mcpServers, toolsets, workflows]);
+      });
+      // 同步完整数据到 store
+      syncSelectedAgents(
+        selectedToolsets,
+        selectedMcpServers,
+        selectedWorkflows,
+      );
+    },
+    [syncSelectedAgents, mcpServers, toolsets, workflows],
+  );
 
   return (
-    <Sender
-      value={value}
-      onChange={handleChange}
-      onMentionsChange={handleMentionsChange}
-      onSubmit={handleSubmit}
-      disabled={disabled}
-      autoFocus={true}
-      className="caret-[var(--primary)]"
-      suggestionDataProvider={businessSuggestionDataProvider}
-      // onSuggestionSelect={handleSuggestionSelect}
-      // 🔧 自定义建议列表浮窗（取消注释即可使用）
-      renderSuggestionList={CustomSuggestionList}
-      // 🔧 自定义 mention 标签样式（注意：受 Tiptap renderHTML 限制）
-      // renderMentionLabel={(item) => <span style={{...}}>{item.label}</span>}
-    />
+    <>
+      {/* <div
+        onClick={(e) => {
+          senderRef.current?.openSuggestion();
+        }}
+      >
+        打开命令菜单
+      </div> */}
+      <Sender
+        ref={senderRef}
+        value={value}
+        onChange={handleChange}
+        onMentionsChange={handleMentionsChange}
+        onSubmit={handleSubmit}
+        disabled={disabled}
+        autoFocus={true}
+        suggestionDataProvider={businessSuggestionDataProvider}
+        // 🔧 自定义建议列表浮窗（取消注释即可使用）
+        renderSuggestionList={CustomSuggestionList}
+        referenceSelector=".aui-composer-root"
+        // 🔧 自定义 mention 标签样式（注意：受 Tiptap renderHTML 限制）
+        // renderMentionLabel={(item) => <span style={{...}}>{item.label}</span>}
+      />
+    </>
   );
 };
 
-interface AgentConfig {
+export interface AgentConfig {
   id: string;
   name: string;
   avatar: string | null;
@@ -160,6 +181,7 @@ function buildSuggestionList(configs: AgentConfig[], type: string) {
     value: cfg.id,
     label: cfg.name,
     type,
+    avatar: cfg.avatar,
   }));
 }
 
@@ -214,9 +236,7 @@ export function CustomSuggestionList({
   // 如果没有数据，显示空状态
   if (items.length === 0) {
     return (
-      <div style={{ padding: "16px", color: "#999" }}>
-        没有找到匹配的结果
-      </div>
+      <div style={{ padding: "16px", color: "#999" }}>没有找到匹配的结果</div>
     );
   }
 
@@ -231,6 +251,7 @@ export function CustomSuggestionList({
     <ComponentPanelContainerPrimitive
       value={activeTab}
       onValueChange={setActiveTabState}
+      className="w-[var(--thread-max-width)]"
       defaultValue={availableTypes[0] || "mcp"}
     >
       <ComponentPanelTabsListPrimitive>

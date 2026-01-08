@@ -18,6 +18,10 @@ export interface SuggestionItem {
    * 类型信息（可选，用于区分不同类别的建议项）
    */
   type?: string;
+  /**
+   * 头像信息
+   */
+  avatar?: string | null;
 }
 
 /**
@@ -28,6 +32,25 @@ export interface SuggestionItem {
 export type SuggestionDataProvider = 
   | ((query: string, trigger: string) => SuggestionItem[] | Promise<SuggestionItem[]>)
   | SuggestionItem[];
+
+/**
+ * Sender 组件暴露的 ref 方法
+ */
+export interface SenderRef {
+  /**
+   * 手动触发建议浮窗
+   * @param trigger 触发字符（'/' 或 '@'），默认为 '/'
+   */
+  openSuggestion: (trigger?: string) => void;
+  /**
+   * 获取编辑器实例
+   */
+  getEditor: () => any | null;
+  /**
+   * 聚焦到编辑器
+   */
+  focus: () => void;
+}
 
 /**
  * Sender 组件的属性接口
@@ -88,4 +111,10 @@ export interface SenderProps {
     items: SuggestionItem[];
     command: (item: SuggestionItem) => void;
   }>;
+  /**
+   * 浮窗定位参考元素的选择器（CSS 选择器）
+   * 如果设置，建议浮窗将固定在指定元素上方
+   * 默认为未设置，浮窗跟随光标位置
+   */
+  referenceSelector?: string;
 }
