@@ -78,7 +78,7 @@ class SmartVisionThreadHistoryAdapter implements ThreadHistoryAdapter {
             }
           });
         })
-        .flat();
+        .flat().filter(Boolean);
       messages.push({
         message: {
           id: d.id,
