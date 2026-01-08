@@ -272,6 +272,7 @@ const ExecutionResultTitlePrimitive = React.forwardRef<
           "leading-[var(--line-height-2)]",
           "text-[var(--text-secondary)]",
           "cursor-pointer",
+          "group", // 添加 group 类以支持子元素的状态选择
           className,
         )}
         {...props}
@@ -379,6 +380,7 @@ const ExecutionResultItemHeaderPrimitive = React.forwardRef<
           "w-full",
           "gap-[var(--gap-xs)]",
           "cursor-pointer",
+          "group", // 添加 group 类以支持子元素的状态选择
           className,
         )}
         {...props}
@@ -691,7 +693,7 @@ const ExecutionResultArrowPrimitive = React.forwardRef<
         "size-4",
         "text-[var(--text-secondary)]",
         "transition-transform duration-200",
-        "[data-state=open]_&:rotate-180",
+        "group-data-[state=open]:rotate-180", // 当父元素 CollapsibleTrigger 的 data-state 为 open 时旋转
         "flex items-center justify-center",
         className,
       )}
