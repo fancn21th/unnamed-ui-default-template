@@ -7,4 +7,4 @@
 export { Sender } from "./Sender";
 
 // 导出类型
-export type { SenderProps, SuggestionItem, SuggestionDataProvider } from "./types";
+export type { SenderProps, SenderRef, SuggestionItem, SuggestionDataProvider } from "./types";

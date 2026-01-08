@@ -1,8 +1,8 @@
 "use client";
 
 import { useEditor, EditorContent } from "@tiptap/react";
-import { useEffect, type FC } from "react";
-import type { SenderProps, SuggestionItem } from "./types";
+import { useEffect, useImperativeHandle, forwardRef } from "react";
+import type { SenderProps, SenderRef, SuggestionItem } from "./types";
 import { createEditorExtensions } from "./extensions";
 import "tippy.js/dist/tippy.css";
 import "./styles/sender.css";
@@ -12,7 +12,7 @@ import "./styles/suggestion.css";
  * Tiptap 富文本输入组件
  * 独立组件，可用于任何项目
  */
-export const Sender: FC<SenderProps> = ({
+export const Sender = forwardRef<SenderRef, SenderProps>(({
   value = "",
   onChange,
   onMentionsChange,
@@ -25,7 +25,8 @@ export const Sender: FC<SenderProps> = ({
   onSuggestionSelect,
   renderMentionLabel,
   renderSuggestionList,
-}) => {
+  referenceSelector,
+}, ref) => {
   const editor = useEditor({
     immediatelyRender: false,
     editable: !disabled,
@@ -34,6 +35,8 @@ export const Sender: FC<SenderProps> = ({
       onSuggestionSelect,
       renderMentionLabel,
       renderSuggestionList,
+      placeholder,
+      referenceSelector,
     }),
     content: value,
     editorProps: {
@@ -49,7 +52,6 @@ export const Sender: FC<SenderProps> = ({
           event.preventDefault();
           // 从 view.state 获取当前文本内容
           const text = view.state.doc.textContent;
-          console.log("getText()", text);
           if (text.trim() && onSubmit) {
             const shouldContinue = onSubmit(text);
             // 如果 onSubmit 返回 false，则不清空编辑器
@@ -97,6 +99,23 @@ export const Sender: FC<SenderProps> = ({
     }
   }, [disabled, editor]);
 
+  // 暴露方法给外部调用
+  useImperativeHandle(ref, () => ({
+    openSuggestion: (trigger = "/") => {
+      if (!editor) return;
+      
+      // 聚焦编辑器
+      editor.commands.focus();
+      
+      // 在光标位置插入触发字符，这会自动触发 suggestion
+      editor.commands.insertContent(trigger);
+    },
+    getEditor: () => editor,
+    focus: () => {
+      editor?.commands.focus();
+    },
+  }), [editor]);
+
   if (!editor) {
     return null;
   }
@@ -106,4 +125,6 @@ export const Sender: FC<SenderProps> = ({
       <EditorContent editor={editor} />
     </div>
   );
-};
+});
+
+Sender.displayName = "Sender";

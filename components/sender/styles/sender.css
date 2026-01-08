@@ -73,3 +73,11 @@
 .tiptap-wrapper .ProseMirror::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--muted-foreground) / 0.5);
 }
+
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: #AAA8B3;
+  pointer-events: none;
+  height: 0;
+  float: left;
+}
