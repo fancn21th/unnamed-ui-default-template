@@ -1,0 +1,83 @@
+/* Tiptap Editor 样式 */
+.tiptap-wrapper {
+  width: 100%;
+}
+
+.tiptap {
+  outline: none;
+}
+
+/* placeholder 样式 */
+.tiptap p.is-editor-empty:first-child::before {
+  content: "Send a message...";
+  float: left;
+  color: hsl(var(--muted-foreground));
+  pointer-events: none;
+  height: 0;
+}
+
+/* 段落样式 */
+.tiptap p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* 列表样式 */
+.tiptap ul,
+.tiptap ol {
+  padding-left: 1.5rem;
+  margin: 0.25rem 0;
+}
+
+.tiptap li {
+  margin: 0.1rem 0;
+}
+
+/* 粗体、斜体样式 */
+.tiptap strong {
+  font-weight: 600;
+}
+
+.tiptap em {
+  font-style: italic;
+}
+
+/* 代码样式 */
+.tiptap code {
+  background-color: hsl(var(--muted));
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* 滚动条样式优化 */
+.tiptap-wrapper .ProseMirror {
+  overflow-y: auto;
+  max-height: 8rem; /* 对应 max-h-32 */
+}
+
+.tiptap-wrapper .ProseMirror::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tiptap-wrapper .ProseMirror::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tiptap-wrapper .ProseMirror::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 3px;
+}
+
+.tiptap-wrapper .ProseMirror::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: #AAA8B3;
+  pointer-events: none;
+  height: 0;
+  float: left;
+}

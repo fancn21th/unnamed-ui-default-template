@@ -5,7 +5,6 @@ import {
   SenderActionBar,
   SenderAttachmentButton,
   SenderContainer,
-  SenderTextarea,
   SenderModeButton,
 } from "@/components/wuhan/blocks/sender-01";
 import { Brain, Search, Grid3x3 } from "lucide-react";
@@ -13,6 +12,7 @@ import { ThreadScrollToBottom } from "./ThreadScrollToBottom";
 import { ComposerAttachmentsRegion } from "./ComposerAttachmentsRegion";
 import { ComposerAction } from "./ComposerAction";
 import { ThreadReference } from "./ThreadReference";
+import { SenderInput } from "./SenderInput";
 import { cn } from "@/lib/utils";
 import {
   BlockTooltip,
@@ -35,12 +35,14 @@ export const Composer: FC<ComposerProps> = ({ sticky = true }) => {
   const [isWebSearchMode, setIsWebSearchMode] = useState(false);
   const [isComponentMode, setIsComponentMode] = useState(false);
 
+
   return (
     <div className={cn(
       "aui-composer-wrapper z-10 mx-auto flex w-full max-w-[var(--thread-max-width)] flex-col gap-0 overflow-visible rounded-t-3xl bg-background pb-4 md:pb-6",
       sticky && "sticky bottom-0"
     )}>
       <ThreadScrollToBottom />
+
       <ComposerPrimitive.Root asChild>
         <SenderContainer className="aui-composer-root gap-0 dark:border-muted-foreground/15">
           <div className="flex flex-col gap-3">
@@ -55,7 +57,7 @@ export const Composer: FC<ComposerProps> = ({ sticky = true }) => {
               aria-label="Message input"
               asChild
             >
-              <SenderTextarea className="caret-[var(--primary)]" />
+              <SenderInput />
             </ComposerPrimitive.Input>
             <SenderActionBar className="flex items-center justify-between">
               <div className="flex items-center gap-1">
@@ -86,7 +88,7 @@ export const Composer: FC<ComposerProps> = ({ sticky = true }) => {
                   aria-label="Web Search Mode"
                 >
                   <Search className="size-4" />
-                  联网搜索
+                  搜索
                 </SenderModeButton>
                 <SenderModeButton
                   selected={isComponentMode}
