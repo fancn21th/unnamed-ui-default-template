@@ -16,7 +16,7 @@ export const UserMessage: FC = () => {
         {/* MessageHeader 显示在顶部，左对齐 */}
         <div className="flex justify-end">
           <MessageHeader.Root>
-            <MessageHeader.Avatar className="flex items-center justify-center justify-end">
+            <MessageHeader.Avatar className="flex items-center justify-center">
               <UserRound className="size-4" />
             </MessageHeader.Avatar>
             <MessageHeader.Name>User</MessageHeader.Name>

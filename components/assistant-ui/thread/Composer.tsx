@@ -88,7 +88,7 @@ export const Composer: FC<ComposerProps> = ({ sticky = true }) => {
                   aria-label="Web Search Mode"
                 >
                   <Search className="size-4" />
-                  联网搜索
+                  搜索
                 </SenderModeButton>
                 <SenderModeButton
                   selected={isComponentMode}

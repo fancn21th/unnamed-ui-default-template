@@ -2,17 +2,17 @@ import { loadConfig, getApp } from "@/runtime/smartvisionApi";
 import { create, useStore } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { ConfigResponse } from "@/runtime/types";
-
+import { AgentConfig } from "@/components/assistant-ui/thread/SenderInput";
 interface SmartVisionConfigState {
   config?: ConfigResponse;
   configLoading?: boolean;
-  appConfig?: any;
+  appConfig?: AgentConfig[];
   appConfigLoading?: boolean;
   selectedAgents?: {
     enabled: boolean;
-    toolsets: any[];
-    mcp_servers: any[];
-    workFlows: any[];
+    toolsets: AgentConfig[];
+    mcp_servers: AgentConfig[];
+    workFlows: AgentConfig[];
   };
 }
 const store = create(immer<SmartVisionConfigState>(() => ({})));
@@ -95,9 +95,9 @@ export const useSmartVisionConfigActions = () => {
    * @param workFlows - 工作流 ID 数组
    */
   const syncSelectedAgents = (
-    toolsets: string[],
-    mcpServers: string[],
-    workFlows: string[],
+    toolsets: AgentConfig[],
+    mcpServers: AgentConfig[],
+    workFlows: AgentConfig[],
   ) => {
     store.setState((draft) => {
       draft.selectedAgents = {

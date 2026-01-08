@@ -43,7 +43,7 @@ export const Sender = forwardRef<SenderRef, SenderProps>(({
       attributes: {
         class:
           className ||
-          "aui-composer-input mb-1 max-h-32 min-h-16 w-full resize-none bg-transparent px-3.5 pt-1.5 pb-3 text-base outline-none placeholder:text-muted-foreground focus:outline-primary prose prose-sm max-w-none",
+          "aui-composer-input",
         "aria-label": "Message input",
         placeholder: placeholder,
       },
