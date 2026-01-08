@@ -222,7 +222,7 @@ const MessageAIPrimitive = React.forwardRef<
   ) => {
     return (
       <div
-        className="[&_*]:!box-border w-fit max-w-full"
+        className="[&_*]:!box-border w-full"
         ref={ref}
         role={role}
         aria-label={ariaLabel}
