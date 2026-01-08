@@ -13,18 +13,42 @@ interface Range {
 }
 
 /**
- * Suggestion props 接口（来自 Tiptap suggestion 插件）
+ * Mention 节点属性（Tiptap Mention 扩展使用的格式）
  */
-interface SuggestionProps<T = SuggestionItem> {
+interface MentionNodeAttrs {
+  id: string | null;
+  label?: string | null;
+}
+
+/**
+ * Tiptap Suggestion props 类型（用于 onStart 和 onUpdate）
+ */
+interface TiptapSuggestionProps {
   editor: Editor;
   range: Range;
   query: string;
   text: string;
-  items: T[];
-  command: (props: T) => void;
+  items: SuggestionItem[];
+  command: (props: MentionNodeAttrs) => void;
   decorationNode: Element | null;
   clientRect?: (() => DOMRect | null) | null;
   event?: KeyboardEvent;
+}
+
+/**
+ * Tiptap Suggestion KeyDown props 类型（只包含 event）
+ */
+interface TiptapSuggestionKeyDownProps {
+  event?: KeyboardEvent;
+}
+
+/**
+ * Tiptap command 函数参数类型
+ */
+interface TiptapCommandProps {
+  editor: Editor;
+  range: Range;
+  props: MentionNodeAttrs;
 }
 
 /**
@@ -61,7 +85,10 @@ export interface MentionExtensionOptions {
   /**
    * 建议列表组件（React 组件）
    */
-  suggestionListComponent: React.ComponentType<any>;
+  suggestionListComponent: React.ComponentType<{
+    items: SuggestionItem[];
+    command: (item: SuggestionItem) => void;
+  }>;
 }
 
 /**
@@ -91,7 +118,8 @@ export const createMentionExtension = (options: MentionExtensionOptions) => {
           value: node.attrs.id,
           label: node.attrs.label,
         };
-        const customContent = renderMentionLabel(item);
+        // 调用自定义渲染函数（虽然结果不会直接使用，但保持接口一致性）
+        renderMentionLabel(item);
 
         // 如果是 React 元素，需要转换为字符串或使用默认显示
         // 这里我们仍然使用 label，但可以添加额外的 class
@@ -156,10 +184,23 @@ export const createMentionExtension = (options: MentionExtensionOptions) => {
         let component: ReactRenderer<SuggestionListRef> | undefined;
         let popup: TippyInstance[] | undefined;
 
-        return {
-          onStart: (props: any) => {
+        const renderResult = {
+          onStart: (props: TiptapSuggestionProps) => {
+            // 转换 props 以匹配组件期望的格式
+            const componentProps = {
+              items: props.items,
+              command: (item: SuggestionItem) => {
+                // 调用 Tiptap 的 command，传入符合 MentionNodeAttrs 格式的对象
+                // 将 value 转换为 string，因为 Tiptap 的 id 是 string | null
+                props.command({
+                  id: String(item.value),
+                  label: item.label,
+                });
+              },
+            };
+
             component = new ReactRenderer(SuggestionListComponent, {
-              props,
+              props: componentProps,
               editor: props.editor,
             });
 
@@ -178,8 +219,20 @@ export const createMentionExtension = (options: MentionExtensionOptions) => {
             });
           },
 
-          onUpdate: (props: any) => {
-            component?.updateProps(props);
+          onUpdate: (props: TiptapSuggestionProps) => {
+            // 转换 props 以匹配组件期望的格式
+            const componentProps = {
+              items: props.items,
+              command: (item: SuggestionItem) => {
+                // 调用 Tiptap 的 command，传入符合 MentionNodeAttrs 格式的对象
+                // 将 value 转换为 string，因为 Tiptap 的 id 是 string | null
+                props.command({
+                  id: String(item.value),
+                  label: item.label,
+                });
+              },
+            };
+            component?.updateProps(componentProps);
 
             if (!props.clientRect) {
               return;
@@ -190,13 +243,16 @@ export const createMentionExtension = (options: MentionExtensionOptions) => {
             });
           },
 
-          onKeyDown: (props: any) => {
+          onKeyDown: (props: TiptapSuggestionKeyDownProps) => {
             if (props.event?.key === "Escape") {
               popup?.[0]?.hide();
               return true;
             }
 
-            return component?.ref?.onKeyDown(props.event) || false;
+            if (props.event) {
+              return component?.ref?.onKeyDown(props.event) || false;
+            }
+            return false;
           },
 
           onExit: () => {
@@ -204,9 +260,15 @@ export const createMentionExtension = (options: MentionExtensionOptions) => {
             component?.destroy();
           },
         };
+        return renderResult;
       },
-      command: ({ editor, range, props }: any) => {
-        const item = props as SuggestionItem;
+      command: ({ editor, range, props }: TiptapCommandProps) => {
+        // 处理 Tiptap 传递的 props（MentionNodeAttrs 格式）
+        // Tiptap 传递的 props 包含 id 和 label，我们需要转换为 SuggestionItem 格式
+        const item: SuggestionItem = {
+          value: props.id ?? "",
+          label: props.label ?? "",
+        };
 
         onSuggestionSelect?.(item);
 

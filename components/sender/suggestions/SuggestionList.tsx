@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, useImperativeHandle, useMemo, useState } from "react";
+import { forwardRef, useImperativeHandle, useMemo, useState, useCallback } from "react";
 import type { SuggestionItem } from "../types";
 
 export interface SuggestionListProps {
@@ -33,12 +33,12 @@ export const SuggestionList = forwardRef<
     return items.length > 0 ? Math.min(selectedIndex, items.length - 1) : 0;
   }, [selectedIndex, items.length]);
 
-  const selectItem = (index: number) => {
+  const selectItem = useCallback((index: number) => {
     const item = items[index];
     if (item) {
       command(item);
     }
-  };
+  }, [items, command]);
 
   useImperativeHandle(
     ref,
@@ -62,7 +62,7 @@ export const SuggestionList = forwardRef<
         return false;
       },
     }),
-    [items.length, validSelectedIndex],
+    [items.length, validSelectedIndex, selectItem],
   );
 
   if (items.length === 0) {

@@ -1,10 +1,19 @@
 "use client";
 
-import { type FC, useCallback, useMemo } from "react";
+import { type FC, useCallback, useMemo, useState } from "react";
 import { useAssistantApi, useAssistantState } from "@assistant-ui/react";
 import { useSmartVisionConfigStore, useSmartVisionConfigActions } from "@/runtime/smartVisionConfigRuntime";
 import { Sender } from "../../sender/Sender";
 import type { SuggestionItem } from "../../sender/types";
+import {
+  ComponentPanelContainerPrimitive,
+  ComponentPanelTabsListPrimitive,
+  ComponentPanelTabsTriggerPrimitive,
+  ComponentPanelTabsContentPrimitive,
+  ComponentPanelListPrimitive,
+  ComponentPanelListItemPrimitive,
+  ComponentPanelListItemIconPrimitive,
+} from "@/components/wuhan/blocks/component-panel-01";
 
 // 业务相关的 SuggestionItem 类型（包含额外的业务字段）
 export type BusinessSuggestionItem = SuggestionItem & {
@@ -78,27 +87,27 @@ export const SenderInput: FC = () => {
   // Mention 标签变化时的回调 - 收集并同步所有 agents
   const handleMentionsChange = useCallback((mentions: SuggestionItem[]) => {
     // 收集完整的原始数据（通过 id 查找确定类型）
-    const selectedMcpServers: any[] = [];
-    const selectedToolsets: any[] = [];
-    const selectedWorkflows: any[] = [];
+    const selectedMcpServers: AgentConfig[] = [];
+    const selectedToolsets: AgentConfig[] = [];
+    const selectedWorkflows: AgentConfig[] = [];
 
     mentions.forEach((mention) => {
       const id = mention.value;
       
       // 在三个数据源中查找匹配的配置
-      const mcpServer = (mcpServers || []).find((server) => server.id === id);
+      const mcpServer = (mcpServers || []).find((server: AgentConfig) => server.id === id);
       if (mcpServer) {
         selectedMcpServers.push(mcpServer);
         return;
       }
       
-      const toolset = (toolsets || []).find((tool) => tool.id === id);
+      const toolset = (toolsets || []).find((tool: AgentConfig) => tool.id === id);
       if (toolset) {
         selectedToolsets.push(toolset);
         return;
       }
       
-      const workflow = (workflows || []).find((wf) => wf.id === id);
+      const workflow = (workflows || []).find((wf: AgentConfig) => wf.id === id);
       if (workflow) {
         selectedWorkflows.push(workflow);
         return;
@@ -107,11 +116,11 @@ export const SenderInput: FC = () => {
 
     console.log("Selected agents:", selectedMcpServers, selectedToolsets, selectedWorkflows);
     
-    // 同步完整数据到 store
+    // 同步完整数据到 store（传递 id 数组）
     syncSelectedAgents(
-      selectedToolsets,
-      selectedMcpServers,
-      selectedWorkflows
+      selectedToolsets.map((t) => t.id),
+      selectedMcpServers.map((s) => s.id),
+      selectedWorkflows.map((w) => w.id)
     );
   }, [syncSelectedAgents, mcpServers, toolsets, workflows]);
 
@@ -155,8 +164,8 @@ function buildSuggestionList(configs: AgentConfig[], type: string) {
 }
 
 /**
- * 自定义建议列表组件示例
- * 用户可以在 SenderInput.tsx 中使用这个组件来完全自定义浮窗样式
+ * 自定义建议列表组件
+ * 使用 component-panel-01 组件，按类型分组显示
  */
 export function CustomSuggestionList({
   items,
@@ -165,6 +174,44 @@ export function CustomSuggestionList({
   items: SuggestionItem[];
   command: (item: SuggestionItem) => void;
 }) {
+  // 按类型分组
+  const groupedItems = useMemo(() => {
+    const groups: Record<string, BusinessSuggestionItem[]> = {
+      mcp: [],
+      tool: [],
+      workflow: [],
+    };
+
+    items.forEach((item) => {
+      const businessItem = item as BusinessSuggestionItem;
+      const type = businessItem.type || "tool";
+      if (groups[type]) {
+        groups[type].push(businessItem);
+      }
+    });
+
+    return groups;
+  }, [items]);
+
+  // 获取有数据的类型列表
+  const availableTypes = useMemo(() => {
+    return Object.keys(groupedItems).filter(
+      (type) => groupedItems[type].length > 0
+    );
+  }, [groupedItems]);
+
+  // 计算当前应该显示的 tab（如果当前 tab 不在可用列表中，使用第一个可用的）
+  const [activeTabState, setActiveTabState] = useState<string>("mcp");
+  
+  const activeTab = useMemo(() => {
+    if (availableTypes.length === 0) return "mcp";
+    if (availableTypes.includes(activeTabState)) {
+      return activeTabState;
+    }
+    return availableTypes[0];
+  }, [availableTypes, activeTabState]);
+
+  // 如果没有数据，显示空状态
   if (items.length === 0) {
     return (
       <div style={{ padding: "16px", color: "#999" }}>
@@ -173,51 +220,42 @@ export function CustomSuggestionList({
     );
   }
 
+  // 类型标签映射
+  const typeLabels: Record<string, string> = {
+    mcp: "MCP",
+    tool: "工具",
+    workflow: "工作流",
+  };
+
   return (
-    <div
-      style={{
-        background: "white",
-        border: "1px solid #ddd",
-        borderRadius: "8px",
-        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-        padding: "8px",
-        minWidth: "280px",
-        color: "black",
-      }}
+    <ComponentPanelContainerPrimitive
+      value={activeTab}
+      onValueChange={setActiveTabState}
+      defaultValue={availableTypes[0] || "mcp"}
     >
-      {items.map((item) => (
-        <button
-          key={item.value}
-          onClick={() => command(item)}
-          style={{
-            display: "block",
-            width: "100%",
-            padding: "12px",
-            border: "none",
-            background: "transparent",
-            textAlign: "left",
-            cursor: "pointer",
-            borderRadius: "4px",
-            transition: "background 0.2s",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "#f5f5f5";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "transparent";
-          }}
-        >
-          {/* 使用 renderLabel 如果有，否则使用 label */}
-          {item.renderLabel || (
-            <div>
-              <div style={{ fontWeight: "500" }}>{item.label}</div>
-              <div style={{ fontSize: "12px", color: "#666", marginTop: "4px" }}>
-                ID: {item.value}
-              </div>
-            </div>
-          )}
-        </button>
+      <ComponentPanelTabsListPrimitive>
+        {availableTypes.map((type) => (
+          <ComponentPanelTabsTriggerPrimitive key={type} value={type}>
+            {typeLabels[type] || type}
+          </ComponentPanelTabsTriggerPrimitive>
+        ))}
+      </ComponentPanelTabsListPrimitive>
+
+      {availableTypes.map((type) => (
+        <ComponentPanelTabsContentPrimitive key={type} value={type}>
+          <ComponentPanelListPrimitive>
+            {groupedItems[type].map((item) => (
+              <ComponentPanelListItemPrimitive
+                key={item.value}
+                onClick={() => command(item)}
+              >
+                <ComponentPanelListItemIconPrimitive />
+                <span className="flex-1 truncate text-left">{item.label}</span>
+              </ComponentPanelListItemPrimitive>
+            ))}
+          </ComponentPanelListPrimitive>
+        </ComponentPanelTabsContentPrimitive>
       ))}
-    </div>
+    </ComponentPanelContainerPrimitive>
   );
 }
