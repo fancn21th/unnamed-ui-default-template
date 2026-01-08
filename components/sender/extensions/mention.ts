@@ -62,6 +62,11 @@ export interface MentionExtensionOptions {
    * 建议列表组件（React 组件）
    */
   suggestionListComponent: React.ComponentType<any>;
+  /**
+   * 浮窗定位参考元素的选择器（可选）
+   * 默认为光标位置，如果设置则固定在指定元素上方
+   */
+  referenceSelector?: string;
 }
 
 /**
@@ -75,6 +80,7 @@ export const createMentionExtension = (options: MentionExtensionOptions) => {
     onSuggestionSelect,
     renderMentionLabel,
     suggestionListComponent: SuggestionListComponent,
+    referenceSelector,
   } = options;
 
   const MentionExt = name ? Mention.extend({ name }) : Mention;
@@ -163,31 +169,35 @@ export const createMentionExtension = (options: MentionExtensionOptions) => {
               editor: props.editor,
             });
 
-            if (!props.clientRect) {
-              return;
-            }
-
+            // 如果提供了 referenceSelector，使用指定元素作为定位参考
+            const referenceElement = referenceSelector
+              ? document.querySelector(referenceSelector)
+              : null;
             popup = tippy("body", {
-              getReferenceClientRect: props.clientRect as () => DOMRect,
+              getReferenceClientRect: () => {
+                // 如果找到了参考元素，使用它的位置
+                if (referenceElement) {
+                  return referenceElement.getBoundingClientRect();
+                }
+                // 否则使用光标位置
+                return props.clientRect ? props.clientRect() : new DOMRect();
+              },
               appendTo: () => document.body,
               content: component.element,
               showOnCreate: true,
               interactive: true,
               trigger: "manual",
-              placement: "bottom-start",
+              placement: referenceElement ? "top-start" : "bottom-start", // 固定元素在上方，光标在下方
+              arrow: false, // 隐藏箭头
+              offset: [0, referenceElement ? 12 : 8], // 固定元素距离12px，光标距离8px
+              maxWidth: "none", // 取消最大宽度限制
             });
           },
 
           onUpdate: (props: any) => {
             component?.updateProps(props);
 
-            if (!props.clientRect) {
-              return;
-            }
-
-            popup?.[0]?.setProps({
-              getReferenceClientRect: props.clientRect as () => DOMRect,
-            });
+            // 不需要更新位置，因为固定在 composer-root 上方
           },
 
           onKeyDown: (props: any) => {
