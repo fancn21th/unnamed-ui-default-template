@@ -10,7 +10,22 @@ import { appid, token, slug, baseURL } from "./config";
 import axios from "axios";
 import { ThreadUserMessage } from "@assistant-ui/react";
 import { getAppConfig } from "@/runtime/smartVisionConfigRuntime";
+import { fetchEventSource } from "@microsoft/fetch-event-source";
+import { EventSourceMessage } from "@microsoft/fetch-event-source/lib/cjs/parse";
+import { AsyncQueue } from "@/lib/AsyncQueue";
 
+type SendMessageEvent =
+  | {
+      type: "streaming";
+      value: SmartVisionChunk;
+    }
+  | {
+      type: "complete";
+    }
+  | {
+      type: "error";
+      value: Error;
+    };
 // SmartVision API 客户端
 export class SmartVisionClient {
   private baseURL: string;
@@ -74,8 +89,7 @@ export class SmartVisionClient {
       task_id: params.taskId,
       conversation_id: params.conversationId,
       chat_sys_variable: {},
-      chat_template_kwargs: {
-      },
+      chat_template_kwargs: {},
       // ...(tools.length
       //   ? {
       //       agent_mode: {
@@ -101,53 +115,78 @@ export class SmartVisionClient {
       // },
       // messages: apiMessages,
     };
+    const queue = new AsyncQueue<SendMessageEvent>();
 
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers,
-        body: JSON.stringify(body),
-      });
+    const controller = new AbortController();
+    let done = false;
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+    // 当生成器被提前 return / throw 时，自动关闭连接
+    const cleanup = () => {
+      if (!done) {
+        done = true;
+        controller.abort();
       }
+    };
+    // 监听 SSE 消息
+    const onmessage = (event: EventSourceMessage) => {
+      if (done) return;
 
-      if (!response.body) {
-        throw new Error("No response body");
+      const { data } = event;
+      if (data === "[DONE]") {
+        cleanup();
+        return;
       }
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
 
       try {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          const chunk = decoder.decode(value, { stream: true });
-          const lines = chunk.split("\n");
-
-          for (const line of lines) {
-            if (line.startsWith("data: ")) {
-              const data = line.slice(6).trim();
-              if (data && data !== "[DONE]") {
-                try {
-                  const parsed = JSON.parse(data) as SmartVisionChunk;
-                  yield parsed;
-                } catch (e) {
-                  console.warn("Failed to parse chunk:", data);
-                }
-              }
-            }
-          }
-        }
-      } finally {
-        reader.releaseLock();
+        const parsed = JSON.parse(data) as SmartVisionChunk;
+        // 放入队列
+        queue.push({ value: parsed, type: "streaming" });
+      } catch (e) {
+        console.warn("Failed to parse SSE message:", data, e);
+        // 可选：把错误也推入队列，或直接忽略
+        queue.push({ value: e as Error, type: "error" });
       }
-    } catch (error) {
-      console.error("SmartVision API error:", error);
-      throw error;
+    };
+
+    const onerror = (err: any) => {
+      if (done) return;
+      console.error("SSE connection error:", err);
+      // 注意：fetch-event-source 默认会重连，除非你抛出异常
+      // 如果你想终止流，可以 cleanup()，但通常让其重连更健壮
+    };
+    fetchEventSource(url, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(body),
+      signal: controller.signal,
+      onmessage,
+      onerror,
+      onopen(response) {
+        // 可选：检查响应状态
+        if (response.status !== 200) {
+          throw new Error(`SSE connection failed: ${response.status}`);
+        }
+        return Promise.resolve();
+      },
+    }).catch((err) => {
+      if (!controller.signal.aborted) {
+        console.error("SSE fetch failed:", err);
+      }
+    });
+    try {
+      while (!done) {
+        const event = await queue.next();
+        if (event.type === "error") {
+          // 可选：是否抛出解析错误？这里选择跳过
+          continue;
+        }
+        if (event.type === "complete") {
+          break
+        }
+        yield event.value;
+      }
+    } finally {
+      cleanup();
     }
   }
 
