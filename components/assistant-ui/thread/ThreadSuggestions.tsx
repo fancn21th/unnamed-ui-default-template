@@ -36,7 +36,7 @@ export const ThreadSuggestions: FC = () => {
             asChild
           >
             <PromptButton
-              className="aui-thread-welcome-suggestion"
+              className="aui-thread-welcome-suggestion max-w-full min-h-[38px] h-auto whitespace-normal break-words"
               aria-label={suggestedAction.action}
             >
               {suggestedAction.title} {suggestedAction.label}

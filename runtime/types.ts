@@ -1,9 +1,6 @@
 "use client";
 
 // SmartVision API 消息类型定义
-
-import { CompleteAttachment } from "@assistant-ui/react";
-
 export type SmartVisionEventType =
   | "agent_message" // 智能体消息
   | "agent_thought" // 智能体消息类型工具消息
@@ -29,6 +26,7 @@ export interface SmartVisionChunk {
   tool?: string | null;
   tool_labels?: Record<string, Record<string, unknown>> | null;
   tool_input?: Record<string, unknown> | string | null; // 修改为支持对象格式
+  tool_execute_time?: number | null; // 工具执行耗时（秒）
   message_files?: string[] | null;
   type?: string | null;
   belongs_to?: string | null;
@@ -36,40 +34,6 @@ export interface SmartVisionChunk {
   status?: string | null; // 修改为 string 以支持 "finished" 等状态
   message?: string | null;
 }
-
-// 基础消息内容类型
-export type SmartVisionContentPart =
-  | { type: "text"; text: string }
-  | { type: "text_delta"; text: string }
-  | { type: "image_url"; image_url: string | { url: string } }
-  | {
-      type: "tool-call";
-      toolCallId: string;
-      toolName: string;
-      args: unknown;
-      argsText: string;
-    }
-  | {
-      type: "tool-result";
-      toolCallId: string;
-      result: unknown;
-      isError?: boolean;
-    };
-
-// 工具调用相关类型
-export interface SmartVisionToolCall {
-  id: string;
-  toolName: string;
-  toolInput: Record<string, unknown>;
-  toolLabels?: Record<string, Record<string, unknown>>;
-  status?: "running" | "finished" | "error";
-  observation?: string;
-  position?: number;
-  messageId?: string;
-}
-
-// 工具执行状态
-export type SmartVisionToolStatus = "running" | "finished" | "error";
 
 export interface ConversationItem {
   id: string;
@@ -80,38 +44,7 @@ export interface ConversationItem {
   created_at: number;
   updated_at: number;
 }
-// SmartVision 消息类型（类似 LangChain 的消息结构）
-export type SmartVisionMessage =
-  | {
-      type: "system";
-      id: string;
-      content: string;
-    }
-  | {
-      type: "human";
-      id: string;
-      content: string | SmartVisionContentPart[];
-      readonly attachments?: readonly CompleteAttachment[] | undefined;
-    }
-  | {
-      type: "ai";
-      id: string;
-      content: string | SmartVisionContentPart[];
-      toolCalls?: SmartVisionToolCall[]; // AI 消息可以包含工具调用
-      is_upvote?: UpvoteStatus;
-    }
-  | {
-      type: "tool";
-      id: string;
-      name: string;
-      tool_call_id: string;
-      content: string;
-      artifact?: unknown;
-      status?: "success" | "error" | "running";
-      toolInput?: Record<string, unknown>;
-      toolLabels?: Record<string, Record<string, unknown>>;
-      observation?: string;
-    };
+
 
 /** 审查匹配项 */
 export interface ReviewStepContent {
@@ -142,7 +75,7 @@ export interface MultimodalContent {
     url: string;
   };
   tool?: {
-    tool_labels?: Record<string, any>;
+    tool_labels?: Record<string, string>;
     tool?: string;
     tool_input?: string;
     tool_execute_time?: number;
@@ -211,6 +144,7 @@ export interface MessageProps {
     exec_steps: ExecSteps[];
     observation?: string;
     created_at: number;
+    id: string;
   })[];
   message_files: {
     id: string;
@@ -239,3 +173,90 @@ export interface FileUploadResponse {
   url: string;
   extension: string;
 }
+
+export interface InstructionsItem {
+  appId?: number;
+  description?: string;
+  id?: number;
+  name?: string;
+}
+export interface UserInput {
+  label?: string;
+  variable?: string;
+  required?: boolean;
+  options?: string[];
+}
+interface Model {
+  completion_params?: {
+    top_p?: string;
+    frequency_penalty?: string;
+    max_tokens?: string;
+    presence_penalty?: string;
+    temperature?: string;
+  };
+  provider?: string;
+  api_key?: string;
+  api_base?: string;
+  name?: string;
+  model_id?: string;
+  is_mix_think?: boolean;
+}
+interface SuggestedQuestionsAfterAnswer {
+  enabled?: boolean;
+}
+interface MultiRoundConversationEnhancement {
+  enabled?: boolean;
+}
+interface FilesConfig {
+  chunk_size?: number;
+  output_type?: number;
+  api_key?: string;
+  splitter_name?: string;
+  vector_type?: string;
+  pc_chunk_size?: number[];
+  api_host?: string;
+  model_id?: number;
+  pc_chunk_overlap?: number;
+  chunk_overlap?: number;
+  embedding_type?: string;
+  chunk_type?: string;
+}
+interface AgentMode {
+  custom_upload_enabled?: boolean;
+  rag_function?: string;
+  files_config?: FilesConfig;
+  tools?: number[];
+  toolsets?: any;
+  mcp_servers?: any;
+  workflows?: any;
+  enabled?: boolean;
+}
+export interface ConfigResponse {
+  application_name?: string;
+  tenant_id?: string;
+  instructions?: InstructionsItem[];
+  user_input_form?: Record<string, UserInput>[];
+  default_questions?: { enabled: boolean; data: string[] };
+  pre_prompt?: string;
+  model?: Model;
+  opening_statement?: { enabled: boolean; data: string };
+  suggested_questions_after_answer?: SuggestedQuestionsAfterAnswer;
+  application_id?: string;
+  multi_round_conversation_enhancement?: MultiRoundConversationEnhancement;
+  agent_mode?: AgentMode;
+  avatar?: string;
+  voice_chat_enabled?: boolean;
+  memory_config?: {
+    enabled: boolean;
+    prompt_type?: string;
+  };
+  variables_metadata?: any[];
+  enable_websearch?: boolean;
+}
+
+export type Toolset = {
+  id: number;
+  provider_type: "builtin" | "api";
+  avatar?: string;
+  name: string;
+};

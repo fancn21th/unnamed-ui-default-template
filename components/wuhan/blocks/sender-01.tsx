@@ -34,7 +34,6 @@ export const TextareaPrimitive = React.forwardRef<
         "min-h-[calc(var(--line-height-2)*2)]",
         "max-h-[calc(var(--line-height-2)*5)]",
         "overflow-y-auto",
-        // "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
         "leading-[var(--line-height-2)]",
         // 光标颜色使用主题色
         "caret-[var(--primary)]",
@@ -172,14 +171,40 @@ AttachmentButtonPrimitive.displayName = "AttachmentButtonPrimitive";
 /**
  * 模式按钮样式原语（如深度思考、联网搜索等）
  * 提供模式选择按钮的基础样式和状态
- * 注意：这是 ToggleButtonPrimitive 的别名，默认使用 compact 变体
- * 为了向后兼容保留此导出，建议直接使用 ToggleButtonPrimitive from toggle-button block
+ * 基于 ToggleButtonPrimitive，但使用自定义样式
  */
 export const ModeButtonPrimitive = React.forwardRef<
   HTMLButtonElement,
   React.ComponentProps<typeof ToggleButtonPrimitive>
->(({ variant = "compact", ...props }, ref) => {
-  return <ToggleButtonPrimitive ref={ref} variant={variant} {...props} />;
+>(({ className, selected = false, ...props }, ref) => {
+  return (
+    <ToggleButtonPrimitive
+      ref={ref}
+      variant="compact"
+      selected={selected}
+      {...props}
+      className={cn(
+        // 覆盖边框样式：未选中和选中都无边框
+        "!border-0",
+        "rounded-[var(--radius-lg)]",
+        "px-[var(--padding-com-md)]",
+        "py-[var(--padding-com-md)]",
+        // 覆盖背景色样式
+        !selected && [
+          "!bg-transparent",
+          "hover:!bg-[var(--bg-neutral-light)]",
+        ],
+        selected && [
+          "!bg-[var(--bg-neutral-light)]",
+          "hover:!bg-[var(--bg-neutral-light)]",
+        ],
+        // 覆盖文字颜色：统一使用 text-primary
+        "!text-[var(--text-primary)]",
+        "hover:!text-[var(--text-primary)]",
+        className,
+      )}
+    />
+  );
 });
 ModeButtonPrimitive.displayName = "ModeButtonPrimitive";
 
@@ -291,7 +316,7 @@ export function ActionBarPrimitive({
   ...props
 }: ActionBarPrimitiveProps) {
   return (
-    <div className={cn("", className)} {...props}>
+    <div className={cn("pt-2", className)} {...props}>
       {children}
     </div>
   );

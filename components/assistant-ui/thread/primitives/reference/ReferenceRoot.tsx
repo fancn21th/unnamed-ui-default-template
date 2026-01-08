@@ -31,13 +31,13 @@ const ReferenceRoot = forwardRef<Element, Props>((props, forwardedRef) => {
         /* 选中了文本 */
         if (contentNode.contains(selection.anchorNode)) {
           /* 范围内 */
-          const range = selection.getRangeAt(0).getBoundingClientRect();
+          const range = getSelectionStartRect(selection);
           const componentRect = localRef.current?.getBoundingClientRect() ?? {
             top: 0,
             left: 0,
           };
 
-          const top = range.top - componentRect.top - 24; // 20px above the selected text
+          const top = range.top - componentRect.top - 24; // 24px above the selected text
           const left = range.left - componentRect.left;
           onChoose?.(selectText, { top, left });
         }
@@ -65,3 +65,23 @@ export const ReferencePrimitiveRoot = forwardRef<Element, Props>(
   },
 );
 ReferencePrimitiveRoot.displayName = "ReferencePrimitiveRoot";
+
+const getSelectionStartRect = (selection:Selection) => {
+
+  const range = selection.getRangeAt(0).cloneRange(); // 克隆避免修改原选区
+
+  // 折叠 Range 到起始点（长度为0）
+  range.collapse(true); // true 表示折叠到起点
+
+  // 创建一个临时 span 元素插入到该位置，以获取精确位置
+  const tempSpan = document.createElement("span");
+  tempSpan.textContent = "\u200B"; // 零宽字符，不影响布局
+  range.insertNode(tempSpan);
+
+  const rect = tempSpan.getBoundingClientRect();
+
+  // 清理临时元素
+  tempSpan.parentNode?.removeChild(tempSpan);
+
+  return rect;
+};
