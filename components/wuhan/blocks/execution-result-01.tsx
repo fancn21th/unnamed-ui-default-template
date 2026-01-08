@@ -273,6 +273,8 @@ const ExecutionResultTitlePrimitive = React.forwardRef<
           "text-[var(--text-secondary)]",
           "cursor-pointer",
           "group", // 添加 group 类以支持子元素的状态选择
+          "hover:text-[var(--text-brand-hover)]",
+          "transition-colors",
           className,
         )}
         {...props}
@@ -283,7 +285,6 @@ const ExecutionResultTitlePrimitive = React.forwardRef<
             "font-[var(--font-family-cn)]",
             "text-sm",
             "leading-[var(--line-height-2)]",
-            "text-[var(--text-secondary)]",
           )}
         >
           {children}
@@ -310,6 +311,7 @@ const ExecutionResultContentPrimitive = React.forwardRef<
           "[&_*]:!box-border",
           "flex flex-col",
           "rounded-[var(--radius-xl)]",
+          "overflow-hidden",
           "border border-[var(--border-neutral)]",
           className,
         )}
@@ -345,11 +347,12 @@ const ExecutionResultItemPrimitive = React.forwardRef<
           className={cn(
             "[&_*]:!box-border",
             "w-full",
-            "rounded-[var(--radius-lg)]",
             "overflow-hidden",
             "flex flex-col",
             "gap-[var(--gap-md)]",
             "p-[var(--padding-com-lg)]",
+            "hover:bg-[var(--bg-neutral-light)]",
+            "transition-colors",
             className,
           )}
           {...props}
@@ -546,16 +549,6 @@ const ExecutionResultSectionPrimitive = React.forwardRef<
         {...props}
       >
         {(title || showCopyIcon) && (
-          // gap: 8;
-          // angle: 0 deg;
-          // opacity: 1;
-          // padding-top: Padding/padding-com-sm;
-          // padding-right: Padding/padding-com-md;
-          // padding-bottom: Padding/padding-com-sm;
-          // padding-left: Padding/padding-com-md;
-          // border-top-left-radius: 8px;
-          // border-top-right-radius: 8px;
-          // border-bottom-width: 1px;
 
           <div className={cn("flex items-center justify-between",
             "gap-[var(--gap-md)]",
@@ -600,6 +593,9 @@ const ExecutionResultSectionPrimitive = React.forwardRef<
               "py-[var(--padding-com-sm)]",
               "px-[var(--padding-com-md)]",
               "rounded-b-[var(--radius-md)]",
+              "max-h-[calc(var(--line-height-1)*8)]", // 8行的高度
+              "overflow-y-auto",
+              "overflow-x-hidden",
               className)}>
 
             {children}
