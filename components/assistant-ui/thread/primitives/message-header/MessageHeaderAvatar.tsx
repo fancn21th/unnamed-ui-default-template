@@ -17,7 +17,7 @@ export const MessageHeaderPrimitiveAvatar = forwardRef<Element, Props>(
       if (s.config?.avatar) {
         return s.config?.avatar;
       }
-      const logoData = s.appConfig?.app_icon?.condensedLogoUrl;
+      const logoData = s.appConfig?.appIcon?.condensedLogoUrl;
       return logoData?.status ? logoData.logoUrl : "";
     });
     

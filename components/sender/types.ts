@@ -35,7 +35,6 @@ export type SuggestionDataProvider =
   | ((query: string, trigger: string) => SuggestionItem[] | Promise<SuggestionItem[]>)
   | SuggestionItem[];
 
-import type { Editor } from "@tiptap/react";
 
 /**
  * Sender 组件暴露的 ref 方法
