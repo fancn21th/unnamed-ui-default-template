@@ -3,7 +3,7 @@ import { ComposerPrimitive } from "@assistant-ui/react";
 import {
   SenderActionBar,
   SenderContainer,
-  TextareaPrimitive
+  TextareaPrimitive,
 } from "@/components/wuhan/blocks/sender-01";
 import { ThreadScrollToBottom } from "./ThreadScrollToBottom";
 import { ComposerAttachmentsRegion } from "./ComposerAttachmentsRegion";
@@ -11,27 +11,30 @@ import { ComposerAction } from "./ComposerAction";
 import { ThreadReference } from "./ThreadReference";
 import { SenderInput } from "./SenderInput";
 import { cn } from "@/lib/utils";
+import { ComposerHeader } from "./primitives/composer-header";
 
 interface ComposerProps {
   sticky?: boolean;
 }
 
 export const Composer: FC<ComposerProps> = ({ sticky = true }) => {
-
-
   return (
-    <div className={cn(
-      "aui-composer-wrapper z-10 mx-auto flex w-full max-w-[var(--thread-max-width)] flex-col gap-0 overflow-visible rounded-t-3xl bg-background pb-4 md:pb-6",
-      sticky && "sticky bottom-0"
-    )}>
+    <div
+      className={cn(
+        "aui-composer-wrapper z-10 mx-auto flex w-full max-w-[var(--thread-max-width)] flex-col gap-0 overflow-visible rounded-t-3xl bg-background pb-4 md:pb-6",
+        sticky && "sticky bottom-0",
+      )}
+    >
       <ThreadScrollToBottom />
 
       <ComposerPrimitive.Root asChild>
         <SenderContainer className="aui-composer-root gap-[var(--gap-xl)] dark:border-muted-foreground/15">
-          <div className="flex flex-col gap-3">
-            <ThreadReference />
-            <ComposerAttachmentsRegion />
-          </div>
+          <ComposerHeader.AnyIf hasReference hasAttachments>
+            <div className="flex flex-col gap-3">
+              <ThreadReference />
+              <ComposerAttachmentsRegion />
+            </div>
+          </ComposerHeader.AnyIf>
           <div className="flex flex-col gap-4">
             <ComposerPrimitive.Input
               placeholder="Send a message..."
