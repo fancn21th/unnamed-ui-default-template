@@ -1,0 +1,145 @@
+/* 建议列表浮窗样式 */
+.suggestion-list,
+.suggestion-list-empty {
+  background   : white;
+  border       : 1px solid hsl(var(--border));
+  border-radius: 0.5rem;
+  box-shadow   : 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  max-height   : 20rem;
+  overflow-y   : auto;
+  padding      : 0.25rem;
+  position     : relative;
+  z-index      : 50;
+  color        : black;
+}
+
+.suggestion-list-empty {
+  padding: 0.5rem;
+}
+
+.suggestion-item-empty {
+  color     : hsl(var(--muted-foreground));
+  font-size : 0.875rem;
+  padding   : 0.5rem;
+  text-align: center;
+}
+
+.suggestion-item {
+  align-items  : flex-start;
+  background   : transparent;
+  border       : none;
+  border-radius: 0.375rem;
+  cursor       : pointer;
+  display      : flex;
+  gap          : 0.5rem;
+  padding      : 0.5rem;
+  text-align   : left;
+  transition   : background-color 0.15s;
+  width        : 100%;
+}
+
+.suggestion-item:hover,
+.suggestion-item.is-selected {
+  background: hsl(var(--accent));
+}
+
+.suggestion-item-content {
+  display       : flex;
+  flex-direction: column;
+  gap           : 0.25rem;
+  min-width     : 0;
+  flex          : 1;
+}
+
+.suggestion-item-header {
+  display    : flex;
+  align-items: center;
+  gap        : 0.5rem;
+}
+
+.suggestion-item-type {
+  background    : hsl(var(--muted));
+  border-radius : 0.25rem;
+  color         : hsl(var(--muted-foreground));
+  font-size     : 0.75rem;
+  font-weight   : 500;
+  padding       : 0.125rem 0.375rem;
+  text-transform: uppercase;
+}
+
+.suggestion-item-label {
+  color        : hsl(var(--foreground));
+  font-size    : 0.875rem;
+  font-weight  : 500;
+  overflow     : hidden;
+  text-overflow: ellipsis;
+  white-space  : nowrap;
+}
+
+.suggestion-item-description {
+  color        : hsl(var(--muted-foreground));
+  font-size    : 0.75rem;
+  line-height  : 1.25;
+  overflow     : hidden;
+  text-overflow: ellipsis;
+  white-space  : nowrap;
+}
+
+/* Mention 节点样式 */
+.mention {
+  /* background-color    : hsl(var(--accent)); */
+  background-color    : white;
+  border-radius       : 0.25rem;
+  box-decoration-break: clone;
+  color               : hsl(var(--accent-foreground));
+  padding             : 0.125rem 0.25rem;
+  font-weight         : 500;
+}
+
+.mention[data-type="tool"] {
+  background-color: hsl(220 70% 95%);
+  color           : hsl(220 70% 40%);
+}
+
+.mention[data-type="workflow"] {
+  background-color: hsl(280 70% 95%);
+  color           : hsl(280 70% 40%);
+}
+
+.mention[data-type="mcp"] {
+  background-color: hsl(160 70% 95%);
+  color           : hsl(160 70% 40%);
+}
+
+.tippy-box {
+  background-color: transparent;
+}
+
+.tippy-content {
+  padding: 0;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+
+  .suggestion-list,
+  .suggestion-list-empty {
+    background  : hsl(var(--popover));
+    border-color: hsl(var(--border));
+  }
+
+  .mention[data-type="tool"] {
+    background-color: hsl(220 70% 20%);
+    color           : hsl(220 70% 80%);
+  }
+
+  .mention[data-type="workflow"] {
+    background-color: hsl(280 70% 20%);
+    color           : hsl(280 70% 80%);
+  }
+
+  .mention[data-type="mcp"] {
+    background-color: hsl(160 70% 20%);
+    color           : hsl(160 70% 80%);
+  }
+}
