@@ -56,6 +56,16 @@ export interface ReviewStepContent {
   /** 总审核进度 */
   total?: number;
 }
+
+export interface AppConfig {
+  appIcon: {
+    condensedLogoUrl: {
+      logoUrl?: string;
+      status?: boolean;
+    };
+  };
+}
+
 export interface MultimodalContent {
   type?:
     | "text"

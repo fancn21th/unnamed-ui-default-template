@@ -1,12 +1,11 @@
 import { loadConfig, getApp } from "@/runtime/smartvisionApi";
 import { create, useStore } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import { ConfigResponse } from "@/runtime/types";
-import { AgentConfig } from "@/runtime/types";
+import { AgentConfig, AppConfig, ConfigResponse } from "@/runtime/types";
 interface SmartVisionConfigState {
   config?: ConfigResponse;
   configLoading?: boolean;
-  appConfig?: AgentConfig[];
+  appConfig?: AppConfig;
   appConfigLoading?: boolean;
   selectedAgents?: {
     enabled: boolean;
