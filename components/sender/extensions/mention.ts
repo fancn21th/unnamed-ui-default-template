@@ -89,7 +89,6 @@ export interface MentionExtensionOptions {
     items: SuggestionItem[];
     command: (item: SuggestionItem) => void;
   }>;
-  // suggestionListComponent: React.ComponentType<any>;
   /**
    * 浮窗定位参考元素的选择器（可选）
    * 默认为光标位置，如果设置则固定在指定元素上方

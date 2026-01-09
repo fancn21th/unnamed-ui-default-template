@@ -2,7 +2,7 @@ import { loadConfig, getApp } from "@/runtime/smartvisionApi";
 import { create, useStore } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { ConfigResponse } from "@/runtime/types";
-import { AgentConfig } from "@/components/assistant-ui/thread/SenderInput";
+import { AgentConfig } from "@/runtime/types";
 interface SmartVisionConfigState {
   config?: ConfigResponse;
   configLoading?: boolean;

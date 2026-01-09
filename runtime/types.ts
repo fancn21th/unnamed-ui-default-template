@@ -45,7 +45,6 @@ export interface ConversationItem {
   updated_at: number;
 }
 
-
 /** 审查匹配项 */
 export interface ReviewStepContent {
   /** 审核步骤名称 */
@@ -80,7 +79,7 @@ export interface MultimodalContent {
     tool_input?: string;
     tool_execute_time?: number;
     observation?: string;
-    data?: any;
+    data?: unknown;
     status?: "finished" | "using";
     // 审核步骤数据，在tool中进行展示
     reviewStep?: ReviewStepContent[];
@@ -135,7 +134,7 @@ export interface MessageProps {
   agent_thoughts: (MultimodalContent["tool"] & {
     files?: string[];
     thought?: string;
-    bi_steps?: any;
+    bi_steps?: unknown;
     canvas_meta?: {
       title: string;
       artifact_id: string;
@@ -163,7 +162,7 @@ export interface MessageProps {
   is_upvote: UpvoteStatus;
   variable?: Record<string, string>;
   is_audio?: boolean;
-  canvas_meta?: any;
+  canvas_meta?: unknown;
   cotent?: string;
 }
 
@@ -221,14 +220,19 @@ interface FilesConfig {
   embedding_type?: string;
   chunk_type?: string;
 }
+export interface AgentConfig {
+  id: string;
+  name: string;
+  avatar: string | null;
+}
 interface AgentMode {
   custom_upload_enabled?: boolean;
   rag_function?: string;
   files_config?: FilesConfig;
   tools?: number[];
-  toolsets?: any;
-  mcp_servers?: any;
-  workflows?: any;
+  toolsets?: AgentConfig[];
+  mcp_servers?: AgentConfig[];
+  workflows?: AgentConfig[];
   enabled?: boolean;
 }
 export interface ConfigResponse {
@@ -250,7 +254,7 @@ export interface ConfigResponse {
     enabled: boolean;
     prompt_type?: string;
   };
-  variables_metadata?: any[];
+  variables_metadata?: unknown[];
   enable_websearch?: boolean;
 }
 

@@ -13,6 +13,7 @@ import { getAppConfig } from "@/runtime/smartVisionConfigRuntime";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { EventSourceMessage } from "@microsoft/fetch-event-source/lib/cjs/parse";
 import { AsyncQueue } from "@/lib/AsyncQueue";
+import { getChatConfig } from "@/runtime/smartVisionActionRuntime";
 
 type SendMessageEvent =
   | {
@@ -100,7 +101,10 @@ export class SmartVisionClient {
       task_id: params.taskId,
       conversation_id: params.conversationId,
       chat_sys_variable: {},
-      chat_template_kwargs: {},
+      chat_template_kwargs: {
+        enable_websearch: getChatConfig().webSearch,
+        enable_thinking: getChatConfig().deepThink,
+      },
       // ...(tools.length
       //   ? {
       //       agent_mode: {
@@ -126,7 +130,6 @@ export class SmartVisionClient {
       // },
       // messages: apiMessages,
     };
-
     const requestBody = Object.assign(
       {},
       body,
@@ -142,6 +145,7 @@ export class SmartVisionClient {
       if (!done) {
         done = true;
         controller.abort();
+        queue.push({ type: "complete" });
       }
     };
     // 监听 SSE 消息
@@ -185,6 +189,7 @@ export class SmartVisionClient {
         }
         return Promise.resolve();
       },
+      onclose: cleanup,
     }).catch((err) => {
       if (!controller.signal.aborted) {
         console.error("SSE fetch failed:", err);

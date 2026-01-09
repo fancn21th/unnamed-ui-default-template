@@ -1,24 +1,53 @@
 import { upvoteMessage } from "@/runtime/smartvisionApi";
 import { UpvoteStatus } from "@/runtime/types";
 import { create, useStore } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { useAssistantState } from "@assistant-ui/react";
 
 interface SmartVisionChatActionState {
   upvoteStatusMap: Record<string, UpvoteStatus>;
   dislikeFeedbackMap: Record<string, boolean>;
+  deepThink?: boolean;
+  webSearch?: boolean;
 }
 const store = create(
-  immer<SmartVisionChatActionState>(() => ({
-    upvoteStatusMap: {},
-    dislikeFeedbackMap: {},
-  })),
+  persist(
+    immer<SmartVisionChatActionState>(() => ({
+      upvoteStatusMap: {},
+      dislikeFeedbackMap: {},
+    })),
+    {
+      name: "smart-vision-action",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (s) => ({
+        deepThink: s.deepThink,
+        webSearch: s.webSearch,
+      }),
+    },
+  ),
 );
-
+export const getChatConfig = () => {
+  return {
+    deepThink: store.getState().deepThink,
+    webSearch: store.getState().webSearch,
+  };
+};
+export type QueryMessageActionStatus = {
+  like?: boolean;
+  dislike?: boolean;
+  dislikeFeedback?: boolean;
+};
+export type QueryComposerActionStatus = {
+  deepThink?: boolean;
+  webSearch?: boolean;
+};
+export type QueryActionStatus = QueryMessageActionStatus &
+  QueryComposerActionStatus;
 export const useSmartVisionActionStore = <U>(
   selector: (state: SmartVisionChatActionState) => U,
 ) => useStore(store, selector);
-export const useSmartVisionActionActions = () => {
+export const useSmartVisionMessageActionActions = () => {
   const messageId = useAssistantState((s) => s.message.id);
   const upvoteStatus = useAssistantState(
     (s) => s.message.metadata.custom.is_upvote,
@@ -31,15 +60,12 @@ export const useSmartVisionActionActions = () => {
     store,
     (s) => s.dislikeFeedbackMap[messageId],
   );
-  const queryLikeStatus = ({
+
+  const queryMessageStatus = ({
     like,
     dislike,
     dislikeFeedback,
-  }: {
-    like?: boolean;
-    dislike?: boolean;
-    dislikeFeedback?: boolean;
-  }): boolean => {
+  }: QueryMessageActionStatus): boolean => {
     const status = cacheUpvoteStatus || upvoteStatus || UpvoteStatus.None;
     if (like) {
       return status === UpvoteStatus.Like;
@@ -113,11 +139,51 @@ export const useSmartVisionActionActions = () => {
       state.dislikeFeedbackMap[messageId] = false;
     });
   };
+
   return {
     onLike,
     onDislikeClick,
-    queryLikeStatus,
+    queryMessageStatus,
     onCancelDislikeFeedback,
     onSubmitDislikeFeedback,
+  };
+};
+
+export const useSmartVisionActionActions = () => {
+  const deepThinkState = useSmartVisionActionStore((s) => s.deepThink);
+  const webSearchState = useSmartVisionActionStore((s) => s.webSearch);
+
+  const queryStatus = ({
+    webSearch,
+    deepThink,
+  }: QueryComposerActionStatus): boolean => {
+    if (deepThink !== undefined) {
+      return deepThink === (deepThinkState ?? false);
+    }
+    if (webSearch !== undefined) {
+      return webSearch === (webSearchState ?? false);
+    }
+    return false;
+  };
+  /**
+   * 切换深度思考
+   * */
+  const onSwitchDeepThink = () => {
+    store.setState((state) => {
+      state.deepThink = !state.deepThink;
+    });
+  };
+  /**
+   * 切换联网搜索
+   * */
+  const onSwitchWebSearch = () => {
+    store.setState((state) => {
+      state.webSearch = !state.webSearch;
+    });
+  };
+  return {
+    queryStatus,
+    onSwitchDeepThink,
+    onSwitchWebSearch,
   };
 };

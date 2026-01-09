@@ -1,3 +1,5 @@
+import { Editor } from "@tiptap/react";
+
 /**
  * 建议项数据结构（通用选项类型）
  */

@@ -73,7 +73,7 @@ class SmartVisionThreadHistoryAdapter implements ThreadHistoryAdapter {
               return {
                 type: "image",
                 image: file?.url,
-                filename:file.name,
+                filename: file.name,
               } as ImageMessagePart;
             }
           });
