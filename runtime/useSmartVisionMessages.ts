@@ -18,7 +18,7 @@ import { v4 as UUIDv4 } from "uuid";
 export const useSmartVisionMessages = () => {
   const api = useAssistantApi();
   const [messages, setMessages] = useState<ThreadMessage[]>([]);
-  const { getSelectedAgents } = useSmartVisionConfigActions();
+  const { getSelectedSkills } = useSmartVisionConfigActions();
 
   const updateMessageContent = useCallback(
     (msgId: string, content: ThreadAssistantMessagePart) => {
@@ -153,12 +153,12 @@ export const useSmartVisionMessages = () => {
       let msgId: string | undefined = undefined;
       try {
         // 获取选中的 agents
-        const selectedAgents = getSelectedAgents();
+        const selectedSkills = getSelectedSkills();
         // 调用 SmartVision API
         const generator = sendSmartVisionMessage({
           messages: newMessages,
           conversationId: remoteId,
-          agentMode: selectedAgents,
+          agentSkills: selectedSkills!,
         });
 
         // 🆕 只添加用户消息，不提前创建 AI 占位符
@@ -229,7 +229,7 @@ export const useSmartVisionMessages = () => {
         if (msgId) completeMessage(msgId);
       }
     },
-    [getSelectedAgents],
+    [getSelectedSkills],
   );
 
   return {
