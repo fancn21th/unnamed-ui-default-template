@@ -264,8 +264,11 @@ export function CustomSuggestionList({
               <ComponentPanelListItemPrimitive
                 key={item.value}
                 onClick={() => command(item)}
+                className="flex items-center gap-2"
               >
-                <ComponentPanelListItemIconPrimitive />
+                <ComponentPanelListItemIconPrimitive>
+                  {item.avatar&&<img src={item.avatar ?? ""} alt={item.label} className="bg-background size-6"/>}
+                </ComponentPanelListItemIconPrimitive>
                 <span className="flex-1 truncate text-left">{item.label}</span>
               </ComponentPanelListItemPrimitive>
             ))}
