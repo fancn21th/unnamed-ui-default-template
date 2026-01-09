@@ -1,73 +1,94 @@
 import type { FC } from "react";
-import { ComposerAddAttachment } from "../attachment";
+import { useState } from "react";
 import { ComposerPrimitive, ThreadPrimitive } from "@assistant-ui/react";
 import { TooltipIconButton } from "../tooltip-icon-button";
-import { ArrowUpIcon, Brain, Search, Square } from "lucide-react";
+import { ArrowUpIcon, Brain, Search, Grid3x3, Square } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ActionBarExtend } from "./primitives/action-bar-extend";
+import {
+  SenderAttachmentButton,
+  SenderModeButton,
+} from "@/components/wuhan/blocks/sender-01";
+import {
+  BlockTooltip,
+  BlockTooltipTrigger,
+  BlockTooltipContent,
+} from "@/components/wuhan/blocks/tooltip-01";
 
 export const ComposerAction: FC = () => {
+  const [isComponentMode, setIsComponentMode] = useState(false);
+
   return (
-    <div className="aui-composer-action-wrapper relative mx-1 mt-2 mb-2 flex items-center justify-between">
+    <div className="aui-composer-action-wrapper relative w-full flex items-end justify-between">
       <div className="flex items-center gap-1">
-        <ComposerAddAttachment />
+        <BlockTooltip>
+          <BlockTooltipTrigger asChild>
+            <ComposerPrimitive.AddAttachment asChild>
+              <SenderAttachmentButton
+                className="cursor-pointer border-none"
+                aria-label="Add Attachment"
+              />
+            </ComposerPrimitive.AddAttachment>
+          </BlockTooltipTrigger>
+          <BlockTooltipContent side="top">上传附件</BlockTooltipContent>
+        </BlockTooltip>
         <ActionBarExtend.If deepThink={true}>
           <ActionBarExtend.DeepThink asChild>
-            <TooltipIconButton
-              tooltip="深度思考"
-              side="bottom"
-              variant="ghost"
-              size="icon"
-              className="aui-composer-add-attachment size-[34px] rounded-full bg-muted-foreground/15 p-1 text-xs font-semibold dark:border-muted-foreground/15 dark:hover:bg-muted-foreground/30"
-              aria-label="Add Attachment"
+            <SenderModeButton
+              selected={true}
+              type="button"
+              aria-label="Deep Think Mode"
             >
-              <Brain className="aui-attachment-add-icon size-5 stroke-[1.5px]" />
-            </TooltipIconButton>
+              <Brain className="size-4" />
+              思考
+            </SenderModeButton>
           </ActionBarExtend.DeepThink>
         </ActionBarExtend.If>
         <ActionBarExtend.If deepThink={false}>
           <ActionBarExtend.DeepThink asChild>
-            <TooltipIconButton
-              tooltip="深度思考"
-              side="bottom"
-              variant="ghost"
-              size="icon"
-              className="aui-composer-add-attachment size-[34px] rounded-full p-1 text-xs font-semibold hover:bg-muted-foreground/15 dark:border-muted-foreground/15 dark:hover:bg-muted-foreground/30"
-              aria-label="Add Attachment"
+            <SenderModeButton
+              selected={false}
+              type="button"
+              aria-label="Deep Think Mode"
             >
-              <Brain className="aui-attachment-add-icon size-5 stroke-[1.5px]" />
-            </TooltipIconButton>
+              <Brain className="size-4" />
+              思考
+            </SenderModeButton>
           </ActionBarExtend.DeepThink>
         </ActionBarExtend.If>
-
         <ActionBarExtend.If webSearch={true}>
           <ActionBarExtend.WebSearch asChild>
-            <TooltipIconButton
-              tooltip="联网搜索"
-              side="bottom"
-              variant="ghost"
-              size="icon"
-              className="aui-composer-add-attachment size-[34px] rounded-full bg-muted-foreground/15 p-1 text-xs font-semibold dark:border-muted-foreground/15 dark:hover:bg-muted-foreground/30"
-              aria-label="Add Attachment"
+            <SenderModeButton
+              selected={true}
+              type="button"
+              aria-label="Web Search Mode"
             >
-              <Search className="aui-attachment-add-icon size-5 stroke-[1.5px]" />
-            </TooltipIconButton>
+              <Search className="size-4" />
+              搜索
+            </SenderModeButton>
           </ActionBarExtend.WebSearch>
         </ActionBarExtend.If>
         <ActionBarExtend.If webSearch={false}>
           <ActionBarExtend.WebSearch asChild>
-            <TooltipIconButton
-              tooltip="联网搜索"
-              side="bottom"
-              variant="ghost"
-              size="icon"
-              className="aui-composer-add-attachment size-[34px] rounded-full p-1 text-xs font-semibold hover:bg-muted-foreground/15 dark:border-muted-foreground/15 dark:hover:bg-muted-foreground/30"
-              aria-label="Add Attachment"
+            <SenderModeButton
+              selected={false}
+              type="button"
+              aria-label="Web Search Mode"
             >
-              <Search className="aui-attachment-add-icon size-5 stroke-[1.5px]" />
-            </TooltipIconButton>
+              <Search className="size-4" />
+              搜索
+            </SenderModeButton>
           </ActionBarExtend.WebSearch>
         </ActionBarExtend.If>
+        <SenderModeButton
+          selected={isComponentMode}
+          onClick={() => setIsComponentMode(!isComponentMode)}
+          type="button"
+          aria-label="Component Mode"
+        >
+          <Grid3x3 className="size-4" />
+          组件
+        </SenderModeButton>
       </div>
 
       <ThreadPrimitive.If running={false}>
