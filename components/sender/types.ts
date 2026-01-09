@@ -1,3 +1,5 @@
+import { Editor } from "@tiptap/react";
+
 /**
  * 建议项数据结构（通用选项类型）
  */
@@ -45,7 +47,7 @@ export interface SenderRef {
   /**
    * 获取编辑器实例
    */
-  getEditor: () => any | null;
+  getEditor: () => Editor | null;
   /**
    * 聚焦到编辑器
    */

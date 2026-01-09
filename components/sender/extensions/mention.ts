@@ -61,7 +61,10 @@ export interface MentionExtensionOptions {
   /**
    * 建议列表组件（React 组件）
    */
-  suggestionListComponent: React.ComponentType<any>;
+  suggestionListComponent: React.ComponentType<{
+    items: SuggestionItem[];
+    command: (item: SuggestionItem) => void;
+  }>;
   /**
    * 浮窗定位参考元素的选择器（可选）
    * 默认为光标位置，如果设置则固定在指定元素上方
@@ -163,7 +166,7 @@ export const createMentionExtension = (options: MentionExtensionOptions) => {
         let popup: TippyInstance[] | undefined;
 
         return {
-          onStart: (props: any) => {
+          onStart: (props) => {
             component = new ReactRenderer(SuggestionListComponent, {
               props,
               editor: props.editor,
@@ -180,7 +183,8 @@ export const createMentionExtension = (options: MentionExtensionOptions) => {
                   return referenceElement.getBoundingClientRect();
                 }
                 // 否则使用光标位置
-                return props.clientRect ? props.clientRect() : new DOMRect();
+                const clientRect = props.clientRect?.();
+                return clientRect || new DOMRect();
               },
               appendTo: () => document.body,
               content: component.element,
@@ -194,13 +198,13 @@ export const createMentionExtension = (options: MentionExtensionOptions) => {
             });
           },
 
-          onUpdate: (props: any) => {
+          onUpdate: (props) => {
             component?.updateProps(props);
 
             // 不需要更新位置，因为固定在 composer-root 上方
           },
 
-          onKeyDown: (props: any) => {
+          onKeyDown: (props) => {
             if (props.event?.key === "Escape") {
               popup?.[0]?.hide();
               return true;
@@ -215,8 +219,8 @@ export const createMentionExtension = (options: MentionExtensionOptions) => {
           },
         };
       },
-      command: ({ editor, range, props }: any) => {
-        const item = props as SuggestionItem;
+      command: ({ editor, range, props }) => {
+        const item = props as unknown as SuggestionItem;
 
         onSuggestionSelect?.(item);
 

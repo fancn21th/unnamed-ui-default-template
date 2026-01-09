@@ -3,12 +3,14 @@ import TextareaAutosize from "react-textarea-autosize";
 import { Button } from "@/components/ui/button";
 import { XIcon } from "lucide-react";
 import * as React from "react";
-import { useSmartVisionActionActions } from "@/runtime/smartVisionActionRuntime";
+import {
+  useSmartVisionMessageActionActions,
+} from "@/runtime/smartVisionActionRuntime";
 
 export const DislikeFeedbackForm: FC = () => {
   const [content, setContent] = useState<string>("");
   const { onCancelDislikeFeedback, onSubmitDislikeFeedback } =
-    useSmartVisionActionActions();
+    useSmartVisionMessageActionActions();
   const onContentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
   };
