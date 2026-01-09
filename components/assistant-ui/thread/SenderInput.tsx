@@ -8,6 +8,7 @@ import {
 } from "@/runtime/smartVisionConfigRuntime";
 import { Sender, type SenderRef } from "../../sender";
 import type { SuggestionItem } from "../../sender/types";
+import { AgentConfig } from "@/runtime/types";
 
 // 业务相关的 SuggestionItem 类型（包含额外的业务字段）
 export type BusinessSuggestionItem = SuggestionItem & {
@@ -89,9 +90,9 @@ export const SenderInput: FC = () => {
   const handleMentionsChange = useCallback(
     (mentions: SuggestionItem[]) => {
       // 收集完整的原始数据（通过 id 查找确定类型）
-      const selectedMcpServers: any[] = [];
-      const selectedToolsets: any[] = [];
-      const selectedWorkflows: any[] = [];
+      const selectedMcpServers: string[] = [];
+      const selectedToolsets: string[] = [];
+      const selectedWorkflows: string[] = [];
 
       mentions.forEach((mention) => {
         const id = mention.value;
@@ -99,19 +100,19 @@ export const SenderInput: FC = () => {
         // 在三个数据源中查找匹配的配置
         const mcpServer = (mcpServers || []).find((server) => server.id === id);
         if (mcpServer) {
-          selectedMcpServers.push(mcpServer);
+          selectedMcpServers.push(mcpServer.id);
           return;
         }
 
         const toolset = (toolsets || []).find((tool) => tool.id === id);
         if (toolset) {
-          selectedToolsets.push(toolset);
+          selectedToolsets.push(toolset.id);
           return;
         }
 
         const workflow = (workflows || []).find((wf) => wf.id === id);
         if (workflow) {
-          selectedWorkflows.push(workflow);
+          selectedWorkflows.push(workflow.id);
           return;
         }
       });
@@ -152,12 +153,6 @@ export const SenderInput: FC = () => {
     </>
   );
 };
-
-interface AgentConfig {
-  id: string;
-  name: string;
-  avatar: string | null;
-}
 
 /**
  * 构建业务相关的 SuggestionItem 数据
