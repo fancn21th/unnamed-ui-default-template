@@ -45,7 +45,6 @@ export interface ConversationItem {
   updated_at: number;
 }
 
-
 /** 审查匹配项 */
 export interface ReviewStepContent {
   /** 审核步骤名称 */
@@ -221,14 +220,19 @@ interface FilesConfig {
   embedding_type?: string;
   chunk_type?: string;
 }
+export interface AgentConfig {
+  id: string;
+  name: string;
+  avatar: string | null;
+}
 interface AgentMode {
   custom_upload_enabled?: boolean;
   rag_function?: string;
   files_config?: FilesConfig;
   tools?: number[];
-  toolsets?: any;
-  mcp_servers?: any;
-  workflows?: any;
+  toolsets?: AgentConfig[];
+  mcp_servers?: AgentConfig[];
+  workflows?: AgentConfig[];
   enabled?: boolean;
 }
 export interface ConfigResponse {

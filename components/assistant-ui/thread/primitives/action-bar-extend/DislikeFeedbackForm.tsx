@@ -12,7 +12,9 @@ import {
   ToggleButtonGroupPrimitive,
   ToggleButtonPrimitive,
 } from "@/components/wuhan/blocks/toggle-button-01";
-import { useSmartVisionActionActions } from "@/runtime/smartVisionActionRuntime";
+import {
+  useSmartVisionMessageActionActions,
+} from "@/runtime/smartVisionActionRuntime";
 
 const FEEDBACK_OPTIONS: Array<{ id: string; label: string }> = [
   { id: "1", label: "有害/不安全" },
@@ -28,7 +30,7 @@ export const DislikeFeedbackForm: FC = () => {
   const [content, setContent] = useState<string>("");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const { onCancelDislikeFeedback, onSubmitDislikeFeedback } =
-    useSmartVisionActionActions();
+    useSmartVisionMessageActionActions();
   const hasOtherSelected = selectedIds.includes(OTHER_OPTION_ID);
   const hasAnySelected = selectedIds.length > 0;
 

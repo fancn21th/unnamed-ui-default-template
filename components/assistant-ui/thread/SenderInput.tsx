@@ -18,6 +18,7 @@ import {
   ComponentPanelListItemPrimitive,
   ComponentPanelListItemIconPrimitive,
 } from "@/components/wuhan/blocks/component-panel-01";
+import { AgentConfig } from "@/runtime/types";
 
 // 业务相关的 SuggestionItem 类型（包含额外的业务字段）
 export type BusinessSuggestionItem = SuggestionItem & {
@@ -163,12 +164,6 @@ export const SenderInput: FC = () => {
     </>
   );
 };
-
-export interface AgentConfig {
-  id: string;
-  name: string;
-  avatar: string | null;
-}
 
 /**
  * 构建业务相关的 SuggestionItem 数据
