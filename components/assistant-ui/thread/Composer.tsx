@@ -3,6 +3,7 @@ import { ComposerPrimitive } from "@assistant-ui/react";
 import {
   SenderActionBar,
   SenderContainer,
+  TextareaPrimitive
 } from "@/components/wuhan/blocks/sender-01";
 import { ThreadScrollToBottom } from "./ThreadScrollToBottom";
 import { ComposerAttachmentsRegion } from "./ComposerAttachmentsRegion";
@@ -26,7 +27,7 @@ export const Composer: FC<ComposerProps> = ({ sticky = true }) => {
       <ThreadScrollToBottom />
 
       <ComposerPrimitive.Root asChild>
-        <SenderContainer className="aui-composer-root gap-0 dark:border-muted-foreground/15">
+        <SenderContainer className="aui-composer-root gap-[var(--gap-xl)] dark:border-muted-foreground/15">
           <div className="flex flex-col gap-3">
             <ThreadReference />
             <ComposerAttachmentsRegion />
@@ -34,12 +35,14 @@ export const Composer: FC<ComposerProps> = ({ sticky = true }) => {
           <div className="flex flex-col gap-4">
             <ComposerPrimitive.Input
               placeholder="Send a message..."
-              rows={1}
+              rows={3}
               autoFocus
               aria-label="Message input"
               asChild
             >
-              <SenderInput />
+              <TextareaPrimitive>
+                <SenderInput />
+              </TextareaPrimitive>
             </ComposerPrimitive.Input>
             <SenderActionBar className="flex items-center justify-between">
               <ComposerAction />
