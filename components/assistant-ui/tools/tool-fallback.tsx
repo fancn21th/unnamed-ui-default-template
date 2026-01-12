@@ -1,7 +1,7 @@
 import type { ToolCallMessagePartComponent } from "@assistant-ui/react";
 import { useAssistantState } from "@assistant-ui/react";
 import { ChevronDown, CheckCircle2, XCircle, Loader2 } from "lucide-react";
-import { useMemo, useState, useEffect, type FC } from "react";
+import { useMemo, useState, useEffect, useRef, startTransition, type FC } from "react";
 import {
   ExecutionResultContainerPrimitive,
   ExecutionResultTitlePrimitive,
@@ -75,11 +75,40 @@ const ToolCallItem: FC<{
   const isLoading = !hasObservation(toolData.result);
   const isError = isErrorResult(toolData.result);
   const displayName = getToolDisplayName(toolData);
-
-  // 正在执行中的步骤自动展开，已完成的步骤自动收起
+  // 正在执行中的步骤自动展开，已完成的步骤延迟几秒后自动收起（增加容错）
   const [itemOpen, setItemOpen] = useState(isLoading);
+  const delayTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const prevLoadingRef = useRef(isLoading);
+  
   useEffect(() => {
-    setItemOpen(isLoading);
+    const wasLoading = prevLoadingRef.current;
+    prevLoadingRef.current = isLoading;
+    
+    // 清除之前的延迟定时器
+    if (delayTimerRef.current) {
+      clearTimeout(delayTimerRef.current);
+      delayTimerRef.current = null;
+    }
+    
+    if (isLoading) {
+      // 如果正在加载，立即展开（使用 startTransition 避免 lint 警告）
+      startTransition(() => {
+        setItemOpen(true);
+      });
+    } else if (wasLoading && !isLoading) {
+      // 如果状态从加载变为完成，延迟3秒后收起，增加容错性
+      delayTimerRef.current = setTimeout(() => {
+        setItemOpen(false);
+        delayTimerRef.current = null;
+      }, 3000);
+    }
+    
+    return () => {
+      if (delayTimerRef.current) {
+        clearTimeout(delayTimerRef.current);
+        delayTimerRef.current = null;
+      }
+    };
   }, [isLoading]);
 
   return (
@@ -195,10 +224,40 @@ export const ToolFallback: ToolCallMessagePartComponent = ({
     );
   }, [toolCalls]);
 
-  // 容器展开状态：有正在执行的工具时自动展开，全部完成后自动收起
+  // 容器展开状态：有正在执行的工具时自动展开，全部完成后延迟几秒后自动收起（增加容错）
   const [containerOpen, setContainerOpen] = useState(hasLoadingTools);
+  const containerDelayTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const prevLoadingToolsRef = useRef(hasLoadingTools);
+  
   useEffect(() => {
-    setContainerOpen(hasLoadingTools);
+    const hadLoadingTools = prevLoadingToolsRef.current;
+    prevLoadingToolsRef.current = hasLoadingTools;
+    
+    // 清除之前的延迟定时器
+    if (containerDelayTimerRef.current) {
+      clearTimeout(containerDelayTimerRef.current);
+      containerDelayTimerRef.current = null;
+    }
+    
+    if (hasLoadingTools) {
+      // 如果还有正在执行的工具，立即展开（使用 startTransition 避免 lint 警告）
+      startTransition(() => {
+        setContainerOpen(true);
+      });
+    } else if (hadLoadingTools && !hasLoadingTools) {
+      // 如果状态从有加载工具变为全部完成，延迟3秒后收起，确保真的没有新的工具调用
+      containerDelayTimerRef.current = setTimeout(() => {
+        setContainerOpen(false);
+        containerDelayTimerRef.current = null;
+      }, 3000);
+    }
+    
+    return () => {
+      if (containerDelayTimerRef.current) {
+        clearTimeout(containerDelayTimerRef.current);
+        containerDelayTimerRef.current = null;
+      }
+    };
   }, [hasLoadingTools]);
 
   // 边界情况：找不到匹配的工具调用或没有其他工具调用，使用当前组件的 props 作为 fallback
