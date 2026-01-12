@@ -26,6 +26,7 @@ export interface SmartVisionChunk {
   tool?: string | null;
   tool_labels?: Record<string, Record<string, unknown>> | null;
   tool_input?: Record<string, unknown> | string | null; // 修改为支持对象格式
+  tool_execute_time?: number | null; // 工具执行耗时（秒）
   message_files?: string[] | null;
   type?: string | null;
   belongs_to?: string | null;
@@ -55,6 +56,16 @@ export interface ReviewStepContent {
   /** 总审核进度 */
   total?: number;
 }
+
+export interface AppConfig {
+  appIcon: {
+    condensedLogoUrl: {
+      logoUrl?: string;
+      status?: boolean;
+    };
+  };
+}
+
 export interface MultimodalContent {
   type?:
     | "text"
@@ -78,7 +89,7 @@ export interface MultimodalContent {
     tool_input?: string;
     tool_execute_time?: number;
     observation?: string;
-    data?: any;
+    data?: unknown;
     status?: "finished" | "using";
     // 审核步骤数据，在tool中进行展示
     reviewStep?: ReviewStepContent[];
@@ -133,7 +144,7 @@ export interface MessageProps {
   agent_thoughts: (MultimodalContent["tool"] & {
     files?: string[];
     thought?: string;
-    bi_steps?: any;
+    bi_steps?: unknown;
     canvas_meta?: {
       title: string;
       artifact_id: string;
@@ -161,7 +172,7 @@ export interface MessageProps {
   is_upvote: UpvoteStatus;
   variable?: Record<string, string>;
   is_audio?: boolean;
-  canvas_meta?: any;
+  canvas_meta?: unknown;
   cotent?: string;
 }
 
@@ -219,19 +230,33 @@ interface FilesConfig {
   embedding_type?: string;
   chunk_type?: string;
 }
-export interface AgentConfig {
+/**
+ * 技能配置
+ */
+export interface SkillConfig {
   id: string;
   name: string;
   avatar: string | null;
+  [key: string]: unknown;
+}
+
+/**
+ * 智能体技能配置
+ */
+export interface AgentSkillsConfig {
+  enabled?: boolean;
+  toolsets?: SkillConfig[];
+  mcp_servers?: SkillConfig[];
+  workFlows?: SkillConfig[];
 }
 interface AgentMode {
   custom_upload_enabled?: boolean;
   rag_function?: string;
   files_config?: FilesConfig;
   tools?: number[];
-  toolsets?: AgentConfig[];
-  mcp_servers?: AgentConfig[];
-  workflows?: AgentConfig[];
+  toolsets?: SkillConfig[];
+  mcp_servers?: SkillConfig[];
+  workflows?: SkillConfig[];
   enabled?: boolean;
 }
 export interface ConfigResponse {
@@ -253,7 +278,7 @@ export interface ConfigResponse {
     enabled: boolean;
     prompt_type?: string;
   };
-  variables_metadata?: any[];
+  variables_metadata?: unknown[];
   enable_websearch?: boolean;
 }
 
