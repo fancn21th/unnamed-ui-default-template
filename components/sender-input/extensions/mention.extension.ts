@@ -66,7 +66,18 @@ export const createMentionExtension = (params: MentionExtensionOptions) => {
             });
 
             component = new ReactRenderer(SkillList!, {
-              props: { ...props, selectedIds },
+              props: {
+                ...props,
+                command: (item: SenderInputSkillItem) => {
+                  // 调用 Tiptap 的 command，传入符合 MentionNodeAttrs 格式的对象
+                  // 将 value 转换为 string，因为 Tiptap 的 id 是 string | null
+                  props.command({
+                    id: String(item.value),
+                    label: item.label,
+                  });
+                },
+                selectedIds,
+              },
               editor: props.editor,
             });
             // 触发显示状态回调
@@ -107,7 +118,18 @@ export const createMentionExtension = (params: MentionExtensionOptions) => {
                 selectedIds.add(node.attrs.id);
               }
             });
-            component?.updateProps({ ...props, selectedIds });
+            component?.updateProps({
+              ...props,
+              selectedIds,
+              command: (item: SenderInputSkillItem) => {
+                // 调用 Tiptap 的 command，传入符合 MentionNodeAttrs 格式的对象
+                // 将 value 转换为 string，因为 Tiptap 的 id 是 string | null
+                props.command({
+                  id: String(item.value),
+                  label: item.label,
+                });
+              },
+            });
           },
           onKeyDown: (props) => {
             if (props.event?.key === "Escape") {
@@ -124,8 +146,12 @@ export const createMentionExtension = (params: MentionExtensionOptions) => {
         };
       },
       command({ editor, range, props }) {
-        // 删除触发字符和查询文本,然后插入 mention
-        const item = props as unknown as SenderInputSkillItem;
+        // 处理 Tiptap 传递的 props（MentionNodeAttrs 格式）
+        // Tiptap 传递的 props 包含 id 和 label，我们需要转换为 SuggestionItem 格式
+        const item: SenderInputSkillItem = {
+          value: props.id ?? "",
+          label: props.label ?? "",
+        };
         editor
           .chain()
           .focus()

@@ -17,8 +17,9 @@ export function ChatSenderInput() {
   return (
     <SenderInput
       skillReferenceSelector=".aui-composer-root"
-      className="aui-composer-input"
+      className="aui-composer-input p-[2px] outline-none"
       mentionLabelClassName="bg-[#EDF2FF] p-1 rounded-lg text-[#4A56FF]"
+      placeholder="Send a message..."
       ref={inputRef}
       value={value}
       disabled={disabled}

@@ -55,7 +55,7 @@ export const SenderInput = forwardRef<SenderInputInstance, SenderInputProps>(
         autofocus: autoFocus && !disabled,
         editorProps: {
           attributes: {
-            class: className,
+            class: `tiptap-placeholder tiptap-mention ${className}`,
             "aria-label": "Sender input",
           },
           handleKeyDown: onHandleKeyDown,

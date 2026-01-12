@@ -1,12 +1,12 @@
 import { loadConfig, getApp } from "@/runtime/smartvisionApi";
 import { create, useStore } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import { ConfigResponse, SkillConfig } from "@/runtime/types";
+import { AppConfig, ConfigResponse, SkillConfig } from "@/runtime/types";
 
 interface SmartVisionConfigState {
   config?: ConfigResponse;
   configLoading?: boolean;
-  appConfig?: unknown;
+  appConfig?: AppConfig;
   appConfigLoading?: boolean;
   /** 选中的技能配置 */
   selectedSkills?: {

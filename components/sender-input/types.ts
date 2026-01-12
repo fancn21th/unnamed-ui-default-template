@@ -92,6 +92,10 @@ export interface SenderInputSkillItem {
    * 头像信息
    */
   avatar?: string | null;
+  /**
+   * 类型
+   */
+  type?: string;
 }
 
 /**

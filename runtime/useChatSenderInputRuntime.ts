@@ -87,7 +87,7 @@ export function useChatSenderInputRuntime() {
    * @param skills
    */
   const onSkillsChange = (skills: SenderInputSkillItem[]) => {
-    const skillIds = skills.map((skill) => skill.value);
+    const skillIds = skills.map((skill) => Number(skill.value));
     const categorizedSkills = getSkillsByIds(skillIds);
     setSelectedSkills(
       categorizedSkills.toolsets,
