@@ -60,7 +60,8 @@ class SmartVisionThreadHistoryAdapter implements ThreadHistoryAdapter {
             labels: d.tool_labels?.[d.tool!],
             argsText: d.tool_input,
             result: d.observation,
-          } as ToolCallMessagePart & { labels?: Record<string, string> };
+            tool_execute_time: d.tool_execute_time,
+          } as ToolCallMessagePart & { labels?: Record<string, string>, tool_execute_time?: number };
         });
       const imageContents = d.agent_thoughts
         .filter((d) => d.files)
