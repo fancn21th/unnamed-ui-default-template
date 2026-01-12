@@ -1,22 +1,32 @@
 import { loadConfig, getApp } from "@/runtime/smartvisionApi";
 import { create, useStore } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import { AgentConfig, AppConfig, ConfigResponse } from "@/runtime/types";
+import { AppConfig, ConfigResponse, SkillConfig } from "@/runtime/types";
+
 interface SmartVisionConfigState {
   config?: ConfigResponse;
   configLoading?: boolean;
   appConfig?: AppConfig;
   appConfigLoading?: boolean;
-  selectedAgents?: {
+  /** 选中的技能配置 */
+  selectedSkills?: {
     enabled: boolean;
-    toolsets: AgentConfig[];
-    mcp_servers: AgentConfig[];
-    workFlows: AgentConfig[];
+    toolsets: SkillConfig[];
+    mcp_servers: SkillConfig[];
+    workFlows: SkillConfig[];
   };
+  /** 技能菜单是否可见 */
+  skillsVisible?: boolean;
+  /** 打开技能菜单的函数 */
+  openSkillsFn?: () => void;
+  /** 设置打开技能菜单的函数 */
+  setOpenSkillsFn?: (fn: () => void) => void;
 }
 const store = create(immer<SmartVisionConfigState>(() => ({})));
 
-export const getAppConfig = () => { return store.getState().config;}
+export const getAppConfig = () => {
+  return store.getState().config;
+};
 export const useSmartVisionConfigStore = <U>(
   selector: (state: SmartVisionConfigState) => U,
 ) => useStore(store, selector);
@@ -58,25 +68,25 @@ export const useSmartVisionConfigActions = () => {
   };
 
   /**
-   * 获取选中的代理配置，过滤掉空数组
+   * 获取选中的技能列表，过滤掉空数组
    * @returns 过滤后的配置，如果所有数组都为空则返回 null
    */
-  const getSelectedAgents = () => {
-    const selectedAgents = store.getState().selectedAgents;
-    if (!selectedAgents) return null;
+  const getSelectedSkills = () => {
+    const selectedSkills = store.getState().selectedSkills;
+    if (!selectedSkills) return null;
 
-    const filtered: Partial<typeof selectedAgents> = {
-      enabled: selectedAgents.enabled,
+    const filtered: Partial<typeof selectedSkills> = {
+      enabled: selectedSkills.enabled,
     };
 
-    if (selectedAgents.toolsets.length > 0) {
-      filtered.toolsets = selectedAgents.toolsets;
+    if (selectedSkills.toolsets.length > 0) {
+      filtered.toolsets = selectedSkills.toolsets;
     }
-    if (selectedAgents.mcp_servers.length > 0) {
-      filtered.mcp_servers = selectedAgents.mcp_servers;
+    if (selectedSkills.mcp_servers.length > 0) {
+      filtered.mcp_servers = selectedSkills.mcp_servers;
     }
-    if (selectedAgents.workFlows.length > 0) {
-      filtered.workFlows = selectedAgents.workFlows;
+    if (selectedSkills.workFlows.length > 0) {
+      filtered.workFlows = selectedSkills.workFlows;
     }
 
     // 如果所有数组都为空，返回 null
@@ -88,18 +98,18 @@ export const useSmartVisionConfigActions = () => {
   };
 
   /**
-   * 同步选中的代理配置（直接设置整个状态）
+   * 同步选中的技能列表（直接设置整个状态）
    * @param toolsets - 工具集 ID 数组
    * @param mcpServers - MCP 服务器 ID 数组
    * @param workFlows - 工作流 ID 数组
    */
-  const syncSelectedAgents = (
-    toolsets: AgentConfig[],
-    mcpServers: AgentConfig[],
-    workFlows: AgentConfig[],
+  const setSelectedSkills = (
+    toolsets: SkillConfig[],
+    mcpServers: SkillConfig[],
+    workFlows: SkillConfig[],
   ) => {
     store.setState((draft) => {
-      draft.selectedAgents = {
+      draft.selectedSkills = {
         enabled: true,
         toolsets,
         mcp_servers: mcpServers,
@@ -108,11 +118,31 @@ export const useSmartVisionConfigActions = () => {
     });
   };
 
+  /**
+   * 设置打开技能的函数
+   */
+  const setOpenSkillsFn = (fn: () => void) => {
+    store.setState((draft) => {
+      draft.openSkillsFn = fn;
+    });
+  };
+
+  /**
+   * 技能浮窗显示/隐藏状态变化时的回调
+   */
+  const onSkillVisibleChange = (visible: boolean) => {
+    store.setState((draft) => {
+      draft.skillsVisible = visible;
+    });
+  };
+
   return {
     load,
     reloadAppConfig,
     reloadConfig,
-    getSelectedAgents,
-    syncSelectedAgents,
+    getSelectedSkills,
+    setSelectedSkills,
+    setOpenSkillsFn,
+    onSkillVisibleChange,
   };
 };

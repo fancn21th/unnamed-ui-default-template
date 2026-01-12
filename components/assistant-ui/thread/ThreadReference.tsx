@@ -9,21 +9,20 @@ import {
 } from "@/components/wuhan/blocks/quote-content-01";
 
 export const ThreadReference = () => {
-
   return (
-    <Reference.ComposerContainer>
+    <Reference.ComposerContainer asChild>
       <QuoteContent className="mb-[calc(-1*var(--gap-xs))]">
         <QuoteContentLeading>
-          <CornerDownRight className="w-4 h-4" />
+          <CornerDownRight className="h-4 w-4" />
         </QuoteContentLeading>
         <QuoteContentContent>
           <QuoteContentText>
-            <Reference.Content></Reference.Content>
+            <Reference.Content />
           </QuoteContentText>
         </QuoteContentContent>
-        <Reference.Cancel>
+        <Reference.Cancel asChild>
           <QuoteContentCloseButton>
-            <X className="w-4 h-4" />
+            <X className="h-4 w-4" />
           </QuoteContentCloseButton>
         </Reference.Cancel>
       </QuoteContent>

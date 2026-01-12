@@ -14,12 +14,14 @@ import {
   BlockTooltipTrigger,
   BlockTooltipContent,
 } from "@/components/wuhan/blocks/tooltip-01";
+import { useSmartVisionConfigStore } from "@/runtime/smartVisionConfigRuntime";
 
 export const ComposerAction: FC = () => {
-  const [isComponentMode, setIsComponentMode] = useState(false);
-
+  // const [isComponentMode, setIsComponentMode] = useState(false);
+  const openSkillsFn = useSmartVisionConfigStore((s) => s?.openSkillsFn);
+  const skillsVisible = useSmartVisionConfigStore((s) => s?.skillsVisible);
   return (
-    <div className="aui-composer-action-wrapper relative w-full flex items-end justify-between">
+    <div className="aui-composer-action-wrapper relative flex w-full items-end justify-between">
       <div className="flex items-center gap-1">
         <BlockTooltip>
           <BlockTooltipTrigger asChild>
@@ -81,8 +83,8 @@ export const ComposerAction: FC = () => {
           </ActionBarExtend.WebSearch>
         </ActionBarExtend.If>
         <SenderModeButton
-          selected={isComponentMode}
-          onClick={() => setIsComponentMode(!isComponentMode)}
+          selected={skillsVisible}
+          onClick={() => openSkillsFn?.()}
           type="button"
           aria-label="Component Mode"
         >
