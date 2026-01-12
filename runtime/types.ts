@@ -230,19 +230,33 @@ interface FilesConfig {
   embedding_type?: string;
   chunk_type?: string;
 }
-export interface AgentConfig {
+/**
+ * 技能配置
+ */
+export interface SkillConfig {
   id: string;
   name: string;
   avatar: string | null;
+  [key: string]: unknown;
+}
+
+/**
+ * 智能体技能配置
+ */
+export interface AgentSkillsConfig {
+  enabled?: boolean;
+  toolsets?: SkillConfig[];
+  mcp_servers?: SkillConfig[];
+  workFlows?: SkillConfig[];
 }
 interface AgentMode {
   custom_upload_enabled?: boolean;
   rag_function?: string;
   files_config?: FilesConfig;
   tools?: number[];
-  toolsets?: AgentConfig[];
-  mcp_servers?: AgentConfig[];
-  workflows?: AgentConfig[];
+  toolsets?: SkillConfig[];
+  mcp_servers?: SkillConfig[];
+  workflows?: SkillConfig[];
   enabled?: boolean;
 }
 export interface ConfigResponse {

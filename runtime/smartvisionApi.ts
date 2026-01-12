@@ -2,6 +2,7 @@ import {
   ConversationItem,
   FileUploadResponse,
   MessageProps,
+  AgentSkillsConfig,
   SmartVisionChunk,
   Toolset,
   UpvoteStatus,
@@ -70,7 +71,7 @@ export class SmartVisionClient {
     messages: ThreadUserMessage;
     conversationId?: string;
     taskId?: string;
-    agentMode?: any;
+    agentSkills?: AgentSkillsConfig;
   }): AsyncGenerator<SmartVisionChunk> {
     const url = `${this.apiUrl}/chat`;
     const headers = this.getHeaders();
@@ -133,7 +134,7 @@ export class SmartVisionClient {
     const requestBody = Object.assign(
       {},
       body,
-      params.agentMode ? { agent_mode: params.agentMode } : {},
+      params.agentSkills ? { agent_mode: params.agentSkills } : {},
     );
     const queue = new AsyncQueue<SendMessageEvent>();
 
@@ -366,7 +367,7 @@ export const sendSmartVisionMessage = (params: {
   messages: ThreadUserMessage;
   conversationId?: string;
   taskId?: string;
-  agentMode?: any;
+  agentSkills?: AgentSkillsConfig;
 }) => {
   return smartVisionClient.sendMessage(params);
 };

@@ -9,7 +9,7 @@ import { ThreadScrollToBottom } from "./ThreadScrollToBottom";
 import { ComposerAttachmentsRegion } from "./ComposerAttachmentsRegion";
 import { ComposerAction } from "./ComposerAction";
 import { ThreadReference } from "./ThreadReference";
-import { SenderInput } from "./SenderInput";
+import { ChatSenderInput } from "./ChatSenderInput";
 import { cn } from "@/lib/utils";
 import { ComposerHeader } from "./primitives/composer-header";
 
@@ -44,7 +44,7 @@ export const Composer: FC<ComposerProps> = ({ sticky = true }) => {
               asChild
             >
               <TextareaPrimitive>
-                <SenderInput />
+                <ChatSenderInput />
               </TextareaPrimitive>
             </ComposerPrimitive.Input>
             <SenderActionBar className="flex items-center justify-between">

@@ -1029,3 +1029,23 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  /* Tiptap Placeholder 样式 */
+  .tiptap-placeholder p.is-editor-empty:first-child::before {
+    @apply float-left pointer-events-none h-0;
+    content: attr(data-placeholder);
+    color: var(--text-placeholder);
+  }
+
+  /* SenderInput 编辑器内 mention 标签样式 */
+  .tiptap-mention .mention {
+    @apply px-1.5 py-0.5 rounded font-medium cursor-pointer;
+    background-color: var(--bg-brand-light);
+    color: var(--text-brand);
+  }
+
+  /* .tiptap-mention .mention:hover {
+    background-color: hsl(var(--bg-brand-light) / 0.8);
+  } */
+}
